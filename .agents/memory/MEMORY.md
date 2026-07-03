@@ -1,0 +1,1 @@
+- [OTI frontend conventions](oti-frontend.md) — brand theme, rate-limit quota tradeoff, and TS 6 beta tsconfig quirk for this project.
