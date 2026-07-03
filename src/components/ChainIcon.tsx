@@ -1,20 +1,18 @@
-import {
-  NetworkEthereum,
-  NetworkBinanceSmartChain,
-  NetworkPolygon,
-  NetworkArbitrumOne,
-  NetworkOptimism,
-  NetworkBase,
-  NetworkAvalanche,
-  NetworkFantom,
-  NetworkLinea,
-  NetworkZksync,
-  NetworkTon,
-  NetworkSolana,
-  NetworkSui,
-  NetworkBitcoin,
-  NetworkTron,
-} from '@web3icons/react'
+import NetworkEthereum from '@web3icons/react/icons/networks/NetworkEthereum'
+import NetworkBinanceSmartChain from '@web3icons/react/icons/networks/NetworkBinanceSmartChain'
+import NetworkPolygon from '@web3icons/react/icons/networks/NetworkPolygon'
+import NetworkArbitrumOne from '@web3icons/react/icons/networks/NetworkArbitrumOne'
+import NetworkOptimism from '@web3icons/react/icons/networks/NetworkOptimism'
+import NetworkBase from '@web3icons/react/icons/networks/NetworkBase'
+import NetworkAvalanche from '@web3icons/react/icons/networks/NetworkAvalanche'
+import NetworkFantom from '@web3icons/react/icons/networks/NetworkFantom'
+import NetworkLinea from '@web3icons/react/icons/networks/NetworkLinea'
+import NetworkZksync from '@web3icons/react/icons/networks/NetworkZksync'
+import NetworkTon from '@web3icons/react/icons/networks/NetworkTon'
+import NetworkSolana from '@web3icons/react/icons/networks/NetworkSolana'
+import NetworkSui from '@web3icons/react/icons/networks/NetworkSui'
+import NetworkBitcoin from '@web3icons/react/icons/networks/NetworkBitcoin'
+import NetworkTron from '@web3icons/react/icons/networks/NetworkTron'
 import type { ComponentType } from 'react'
 import type { IconComponentProps } from '@web3icons/react'
 
