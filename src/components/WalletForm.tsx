@@ -1,13 +1,17 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { CHAINS } from '@/lib/chains'
 import { validateAddress } from '@/lib/validateAddress'
 import { ChainSelect } from './ChainSelect'
 
-export function WalletForm() {
-  const navigate = useNavigate()
-  const [address, setAddress] = useState('')
-  const [chain, setChain] = useState(CHAINS[0].id)
+interface WalletFormProps {
+  onSubmit: (address: string, chain: string) => void
+  initialAddress?: string
+  initialChain?: string
+}
+
+export function WalletForm({ onSubmit, initialAddress = '', initialChain }: WalletFormProps) {
+  const [address, setAddress] = useState(initialAddress)
+  const [chain, setChain] = useState(initialChain ?? CHAINS[0].id)
   const [formError, setFormError] = useState<string | null>(null)
 
   function handleSubmit(e: FormEvent) {
@@ -20,7 +24,7 @@ export function WalletForm() {
     }
 
     setFormError(null)
-    navigate(`/wallet/${chain}/${encodeURIComponent(address.trim())}`)
+    onSubmit(address.trim(), chain)
   }
 
   return (

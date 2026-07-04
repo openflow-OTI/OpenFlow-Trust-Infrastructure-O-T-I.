@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from '@/components/Layout'
 import { Home } from '@/pages/Home'
-import { Results } from '@/pages/Results'
 import { NotFound } from '@/pages/NotFound'
 
 function App() {
@@ -9,7 +8,6 @@ function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/wallet/:chain/:address" element={<Results />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>
