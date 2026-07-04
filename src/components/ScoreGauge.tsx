@@ -5,7 +5,7 @@ function scoreColor(score: number): string {
 }
 
 export function ScoreGauge({ score }: { score: number }) {
-  const radius = 70
+  const radius = 60
   const stroke = 14
   const normalizedRadius = radius - stroke / 2
   const circumference = 2 * Math.PI * normalizedRadius

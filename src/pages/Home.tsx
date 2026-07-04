@@ -35,7 +35,7 @@ export function Home() {
     return (
       <div className="home-page">
         <div className="home-intro">
-          <h1 className="home-title">Get On-chain Wallet Trust By Scoring On-chain Wallet</h1>
+          <h1 className="home-title">Is This Wallet Safe to Trust?</h1>
           <p className="home-subtitle">
             Paste a wallet address, pick a chain, get a 0–100 trust score backed by five
             on-chain signals. Free, no login required.
@@ -54,12 +54,12 @@ export function Home() {
   return (
     <div className="results-page">
       <button className="results-back" onClick={handleClear}>
-        &larr; Score another wallet
+        &larr; Score Another Wallet
       </button>
 
       <div className="results-hero">
         <div className="results-hero-icon-wrap">
-          <ChainIcon chainId={chain} size={52} />
+          <ChainIcon chainId={chain} size={44} />
         </div>
         <p className="results-hero-address">{wallet}</p>
         {chainInfo && <span className="results-hero-chain">{chainInfo.label}</span>}
