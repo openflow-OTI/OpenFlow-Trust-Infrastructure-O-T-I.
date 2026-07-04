@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
-import { toApiError } from '@/lib/apiError'
+import { toApiError, ApiError } from '@/lib/apiError'
+import { isKnownChain } from '@/lib/chains'
 import type { components } from '@/api/schema.gen'
 import type { ScoreMetadata } from '@/lib/types'
+
+type Chain = components['schemas']['Chain']
 
 type ScoreResponseWithMetadata = components['schemas']['ScoreResponse'] & {
   metadata?: ScoreMetadata
@@ -16,10 +19,14 @@ export function useScore(address: string, chain: string) {
   return useQuery({
     queryKey: ['score', chain, address],
     queryFn: async () => {
+      if (!isKnownChain(chain)) {
+        throw new ApiError(400, `Unsupported chain: "${chain}"`)
+      }
+
       const { data, error, response } = await apiClient.GET('/score/{address}', {
         params: {
           path: { address },
-          query: { chain: chain as never },
+          query: { chain: chain as Chain },
         },
       })
 

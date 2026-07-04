@@ -50,7 +50,7 @@ export function ChainSelect({ value, onChange, id }: ChainSelectProps) {
               className={`chain-select-option${isSelected ? ' chain-select-option-active' : ''}`}
               onClick={() => selectChain(chain)}
             >
-              <ChainIcon chainId={chain.id} size={20} className="chain-select-icon" />
+              <ChainIcon chainId={chain.id} size={24} className="chain-select-icon" />
               <span>{chain.label}</span>
               {isSelected && <span className="chain-select-check">✓</span>}
             </button>
@@ -71,7 +71,7 @@ export function ChainSelect({ value, onChange, id }: ChainSelectProps) {
         onClick={() => setOpen((v) => !v)}
       >
         <span className="chain-select-trigger-value">
-          {selected && <ChainIcon chainId={selected.id} size={20} />}
+          {selected && <ChainIcon chainId={selected.id} size={24} />}
           <span>{selected?.label ?? 'Select chain'}</span>
         </span>
         <span className={`chain-select-chevron${open ? ' chain-select-chevron-open' : ''}`}>▾</span>

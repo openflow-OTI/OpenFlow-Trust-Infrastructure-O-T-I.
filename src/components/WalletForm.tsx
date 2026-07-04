@@ -30,7 +30,7 @@ export function WalletForm({ onSubmit, initialAddress = '', initialChain }: Wall
   return (
     <form className="wallet-form" onSubmit={handleSubmit} noValidate>
       <label className="wallet-form-label" htmlFor="address">
-        Wallet address
+        WALLET ADDRESS
       </label>
       <div className="wallet-form-input-wrapper">
         <input
