@@ -1,5 +1,6 @@
 # OTI — Master Task Queue
 > Last updated: July 6, 2026 | Maintained by: Development Manager
+
 > **Manager:** This is your master record — add all new tasks here first, then instruct Builders.
 > **Builders:** You also update this file — but only when the Manager explicitly tells you to (marking a task done or adding a new task). Never update it on your own initiative.
 > Never let this file go stale.
@@ -38,6 +39,15 @@
 - Used the original SVG logo file directly as public/logo.svg
 - Crisp and sharp at all sizes, zero blur on Retina/high-DPI screens
 - generateScoreCard.ts points to /logo.svg — score card PNG uses real logo
+
+### Task 7 — Signal Bars → Weighted Display ✅
+- pnpm codegen run — src/api/schema.gen.ts regenerated from live backend spec
+- SignalBar.tsx updated: bar fill = (weighted / maxWeight) × 100%, label = "weighted/maxWeight"
+- Color logic updated to use weighted / maxWeight ratio
+- Home.tsx updated to pass full signal object to SignalBar
+- generateScoreCard.ts updated — score card PNG shows weighted labels and correct fills
+- Verified live on Vercel — all 5 bars showing weighted values
+- Also resolved black screen crash caused by Task 5 API shape mismatch
 
 ---
 
@@ -107,24 +117,6 @@
 > Add an `updated_at` column to the `subscriptions` table via a Drizzle migration. The column should be `timestamp`, nullable, defaulting to null (so existing rows aren't affected). Update the `PATCH /api/admin/keys/:id` handler in `src/routes/admin.ts` to set `updated_at: new Date()` on every update. Update the Drizzle schema file for the `subscriptions` table to include the new column.
 
 **Definition of done:** Migration runs cleanly. PATCH endpoint updates `updated_at`. Column visible in database.
-
----
-
-### TASK 7 — Frontend: Signal Bars → Weighted Display
-**Owner:** Frontend Builder
-**Phase:** 1 — Bug Fixes
-**Priority:** HIGH
-**Depends on:** Task 5 (backend weighted response) must be merged and deployed to Railway first
-
-**Full prompt for Frontend Builder:**
-> Run `pnpm codegen` first to regenerate `src/api/schema.gen.ts` from the updated backend OpenAPI spec (the signal shape has changed).
->
-> Update the signal bar component in the results page (`src/pages/Home.tsx` or wherever the signal bars are rendered):
-> - Bar fill width = `(weighted / maxWeight) × 100%` — not `score / 100`
-> - Score label displayed on the right = `weighted/maxWeight` formatted as a number, e.g. "25/25", "4/20", "10.5/15" (round to 1 decimal)
-> - The color logic (green/red/amber) should be based on `weighted / maxWeight` ratio, same threshold as before
-
-**Definition of done:** Signal bars show weighted contribution. A wallet with walletAge=100 shows "25/25" and full bar. A wallet with transactionCount=20 shows "4/20" and a short bar (20% fill).
 
 ---
 

@@ -1,5 +1,6 @@
 # OTI — Frontend Builder Task List
 > Last updated: July 6, 2026 | Maintained by: Development Manager
+
 > **This file contains your tasks only. Read BUILDER_ONBOARDING.md and ARCHITECTURE.md before starting anything here.**
 > Build in the exact order listed. Some tasks have hard dependencies — do not start them until the dependency is confirmed merged and deployed.
 
@@ -19,6 +20,15 @@
 - Crisp and sharp at all sizes, zero blur on Retina/high-DPI screens
 - generateScoreCard.ts points to /logo.svg — score card PNG uses real logo
 
+### Task 7 — Signal Bars → Weighted Display ✅
+- pnpm codegen run — src/api/schema.gen.ts regenerated from live backend spec
+- SignalBar.tsx updated: bar fill = (weighted / maxWeight) × 100%, label = "weighted/maxWeight"
+- Color logic updated to use weighted / maxWeight ratio
+- Home.tsx updated to pass full signal object to SignalBar
+- generateScoreCard.ts updated — score card PNG shows weighted labels and correct fills
+- Verified live on Vercel — all 5 bars showing weighted values
+- Also resolved black screen crash caused by Task 5 API shape mismatch
+
 ---
 
 ## 🔴 Your Task Queue — Build In This Exact Order
@@ -37,27 +47,6 @@ Etherscan's free API tier caps transaction counts at 1,000. So when a wallet has
 In the results page, the signal bar subtitle for Transaction Count shows the raw `txCount` from the API `metadata`. When `metadata.txCount >= 1000`, display `"1,000+ transactions"` instead of `"1000 transactions"`. This communicates to users that Etherscan's free tier caps the count and the actual volume may be higher.
 
 **Definition of done:** A wallet with txCount=1000 shows "1,000+ transactions" in the Transaction Count signal subtitle.
-
----
-
-### TASK 7 — Signal Bars → Weighted Display
-**Phase:** 1 — Bug Fixes
-**Priority:** HIGH
-**Depends on:** ⚠️ Backend Task 5 must be merged AND deployed to Railway first — do not start until the Manager confirms this
-
-**Why you are doing this:**
-The signal bars currently show raw scores (0–100) as if they are all equal. But they are not — Wallet Age carries 25% of the total score, while Transaction Timing only carries 15%. A wallet with Wallet Age = 100 contributes 25 points, not 100. The bars are visually misleading right now. This fix makes the bars show the real contribution each signal makes to the final score, which is what users and developers actually care about. This requires the Backend Builder to have already shipped the new weighted response shape (Task 5) — that's why this task is sequenced after it.
-
-⚠️ **Coordination point — Backend Builder:**
-Before starting this task, run `pnpm codegen` to regenerate `src/api/schema.gen.ts` from the updated backend OpenAPI spec. The signal shape has changed — the auto-generated types must reflect the new shape before you write any component code.
-
-**What to build:**
-Update the signal bar component in the results page (`src/pages/Home.tsx` or wherever the signal bars are rendered):
-- Bar fill width = `(weighted / maxWeight) × 100%` — not `score / 100`
-- Score label displayed on the right = `weighted/maxWeight` formatted as a number, e.g. "25/25", "4/20", "10.5/15" (round to 1 decimal)
-- The color logic (green/red/amber) should be based on `weighted / maxWeight` ratio, same threshold as before
-
-**Definition of done:** Signal bars show weighted contribution. A wallet with walletAge=100 shows "25/25" and full bar. A wallet with transactionCount=20 shows "4/20" and a short bar (20% fill).
 
 ---
 
