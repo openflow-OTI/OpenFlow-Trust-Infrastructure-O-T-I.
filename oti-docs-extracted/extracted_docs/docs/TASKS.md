@@ -1,5 +1,5 @@
 # OTI — Master Task Queue
-> Last updated: July 5, 2026 | Maintained by: Development Manager
+> Last updated: July 6, 2026 | Maintained by: Development Manager
 > **Manager:** This is your master record — add all new tasks here first, then instruct Builders.
 > **Builders:** You also update this file — but only when the Manager explicitly tells you to (marking a task done or adding a new task). Never update it on your own initiative.
 > Never let this file go stale.
@@ -33,6 +33,11 @@
 ### Task 2 — Logo Fix
 - `Logo.tsx` → `<img src="/logo.jpg">` replacing spiral SVG math
 - `generateScoreCard.ts` → uses `loadImage()` before canvas draw
+
+### Task 2B — Logo: SVG Replace ✅
+- Used the original SVG logo file directly as public/logo.svg
+- Crisp and sharp at all sizes, zero blur on Retina/high-DPI screens
+- generateScoreCard.ts points to /logo.svg — score card PNG uses real logo
 
 ---
 
@@ -159,32 +164,6 @@
 > There is a timestamp parsing bug in the Bitcoin chain handler (`bitcoin.ts` or equivalent). When computing `walletAgedays`, the calculation returns `5` for wallets that are years old (e.g., a wallet created in 2022 returns only 5 days). Investigate the timestamp format returned by the Bitcoin API (likely milliseconds vs seconds confusion, or epoch vs block height conversion error). Fix the calculation so `walletAgedays` correctly reflects the number of days since the wallet's first transaction. Verify with a known old Bitcoin wallet address.
 
 **Definition of done:** A Bitcoin wallet with first activity in 2020 returns a `walletAgedays` value greater than 1,000 days.
-
----
-
-### TASK 2B — Logo: Recreate as SVG (Replace the JPG)
-**Owner:** Frontend Builder
-**Phase:** 1 — Bug Fixes (followup to Task 2)
-**Priority:** HIGH — the JPG is blurry on Retina/high-DPI screens; SVG is required for crisp rendering at any size
-**Depends on:** Nothing — can be done any time
-
-**Full prompt for Frontend Builder:**
-> Task 2 replaced the spiral SVG with `<img src="/logo.jpg">`. The JPG is blurry at 34px on high-DPI screens because JPGs cannot scale. The original SVG approach was architecturally correct — we need to recreate the logo as a proper SVG.
->
-> **The logo design (reference the attached screenshot in docs/ or the original logo image):**
-> - A double Archimedean spiral — two full loops, opening counter-clockwise from center to a clean rounded tip at the upper right
-> - Mint-to-aqua gradient: inner center is `#2BD9A4`, outer tip is `#3EFFC1`
-> - Subtle 3D/depth effect: the inner loop has a faint inner shadow (`filter: drop-shadow`) suggesting the spiral has slight elevation
-> - Black/transparent background (the outer black circle is just the app's background, not part of the SVG)
-> - The spiral's stroke is uniform width (~8% of total SVG viewBox), rounded linecaps
->
-> **Steps:**
-> 1. Create `public/logo.svg` — an SVG file containing the spiral path with a linearGradient or radialGradient from `#2BD9A4` to `#3EFFC1`
-> 2. Update `src/components/Logo.tsx` to use `<img src="/logo.svg" width={34} height={34} alt="OTI" />` — or even better, import the SVG as a React component for full control
-> 3. Update `src/lib/generateScoreCard.ts` to load `logo.svg` instead of `logo.jpg` (the `loadImage()` call is already there — just change the path)
-> 4. Test at 34px (navbar), 80px (potential hero size), and in the generated score card PNG
->
-> **Definition of done:** The spiral logo is crisp and sharp on a MacBook Retina screen at all sizes. No blur visible. The logo in the score card PNG matches the logo in the app navbar.
 
 ---
 

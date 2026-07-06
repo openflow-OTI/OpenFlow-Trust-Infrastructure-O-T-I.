@@ -1,5 +1,5 @@
 # OTI — Frontend Builder Task List
-> Last updated: July 5, 2026 | Maintained by: Development Manager
+> Last updated: July 6, 2026 | Maintained by: Development Manager
 > **This file contains your tasks only. Read BUILDER_ONBOARDING.md and ARCHITECTURE.md before starting anything here.**
 > Build in the exact order listed. Some tasks have hard dependencies — do not start them until the dependency is confirmed merged and deployed.
 
@@ -14,37 +14,14 @@
 - `Logo.tsx` → `<img src="/logo.jpg">` replacing spiral SVG math
 - `generateScoreCard.ts` → uses `loadImage()` before canvas draw
 
+### Task 2B — Logo: SVG Replace ✅
+- Used the original SVG logo file directly as public/logo.svg
+- Crisp and sharp at all sizes, zero blur on Retina/high-DPI screens
+- generateScoreCard.ts points to /logo.svg — score card PNG uses real logo
+
 ---
 
 ## 🔴 Your Task Queue — Build In This Exact Order
-
----
-
-### TASK 2B — Logo: Recreate as SVG (Replace the JPG)
-**Phase:** 1 — Bug Fixes (followup to Task 2)
-**Priority:** HIGH
-**Depends on:** Nothing — start this now
-
-**Why you are doing this:**
-Task 2 fixed the logo component correctly — but the asset itself (logo.jpg) is a low-resolution JPG. On any Retina or high-DPI screen (MacBook, modern iPhone, modern Android), that JPG renders blurry at 34px because JPGs cannot scale. Every user on a modern device sees a blurry logo in the navbar and on their generated score card. SVG is resolution-independent — it looks sharp at any size, on any screen, forever. This also unblocks Task 8 (results redesign) and Task 11A (marketing homepage), both of which require a crisp logo.
-
-**What to build:**
-Task 2 replaced the spiral SVG with `<img src="/logo.jpg">`. The JPG is blurry at 34px on high-DPI screens because JPGs cannot scale. The original SVG approach was architecturally correct — we need to recreate the logo as a proper SVG.
-
-**The logo design:**
-- A double Archimedean spiral — two full loops, opening counter-clockwise from center to a clean rounded tip at the upper right
-- Mint-to-aqua gradient: inner center is `#2BD9A4`, outer tip is `#3EFFC1`
-- Subtle 3D/depth effect: the inner loop has a faint inner shadow (`filter: drop-shadow`) suggesting the spiral has slight elevation
-- Black/transparent background (the outer black circle is just the app's background, not part of the SVG)
-- The spiral's stroke is uniform width (~8% of total SVG viewBox), rounded linecaps
-
-**Steps:**
-1. Create `public/logo.svg` — an SVG file containing the spiral path with a linearGradient or radialGradient from `#2BD9A4` to `#3EFFC1`
-2. Update `src/components/Logo.tsx` to use `<img src="/logo.svg" width={34} height={34} alt="OTI" />` — or even better, import the SVG as a React component for full control
-3. Update `src/lib/generateScoreCard.ts` to load `logo.svg` instead of `logo.jpg` (the `loadImage()` call is already there — just change the path)
-4. Test at 34px (navbar), 80px (potential hero size), and in the generated score card PNG
-
-**Definition of done:** The spiral logo is crisp and sharp on a MacBook Retina screen at all sizes. No blur visible. The logo in the score card PNG matches the logo in the app navbar.
 
 ---
 
