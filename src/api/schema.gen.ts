@@ -98,9 +98,18 @@ export interface paths {
         };
         /**
          * Get score history for a wallet
-         * @description Returns the in-memory score history for the given wallet address and
-         *     chain. History is populated each time a score is computed during the
-         *     current server process lifetime — it is not persisted across restarts.
+         * @description Returns persisted score history for the given wallet address from the
+         *     `chain_scores` database table, ordered by most recent first and
+         *     limited to the 50 most recent records.
+         *
+         *     `?chain=` is optional. When provided, results are filtered to that
+         *     exact chain. When omitted, results include history across all chains
+         *     sharing the wallet's chain family (e.g. all EVM chains for an EVM
+         *     address) — in this case the response's top-level `chain` is `null`
+         *     and each history entry carries its own `chain`. EVM addresses are
+         *     ambiguous across the 10 supported EVM chains, so `?chain=` must be
+         *     supplied to resolve which wallet to look up when the address alone
+         *     cannot be auto-detected.
          */
         get: operations["getScoreHistory"];
         put?: never;
@@ -123,7 +132,7 @@ export interface paths {
          * @description Returns the compromised wallet denylist. Optionally filter by
          *     `chain_family` or `address` (case-insensitive partial match).
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         get: operations["listCompromisedWallets"];
         put?: never;
@@ -133,7 +142,7 @@ export interface paths {
          *     request for this address+chain_family will return `compromised: true`
          *     without computing a score.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         post: operations["flagCompromisedWallet"];
         delete?: never;
@@ -157,7 +166,7 @@ export interface paths {
          * @description Permanently removes a wallet entry from the compromised denylist by its
          *     UUID. The wallet will no longer be blocked from scoring.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         delete: operations["deleteCompromisedWallet"];
         options?: never;
@@ -177,7 +186,7 @@ export interface paths {
          * @description Returns all issued API keys. The raw key is never returned — only the
          *     last 4 characters (`last4`) are included.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         get: operations["listApiKeys"];
         put?: never;
@@ -187,7 +196,7 @@ export interface paths {
          *     The raw key (`api_key`) is returned **only on creation** — it cannot
          *     be retrieved again. Store it securely immediately.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         post: operations["issueApiKey"];
         delete?: never;
@@ -211,7 +220,7 @@ export interface paths {
          * @description Permanently deletes an API key by its UUID. Any request using this key
          *     will immediately receive `401 Invalid API key`.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         delete: operations["revokeApiKey"];
         options?: never;
@@ -221,7 +230,7 @@ export interface paths {
          * @description Updates the `plan` and/or `expires_at` on an existing key. At least
          *     one field must be provided.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         patch: operations["updateApiKey"];
         trace?: never;
@@ -238,7 +247,7 @@ export interface paths {
          * @description Returns all four plan tiers: `anonymous`, `free`, `pro`, `enterprise`.
          *     `daily_limit: null` means unlimited.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         get: operations["listPlanConfigs"];
         put?: never;
@@ -268,7 +277,7 @@ export interface paths {
          *     and/or `description`. Changes take effect immediately on the next
          *     request — no restart required. At least one field must be provided.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         patch: operations["updatePlanConfig"];
         trace?: never;
@@ -285,7 +294,7 @@ export interface paths {
          * @description Returns daily request counts per key or anonymous IP. Optionally filter
          *     by `date` (YYYY-MM-DD) and/or `key_ref`.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         get: operations["getUsage"];
         put?: never;
@@ -309,7 +318,7 @@ export interface paths {
          *     wallets on the denylist, today's request count, and today's requests
          *     broken down by plan tier.
          *
-         *     **Internal use only — no authentication required. Network-restricted in production.**
+         *     **Internal use only — requires the `x-admin-secret` header.**
          */
         get: operations["getStats"];
         put?: never;
@@ -330,7 +339,7 @@ export interface components {
          * @enum {string}
          */
         Chain: "ethereum" | "bsc" | "polygon" | "arbitrum" | "optimism" | "base" | "avalanche" | "fantom" | "linea" | "zksync" | "ton" | "solana" | "sui" | "bitcoin" | "tron";
-        SignalBreakdown: {
+        RawSignalBreakdown: {
             /** @description Score component derived from how long the wallet has been active */
             walletAge: number;
             /** @description Score component derived from number of transactions */
@@ -341,6 +350,26 @@ export interface components {
             smartContractInteractions: number;
             /** @description Score component derived from timing patterns between transactions */
             transactionTimingPatterns: number;
+        };
+        WeightedSignal: {
+            /** @description Raw signal score (0-100), independent of its weight */
+            score: number;
+            /** @description Points this signal contributes toward the overall score. `weighted = score × (maxWeight / 100)`. */
+            weighted: number;
+            /** @description Maximum points this signal can contribute toward the overall score */
+            maxWeight: number;
+        };
+        SignalBreakdown: {
+            /** @description Wallet age signal. `maxWeight` is 25 (25% of the overall score). */
+            walletAge: components["schemas"]["WeightedSignal"];
+            /** @description Transaction count signal. `maxWeight` is 20 (20% of the overall score). */
+            transactionCount: components["schemas"]["WeightedSignal"];
+            /** @description Token holding behavior signal. `maxWeight` is 20 (20% of the overall score). */
+            tokenHoldingBehavior: components["schemas"]["WeightedSignal"];
+            /** @description Smart contract interactions signal. `maxWeight` is 20 (20% of the overall score). */
+            smartContractInteractions: components["schemas"]["WeightedSignal"];
+            /** @description Transaction timing patterns signal. `maxWeight` is 15 (15% of the overall score). */
+            transactionTimingPatterns: components["schemas"]["WeightedSignal"];
         };
         ScoreResponse: {
             /** @description Wallet address (lowercased for EVM) */
@@ -386,12 +415,22 @@ export interface components {
         };
         HistoryEntry: {
             score: number;
-            signals: components["schemas"]["SignalBreakdown"];
+            /** @description Raw signal scores as stored in `chain_scores` at the time this record was created. Unlike the live `/score` endpoint, history entries are not weighted — this reflects the historical ledger as persisted. */
+            signals: components["schemas"]["RawSignalBreakdown"];
+            /** @description The exact chain this score record was computed on. */
+            chain: components["schemas"]["Chain"];
+            address: string;
+            /**
+             * Format: date-time
+             * @description When this score was recorded (`chain_scores.scored_at`).
+             */
+            timestamp: string;
         };
         HistoryResponse: {
             address: string;
-            chain: components["schemas"]["Chain"];
-            /** @description Number of history entries */
+            /** @description The chain filter applied to this request, or `null` when no `?chain=` was provided (history spans the wallet's whole chain family in that case). */
+            chain: components["schemas"]["Chain"] | null;
+            /** @description Number of history entries (max 50) */
             count: number;
             history: components["schemas"]["HistoryEntry"][];
         };
@@ -472,6 +511,11 @@ export interface components {
             expires_at?: string | null;
             /** Format: date-time */
             created_at: string;
+            /**
+             * Format: date-time
+             * @description Timestamp of the last edit via PATCH /admin/keys/:id. null if the key has never been modified since creation.
+             */
+            updated_at?: string | null;
         };
         /** @description At least one field must be provided. */
         PatchKeyRequest: {
@@ -587,6 +631,20 @@ export interface components {
                 "application/json": components["schemas"]["ErrorResponse"];
             };
         };
+        /** @description Missing or incorrect `x-admin-secret` header */
+        Unauthorized: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /**
+                 * @example {
+                 *       "error": "Unauthorized"
+                 *     }
+                 */
+                "application/json": components["schemas"]["ErrorResponse"];
+            };
+        };
         /** @description Daily rate limit exceeded */
         RateLimited: {
             headers: {
@@ -600,7 +658,7 @@ export interface components {
     parameters: {
         /** @description Wallet address. Format depends on chain: EVM `0x` + 40 hex chars; TON starts with `EQ` or `UQ`, 48 chars; Solana base58, 32–44 chars; Sui `0x` + 64 hex chars; Bitcoin Legacy `1…`, Script `3…`, SegWit `bc1q…`, or Taproot `bc1p…`; Tron starts with `T`, exactly 34 base58 chars. */
         AddressPath: string;
-        /** @description Target chain. Defaults to `ethereum` when omitted. */
+        /** @description Target chain. On `/score/{address}` this determines which chain to score. On `/score/{address}/history` it is optional: when omitted, history for all chains sharing the wallet's chain family is returned (auto-detected from the address format where unambiguous). */
         ChainQuery: components["schemas"]["Chain"];
         /** @description UUID of the resource */
         IdPath: string;
@@ -654,7 +712,7 @@ export interface operations {
     getScore: {
         parameters: {
             query?: {
-                /** @description Target chain. Defaults to `ethereum` when omitted. */
+                /** @description Target chain. On `/score/{address}` this determines which chain to score. On `/score/{address}/history` it is optional: when omitted, history for all chains sharing the wallet's chain family is returned (auto-detected from the address format where unambiguous). */
                 chain?: components["parameters"]["ChainQuery"];
             };
             header?: never;
@@ -764,7 +822,7 @@ export interface operations {
     getScoreHistory: {
         parameters: {
             query?: {
-                /** @description Target chain. Defaults to `ethereum` when omitted. */
+                /** @description Target chain. On `/score/{address}` this determines which chain to score. On `/score/{address}/history` it is optional: when omitted, history for all chains sharing the wallet's chain family is returned (auto-detected from the address format where unambiguous). */
                 chain?: components["parameters"]["ChainQuery"];
             };
             header?: never;
@@ -796,7 +854,10 @@ export interface operations {
                      *             "tokenHoldingBehavior": 70,
                      *             "smartContractInteractions": 65,
                      *             "transactionTimingPatterns": 60
-                     *           }
+                     *           },
+                     *           "chain": "ethereum",
+                     *           "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+                     *           "timestamp": "2026-07-04T12:00:00.000Z"
                      *         },
                      *         {
                      *           "score": 76,
@@ -806,7 +867,10 @@ export interface operations {
                      *             "tokenHoldingBehavior": 68,
                      *             "smartContractInteractions": 63,
                      *             "transactionTimingPatterns": 56
-                     *           }
+                     *           },
+                     *           "chain": "ethereum",
+                     *           "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+                     *           "timestamp": "2026-07-03T12:00:00.000Z"
                      *         }
                      *       ]
                      *     }
@@ -841,6 +905,7 @@ export interface operations {
                     "application/json": components["schemas"]["CompromisedWallet"][];
                 };
             };
+            401: components["responses"]["Unauthorized"];
         };
     };
     flagCompromisedWallet: {
@@ -873,6 +938,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
             /** @description Wallet is already flagged for this chain family */
             409: {
                 headers: {
@@ -916,6 +982,7 @@ export interface operations {
                     "application/json": components["schemas"]["DeletedResponse"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
         };
     };
@@ -940,6 +1007,7 @@ export interface operations {
                     "application/json": components["schemas"]["ApiKey"][];
                 };
             };
+            401: components["responses"]["Unauthorized"];
         };
     };
     issueApiKey: {
@@ -975,6 +1043,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
         };
     };
     revokeApiKey: {
@@ -1004,6 +1073,7 @@ export interface operations {
                     "application/json": components["schemas"]["DeletedResponse"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
         };
     };
@@ -1039,6 +1109,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
         };
     };
@@ -1092,6 +1163,7 @@ export interface operations {
                     "application/json": components["schemas"]["PlanConfig"][];
                 };
             };
+            401: components["responses"]["Unauthorized"];
         };
     };
     updatePlanConfig: {
@@ -1125,6 +1197,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
         };
     };
@@ -1169,6 +1242,7 @@ export interface operations {
                     "application/json": components["schemas"]["UsageRow"][];
                 };
             };
+            401: components["responses"]["Unauthorized"];
         };
     };
     getStats: {
@@ -1210,6 +1284,7 @@ export interface operations {
                     "application/json": components["schemas"]["StatsResponse"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
         };
     };
 }

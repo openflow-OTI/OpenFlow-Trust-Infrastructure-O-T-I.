@@ -6,20 +6,36 @@ const SIGNAL_LABELS: Record<string, string> = {
   transactionTimingPatterns: 'Transaction Timing Patterns',
 }
 
-function signalColor(value: number): string {
-  if (value >= 70) return 'var(--accent)'
-  if (value >= 40) return 'var(--warning)'
+function signalColor(ratio: number): string {
+  const pct = ratio * 100
+  if (pct >= 70) return 'var(--accent)'
+  if (pct >= 40) return 'var(--warning)'
   return 'var(--danger)'
+}
+
+function fmtWeighted(v: number): string {
+  const s = v.toFixed(1)
+  return s.endsWith('.0') ? s.slice(0, -2) : s
+}
+
+interface SignalValue {
+  score: number
+  weighted: number
+  maxWeight: number
 }
 
 interface SignalBarProps {
   signalKey: string
-  value: number
+  value: SignalValue
   metadataLabel?: string
 }
 
 export function SignalBar({ signalKey, value, metadataLabel }: SignalBarProps) {
-  const color = signalColor(value)
+  const ratio = value.weighted / value.maxWeight
+  const color = signalColor(ratio)
+  const fillPct = Math.min(100, Math.max(0, ratio * 100))
+  const label = `${fmtWeighted(value.weighted)}/${value.maxWeight}`
+
   return (
     <div className="signal-bar">
       <div className="signal-bar-header">
@@ -30,13 +46,13 @@ export function SignalBar({ signalKey, value, metadataLabel }: SignalBarProps) {
           )}
         </div>
         <span className="signal-bar-value" style={{ color }}>
-          {value}
+          {label}
         </span>
       </div>
       <div className="signal-bar-track">
         <div
           className="signal-bar-fill"
-          style={{ width: `${Math.min(100, Math.max(0, value))}%`, background: color }}
+          style={{ width: `${fillPct}%`, background: color }}
         />
       </div>
     </div>

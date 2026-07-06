@@ -92,7 +92,7 @@ export function Home() {
                   <SignalBar
                     key={key}
                     signalKey={key}
-                    value={value as number}
+                    value={value as { score: number; weighted: number; maxWeight: number }}
                     metadataLabel={
                       scoreQuery.data &&
                       !scoreQuery.data.compromised &&

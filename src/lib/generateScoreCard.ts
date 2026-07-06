@@ -17,6 +17,11 @@ function scoreColor(v: number): string {
   return '#ff4d5e'
 }
 
+function fmtWeighted(v: number): string {
+  const s = v.toFixed(1)
+  return s.endsWith('.0') ? s.slice(0, -2) : s
+}
+
 function fmt(v: number): string {
   return v.toLocaleString()
 }
@@ -187,9 +192,11 @@ export async function generateScoreCard(params: {
   ctx.textBaseline = 'alphabetic'
 
   for (const key of signalKeys) {
-    const value = signals[key] as number
-    const color = scoreColor(value)
+    const sig = signals[key] as { score: number; weighted: number; maxWeight: number }
+    const ratio = sig.weighted / sig.maxWeight
+    const color = scoreColor(ratio * 100)
     const label = SIGNAL_LABELS[key] ?? String(key)
+    const valueLabel = `${fmtWeighted(sig.weighted)}/${sig.maxWeight}`
     const meta = metadata ? getMetaLabel(key, metadata) : ''
 
     // Signal label
@@ -202,7 +209,7 @@ export async function generateScoreCard(params: {
     ctx.fillStyle = color
     ctx.font = 'bold 10.5px "JetBrains Mono", monospace'
     ctx.textAlign = 'right'
-    ctx.fillText(String(value), W - barX, sigY)
+    ctx.fillText(valueLabel, W - barX, sigY)
 
     // Metadata label
     if (meta) {
@@ -221,7 +228,7 @@ export async function generateScoreCard(params: {
     ctx.fill()
 
     // Fill
-    const fillW = Math.max(barR * 2, (value / 100) * barW)
+    const fillW = Math.max(barR * 2, ratio * barW)
     ctx.fillStyle = color
     roundedRect(ctx, barX, trackY, fillW, barH, barR)
     ctx.fill()
