@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminFetch } from '@/lib/adminClient'
 
+// Schema: snake_case throughout (matches schema.gen.ts PlanConfig)
 interface PlanConfig {
   id: string
-  plan: string
-  dailyLimit: number | null
-  description: string | null
-  updatedAt: string | null
+  plan_name: 'anonymous' | 'free' | 'pro' | 'enterprise'
+  daily_limit: number | null
+  description: string
+  updated_at: string
 }
 
 function fmtLimit(limit: number | null) {
@@ -15,7 +16,7 @@ function fmtLimit(limit: number | null) {
   return limit.toLocaleString()
 }
 
-function fmt(ts: string | null) {
+function fmt(ts: string | null | undefined) {
   if (!ts) return '—'
   return new Date(ts).toLocaleString()
 }
@@ -29,7 +30,7 @@ export function PlanConfigs() {
     retry: false,
   })
 
-  const [editId, setEditId] = useState<string | null>(null)
+  const [editPlan, setEditPlan] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<{ daily_limit: string; description: string }>({
     daily_limit: '',
     description: '',
@@ -37,34 +38,35 @@ export function PlanConfigs() {
   const [inputError, setInputError] = useState<string | null>(null)
 
   const editMutation = useMutation({
-    mutationFn: ({ id, body }: { id: string; body: { daily_limit: number | null; description: string } }) =>
-      adminFetch<PlanConfig>(`/admin/plan-configs/${id}`, {
+    // PATCH /admin/plan-configs/{plan_name} — uses plan name, not UUID
+    mutationFn: ({ plan_name, body }: { plan_name: string; body: { daily_limit?: number | null; description?: string } }) =>
+      adminFetch<PlanConfig>(`/admin/plan-configs/${plan_name}`, {
         method: 'PATCH',
         body: JSON.stringify(body),
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'plan-configs'] })
-      setEditId(null)
+      setEditPlan(null)
     },
   })
 
   function startEdit(cfg: PlanConfig) {
-    setEditId(cfg.id)
+    setEditPlan(cfg.plan_name)
     setInputError(null)
     editMutation.reset()
     setEditForm({
-      daily_limit: cfg.dailyLimit !== null ? String(cfg.dailyLimit) : '',
+      daily_limit: cfg.daily_limit !== null ? String(cfg.daily_limit) : '',
       description: cfg.description ?? '',
     })
   }
 
   function cancelEdit() {
-    setEditId(null)
+    setEditPlan(null)
     setInputError(null)
     editMutation.reset()
   }
 
-  function handleSave(e: React.FormEvent, id: string) {
+  function handleSave(e: React.FormEvent, plan_name: string) {
     e.preventDefault()
     setInputError(null)
     const raw = editForm.daily_limit.trim()
@@ -77,7 +79,7 @@ export function PlanConfigs() {
       }
       daily_limit = n
     }
-    editMutation.mutate({ id, body: { daily_limit, description: editForm.description } })
+    editMutation.mutate({ plan_name, body: { daily_limit, description: editForm.description } })
   }
 
   if (configs.isLoading) return <p className="admin-loading">Loading plan configs…</p>
@@ -108,28 +110,28 @@ export function PlanConfigs() {
           {configs.data!.map(cfg => (
             <>
               <tr key={cfg.id}>
-                <td className="admin-td-mono" style={{ maxWidth: 'unset' }}>{cfg.plan}</td>
-                <td>{fmtLimit(cfg.dailyLimit)}</td>
+                <td className="admin-td-mono" style={{ maxWidth: 'unset' }}>{cfg.plan_name}</td>
+                <td>{fmtLimit(cfg.daily_limit)}</td>
                 <td style={{ color: cfg.description ? 'var(--text)' : 'var(--text-dim)' }}>
                   {cfg.description || '—'}
                 </td>
-                <td>{fmt(cfg.updatedAt)}</td>
+                <td>{fmt(cfg.updated_at)}</td>
                 <td>
                   <button
                     className="admin-btn admin-btn--ghost"
-                    onClick={() => editId === cfg.id ? cancelEdit() : startEdit(cfg)}
+                    onClick={() => editPlan === cfg.plan_name ? cancelEdit() : startEdit(cfg)}
                   >
-                    {editId === cfg.id ? 'Cancel' : 'Edit'}
+                    {editPlan === cfg.plan_name ? 'Cancel' : 'Edit'}
                   </button>
                 </td>
               </tr>
 
-              {editId === cfg.id && (
+              {editPlan === cfg.plan_name && (
                 <tr key={`${cfg.id}-edit`} className="admin-edit-row">
                   <td colSpan={5}>
                     <form
                       className="admin-form admin-form--inline"
-                      onSubmit={e => handleSave(e, cfg.id)}
+                      onSubmit={e => handleSave(e, cfg.plan_name)}
                     >
                       <div className="admin-form-row">
                         <label>Daily Limit</label>
