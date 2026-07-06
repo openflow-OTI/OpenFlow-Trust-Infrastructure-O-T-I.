@@ -94,15 +94,27 @@ textarea {
 .navbar-status-dot--online {
   background: var(--accent);
   box-shadow: 0 0 5px var(--accent);
+  animation: status-pulse-green 2.5s ease-in-out infinite;
 }
 
 .navbar-status-dot--offline {
   background: var(--danger);
   box-shadow: 0 0 5px var(--danger);
+  animation: status-pulse-red 2.5s ease-in-out infinite;
 }
 
 .navbar-status-dot--loading {
   background: transparent;
+}
+
+@keyframes status-pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
+  50%       { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+
+@keyframes status-pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger) 60%, transparent); }
+  50%       { box-shadow: 0 0 0 5px color-mix(in srgb, var(--danger) 0%, transparent); }
 }
 
 .navbar-brand {
