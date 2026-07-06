@@ -55,7 +55,7 @@ In the results page, the signal bar subtitle for Transaction Count shows the raw
 
 ---
 
-### TASK 7C — Dynamic Rate Limit Display
+### TASK 7C — Dynamic Rate Limit Display ⏸ ON HOLD
 **Phase:** 2 — Operational
 **Priority:** MEDIUM
 **Depends on:** Nothing — reads from existing API
@@ -67,6 +67,8 @@ The homepage currently hardcodes the text "Anonymous lookups are limited to 3 pe
 Call `GET /api/healthz` or a suitable endpoint to fetch the anonymous plan's `daily_limit` from the backend and display it dynamically. If the fetch fails, fall back to showing "limited per day" without a number. This ensures the text stays accurate when the `plan_configs` table is updated without needing a frontend redeploy.
 
 **Definition of done:** Homepage rate limit text reflects the live `anonymous` plan's daily_limit. Changing the value in the database updates what the homepage shows automatically.
+
+**ON HOLD — reason:** Backend currently returns `daily_limit: null` — Ahmad is running unlimited manual tests on the live site and will set a real limit later via the Admin Panel (Task 9). There is also an unresolved backend design question about how the limit should behave going forward. Frontend work is complete: `useAnonymousLimit.ts` hook + `Home.tsx` fallback logic are correct and will start working automatically once the backend returns a real number. Paused until Task 7C-BACKEND resumes.
 
 ---
 
