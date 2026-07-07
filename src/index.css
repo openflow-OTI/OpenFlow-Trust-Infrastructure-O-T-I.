@@ -512,11 +512,88 @@ textarea {
   gap: 0.5rem;
 }
 
+/* Task 8 — score panel */
+.results-score-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.75rem 1.5rem 1.5rem;
+}
+
+.results-tier-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+}
+
+/* Task 8 — signals panel */
+.results-signals-panel {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.results-signals-heading {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: var(--mono);
+}
+
 .results-signals {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* Task 8 — report link */
+.results-report-link {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+  transition: color 0.15s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.results-report-link:hover {
+  color: var(--danger);
+  border-bottom-color: var(--danger);
+}
+
+/* Task 8 — share wrap (full-width prominent) */
+.results-share-wrap {
+  width: 100%;
+}
+
+/* Task 8 — footer */
+.results-footer {
+  margin-top: auto;
+  padding: 1.25rem 0 0.5rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  border-top: 1px solid var(--border);
 }
 
 /* Score gauge */
@@ -790,24 +867,27 @@ textarea {
 /* Share button */
 
 .share-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45rem;
+  width: 100%;
   background: none;
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent);
   border-radius: 0.5rem;
-  padding: 0.55rem 1.1rem;
+  padding: 0.85rem 1.5rem;
   cursor: pointer;
-  color: var(--text-dim);
-  font-size: 0.85rem;
+  color: var(--accent);
+  font-size: 0.95rem;
   font-family: var(--mono);
-  letter-spacing: 0.04em;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .share-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--accent);
+  color: #000;
 }
 
 .share-btn-icon {

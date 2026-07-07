@@ -20,6 +20,14 @@ function truncateAddress(addr: string): string {
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`
 }
 
+function scoreTier(score: number): { label: string; color: string } {
+  if (score >= 85) return { label: 'HIGHLY TRUSTED', color: 'var(--accent)' }
+  if (score >= 65) return { label: 'TRUSTED',        color: '#4ade80' }
+  if (score >= 45) return { label: 'CAUTION',        color: '#f59e0b' }
+  if (score >= 25) return { label: 'SUSPICIOUS',     color: '#f97316' }
+  return               { label: 'HIGH RISK',         color: 'var(--danger)' }
+}
+
 export function Home() {
   const [searchParams, setSearchParams] = useSearchParams()
   const wallet = searchParams.get('wallet') ?? ''
@@ -95,33 +103,51 @@ export function Home() {
             />
           ) : (
             <>
-              <div className="results-score-card">
+              <div className="results-score-panel">
                 <ScoreGauge score={scoreQuery.data.score} />
+                {(() => {
+                  const tier = scoreTier(scoreQuery.data.score)
+                  return (
+                    <span className="results-tier-label" style={{ color: tier.color }}>
+                      {tier.label}
+                    </span>
+                  )
+                })()}
                 {scoreQuery.data.cached && <CachedBadge />}
               </div>
 
-              <div className="results-signals">
-                {Object.entries(scoreQuery.data.signals).map(([key, value]) => (
-                  <SignalBar
-                    key={key}
-                    signalKey={key}
-                    value={value as { score: number; weighted: number; maxWeight: number }}
-                    metadataLabel={
-                      scoreQuery.data &&
-                      !scoreQuery.data.compromised &&
-                      scoreQuery.data.metadata
-                        ? formatMetadataLabel(key, scoreQuery.data.metadata)
-                        : undefined
-                    }
-                  />
-                ))}
+              <div className="results-signals-panel">
+                <h2 className="results-signals-heading">Trust Signals</h2>
+                <div className="results-signals">
+                  {Object.entries(scoreQuery.data.signals).map(([key, value]) => (
+                    <SignalBar
+                      key={key}
+                      signalKey={key}
+                      value={value as { score: number; weighted: number; maxWeight: number }}
+                      metadataLabel={
+                        scoreQuery.data &&
+                        !scoreQuery.data.compromised &&
+                        scoreQuery.data.metadata
+                          ? formatMetadataLabel(key, scoreQuery.data.metadata)
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
+                <a href="#" className="results-report-link">⚑ Report this wallet</a>
               </div>
 
-              <ShareButton chain={chain} wallet={wallet} />
+              <div className="results-share-wrap">
+                <ShareButton chain={chain} wallet={wallet} />
+              </div>
             </>
           )}
         </div>
       )}
+
+      <footer className="results-footer">
+        © 2026 OpenFlow Labs · openflowlabs.io
+      </footer>
     </div>
   )
 }
