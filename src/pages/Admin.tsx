@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Component, type ReactNode } from 'react'
 import {
   getAdminSecret,
   setAdminSecret,
@@ -13,6 +13,41 @@ import { QueryHistory }       from './admin/QueryHistory'
 import { AdminCache }         from './admin/AdminCache'
 import { PlanConfigs }        from './admin/PlanConfigs'
 import { CompromisedWallets } from './admin/CompromisedWallets'
+
+class AdminErrorBoundary extends Component<
+  { children: ReactNode; onReset: () => void },
+  { error: string | null }
+> {
+  state = { error: null }
+
+  static getDerivedStateFromError(e: Error) {
+    return { error: e.message }
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="admin-gate">
+          <div className="admin-gate-logo" style={{ color: 'var(--danger)' }}>Admin Error</div>
+          <p className="admin-gate-sub" style={{ color: 'var(--text-dim)', maxWidth: 480, textAlign: 'center' }}>
+            {this.state.error}
+          </p>
+          <button
+            className="admin-btn admin-btn--ghost"
+            style={{ marginTop: '1.5rem' }}
+            onClick={() => {
+              this.setState({ error: null })
+              this.props.onReset()
+            }}
+          >
+            ← Back to login
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
 
 type Screen = 'dashboard' | 'keys' | 'usage' | 'history' | 'cache' | 'plans' | 'flagged'
 
@@ -106,9 +141,10 @@ export function Admin() {
     )
   }
 
-  const current = SCREENS.find(s => s.id === screen)!
+  const current = SCREENS.find(s => s.id === screen) ?? SCREENS[0]
 
   return (
+    <AdminErrorBoundary onReset={lock}>
     <div className="admin-shell">
 
       {/* Mobile overlay */}
@@ -173,5 +209,6 @@ export function Admin() {
         </div>
       </div>
     </div>
+    </AdminErrorBoundary>
   )
 }
