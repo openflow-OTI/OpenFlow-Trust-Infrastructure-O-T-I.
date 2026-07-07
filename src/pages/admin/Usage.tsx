@@ -93,7 +93,14 @@ export function Usage() {
 
       {usage.isLoading && <p className="admin-loading">Loading usage…</p>}
       {usage.isError && (
-        <p className="admin-error">{usage.error instanceof Error ? usage.error.message : String(usage.error)}</p>
+        <div className="admin-error-block">
+          <p className="admin-error">
+            {usage.error instanceof Error ? usage.error.message : String(usage.error)}
+          </p>
+          <button className="admin-btn admin-btn--ghost" onClick={() => usage.refetch()}>
+            ↻ Retry
+          </button>
+        </div>
       )}
 
       {usage.data && (

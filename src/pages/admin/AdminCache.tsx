@@ -34,7 +34,14 @@ export function AdminCache() {
         {status === 'flushing' ? 'Flushing…' : 'Flush Cache'}
       </button>
       {status === 'done' && <p className="admin-success">{message}</p>}
-      {status === 'error' && <p className="admin-error">{message}</p>}
+      {status === 'error' && (
+        <div className="admin-error-block">
+          <p className="admin-error">{message}</p>
+          <p className="admin-error" style={{ opacity: 0.7, fontSize: '0.78rem' }}>
+            Click "Flush Cache" above to try again.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

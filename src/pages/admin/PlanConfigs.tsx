@@ -128,10 +128,6 @@ function PlanConfigsInner() {
     editMutation.mutate({ planName: getPlanName(cfg), body })
   }
 
-  if (configs.isLoading) return <p className="admin-loading">Loading plan configs…</p>
-  if (configs.isError)
-    return <p className="admin-error">{configs.error instanceof Error ? configs.error.message : String(configs.error)}</p>
-
   return (
     <div className="admin-section">
       <div className="admin-section-header">
@@ -142,107 +138,122 @@ function PlanConfigsInner() {
         Unlimited.
       </p>
 
-      <div className="admin-table-wrap">
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Plan</th>
-            <th>Daily Limit</th>
-            <th>Description</th>
-            <th>Last Updated</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {configs.data!.map(cfg => (
-            <React.Fragment key={cfg.id}>
-              <tr>
-                <td className="admin-td-mono" style={{ maxWidth: 'unset' }}>
-                  {getPlanName(cfg)}
-                </td>
-                <td>{fmtLimit(getLimit(cfg))}</td>
-                <td style={{ color: cfg.description ? 'var(--text)' : 'var(--text-dim)' }}>
-                  {cfg.description || '—'}
-                </td>
-                <td>{fmt(getUpdatedAt(cfg))}</td>
-                <td>
-                  <button
-                    className="admin-btn admin-btn--ghost"
-                    onClick={() => editId === cfg.id ? cancelEdit() : startEdit(cfg)}
-                  >
-                    {editId === cfg.id ? 'Cancel' : 'Edit'}
-                  </button>
-                </td>
-              </tr>
+      {configs.isLoading && <p className="admin-loading">Loading plan configs…</p>}
 
-              {editId === cfg.id && (
-                <tr className="admin-edit-row">
-                  <td colSpan={5}>
-                    <form
-                      className="admin-form admin-form--inline"
-                      onSubmit={e => handleSave(e, cfg)}
-                    >
-                      <div className="admin-form-row">
-                        <label>Daily Limit</label>
-                        <input
-                          className="admin-input"
-                          type="number"
-                          min={0}
-                          step={1}
-                          placeholder="Unlimited (leave blank)"
-                          value={editForm.daily_limit}
-                          onChange={e => setEditForm(f => ({ ...f, daily_limit: e.target.value }))}
-                        />
-                      </div>
-                      <div className="admin-form-row">
-                        <label>Description</label>
-                        <input
-                          className="admin-input"
-                          type="text"
-                          placeholder="e.g. Anonymous users"
-                          value={editForm.description}
-                          onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
-                        />
-                      </div>
-                      <div className="admin-form-row">
-                        <button
-                          className="admin-btn admin-btn--primary"
-                          type="submit"
-                          disabled={editMutation.isPending}
+      {configs.isError && (
+        <div className="admin-error-block">
+          <p className="admin-error">
+            {configs.error instanceof Error ? configs.error.message : String(configs.error)}
+          </p>
+          <button className="admin-btn admin-btn--ghost" onClick={() => configs.refetch()}>
+            ↻ Retry
+          </button>
+        </div>
+      )}
+
+      {configs.isSuccess && (
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Plan</th>
+                <th>Daily Limit</th>
+                <th>Description</th>
+                <th>Last Updated</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {configs.data.map(cfg => (
+                <React.Fragment key={cfg.id}>
+                  <tr>
+                    <td className="admin-td-mono" style={{ maxWidth: 'unset' }}>
+                      {getPlanName(cfg)}
+                    </td>
+                    <td>{fmtLimit(getLimit(cfg))}</td>
+                    <td style={{ color: cfg.description ? 'var(--text)' : 'var(--text-dim)' }}>
+                      {cfg.description || '—'}
+                    </td>
+                    <td>{fmt(getUpdatedAt(cfg))}</td>
+                    <td>
+                      <button
+                        className="admin-btn admin-btn--ghost"
+                        onClick={() => editId === cfg.id ? cancelEdit() : startEdit(cfg)}
+                      >
+                        {editId === cfg.id ? 'Cancel' : 'Edit'}
+                      </button>
+                    </td>
+                  </tr>
+
+                  {editId === cfg.id && (
+                    <tr className="admin-edit-row">
+                      <td colSpan={5}>
+                        <form
+                          className="admin-form admin-form--inline"
+                          onSubmit={e => handleSave(e, cfg)}
                         >
-                          {editMutation.isPending ? 'Saving…' : 'Save'}
-                        </button>
-                        <button
-                          className="admin-btn admin-btn--ghost"
-                          type="button"
-                          onClick={cancelEdit}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                      {inputError && <p className="admin-error">{inputError}</p>}
-                      {editMutation.isError && (
-                        <p className="admin-error">{editMutation.error instanceof Error ? editMutation.error.message : String(editMutation.error)}</p>
-                      )}
-                      {editMutation.isSuccess && (
-                        <p className="admin-success">Saved.</p>
-                      )}
-                    </form>
+                          <div className="admin-form-row">
+                            <label>Daily Limit</label>
+                            <input
+                              className="admin-input"
+                              type="number"
+                              min={0}
+                              step={1}
+                              placeholder="Unlimited (leave blank)"
+                              value={editForm.daily_limit}
+                              onChange={e => setEditForm(f => ({ ...f, daily_limit: e.target.value }))}
+                            />
+                          </div>
+                          <div className="admin-form-row">
+                            <label>Description</label>
+                            <input
+                              className="admin-input"
+                              type="text"
+                              placeholder="e.g. Anonymous users"
+                              value={editForm.description}
+                              onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                            />
+                          </div>
+                          <div className="admin-form-row">
+                            <button
+                              className="admin-btn admin-btn--primary"
+                              type="submit"
+                              disabled={editMutation.isPending}
+                            >
+                              {editMutation.isPending ? 'Saving…' : 'Save'}
+                            </button>
+                            <button
+                              className="admin-btn admin-btn--ghost"
+                              type="button"
+                              onClick={cancelEdit}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                          {inputError && <p className="admin-error">{inputError}</p>}
+                          {editMutation.isError && (
+                            <p className="admin-error">{editMutation.error instanceof Error ? editMutation.error.message : String(editMutation.error)}</p>
+                          )}
+                          {editMutation.isSuccess && (
+                            <p className="admin-success">Saved.</p>
+                          )}
+                        </form>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+              {configs.data.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
+                    No plan configs found.
                   </td>
                 </tr>
               )}
-            </React.Fragment>
-          ))}
-          {configs.data!.length === 0 && (
-            <tr>
-              <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
-                No plan configs found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
