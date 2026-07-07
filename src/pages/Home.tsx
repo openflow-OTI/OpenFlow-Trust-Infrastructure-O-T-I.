@@ -14,6 +14,7 @@ import { LoadingPanel } from '@/components/LoadingPanel'
 import { ShareButton } from '@/components/ShareButton'
 import { ChainIcon } from '@/components/ChainIcon'
 import { CopyButton } from '@/components/CopyButton'
+import { generateScoreCard } from '@/lib/generateScoreCard'
 
 function truncateAddress(addr: string): string {
   if (addr.length <= 13) return addr
@@ -139,6 +140,22 @@ export function Home() {
 
               <div className="results-share-wrap">
                 <ShareButton chain={chain} wallet={wallet} />
+                <button
+                  className="share-btn"
+                  onClick={() =>
+                    generateScoreCard({
+                      score: scoreQuery.data.score,
+                      signals: scoreQuery.data.signals,
+                      metadata: scoreQuery.data.metadata,
+                      chain,
+                      wallet,
+                    })
+                  }
+                  aria-label="Save score card as image"
+                >
+                  <span className="share-btn-icon">⬇</span>
+                  Save as Image
+                </button>
               </div>
             </>
           )}

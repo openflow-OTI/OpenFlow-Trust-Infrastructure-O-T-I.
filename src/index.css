@@ -566,22 +566,29 @@ textarea {
 .results-report-link {
   align-self: flex-start;
   font-size: 0.75rem;
-  color: var(--text-dim);
+  color: var(--accent);
   text-decoration: none;
   font-family: var(--mono);
   letter-spacing: 0.03em;
-  transition: color 0.15s ease;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
   border-bottom: 1px solid transparent;
 }
 
 .results-report-link:hover {
-  color: var(--danger);
-  border-bottom-color: var(--danger);
+  opacity: 1;
+  border-bottom-color: var(--accent);
 }
 
-/* Task 8 — share wrap (full-width prominent) */
+/* Task 8 — share wrap (two equal buttons) */
 .results-share-wrap {
   width: 100%;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.results-share-wrap .share-btn {
+  flex: 1;
 }
 
 /* Task 8 — footer */
