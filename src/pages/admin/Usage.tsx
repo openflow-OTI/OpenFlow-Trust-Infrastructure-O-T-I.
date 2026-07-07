@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { adminFetch } from '@/lib/adminClient'
+import { CopyButton } from './CopyButton'
 
 interface UsageRow {
   id: string
@@ -121,7 +122,12 @@ export function Usage() {
               <tbody>
                 {usage.data.map(row => (
                   <tr key={row.id}>
-                    <td className="admin-td-mono">{row.key_ref}</td>
+                    <td className="admin-td-mono">
+                      <span className="admin-copy-row">
+                        <span>{row.key_ref}</span>
+                        <CopyButton value={row.key_ref} />
+                      </span>
+                    </td>
                     <td>{row.plan_name}</td>
                     <td>{row.usage_date}</td>
                     <td>{(row.req_count ?? 0).toLocaleString()}</td>

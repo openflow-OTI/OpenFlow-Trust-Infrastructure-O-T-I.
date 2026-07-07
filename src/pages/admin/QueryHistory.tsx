@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { adminFetch } from '@/lib/adminClient'
+import { CopyButton } from './CopyButton'
 
 interface HistoryEntry {
   address: string
@@ -46,7 +47,12 @@ export function QueryHistory() {
             <tbody>
               {history.data.map((r, i) => (
                 <tr key={i}>
-                  <td className="admin-td-mono">{r.address}</td>
+                  <td className="admin-td-mono">
+                    <span className="admin-copy-row">
+                      <span>{r.address}</span>
+                      <CopyButton value={r.address} />
+                    </span>
+                  </td>
                   <td>{r.chain}</td>
                   <td>{r.score}</td>
                   <td>{new Date(r.timestamp).toLocaleString()}</td>

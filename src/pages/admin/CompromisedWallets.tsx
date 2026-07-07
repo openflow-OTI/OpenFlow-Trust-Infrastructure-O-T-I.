@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminFetch } from '@/lib/adminClient'
+import { CopyButton } from './CopyButton'
 
 interface CompromisedWallet {
   id: string
@@ -156,7 +157,12 @@ export function CompromisedWallets() {
               {list.data.map(w => (
                 <React.Fragment key={w.id}>
                   <tr>
-                    <td className="admin-td-mono">{w.address}</td>
+                    <td className="admin-td-mono">
+                      <span className="admin-copy-row">
+                        <span>{w.address}</span>
+                        <CopyButton value={w.address} />
+                      </span>
+                    </td>
                     <td>{w.chain_family}</td>
                     <td>{w.reason}</td>
                     <td>{fmt(w.reported_at)}</td>

@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminFetch } from '@/lib/adminClient'
+import { CopyButton } from './CopyButton'
 
 interface ApiKey {
   id: string
@@ -21,35 +22,6 @@ function fmt(ts?: string | null) {
   return new Date(ts).toLocaleString()
 }
 
-function CopyButton({ value }: { value: string }) {
-  const [copied, setCopied] = useState(false)
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(value).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    }).catch(() => {
-      // Fallback for older browsers
-      const el = document.createElement('textarea')
-      el.value = value
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand('copy')
-      document.body.removeChild(el)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    })
-  }, [value])
-  return (
-    <button
-      className="admin-copy-btn"
-      onClick={handleCopy}
-      title={copied ? 'Copied!' : 'Copy to clipboard'}
-      type="button"
-    >
-      {copied ? '✓' : '⧉'}
-    </button>
-  )
-}
 
 export function ApiKeys() {
   const qc = useQueryClient()
