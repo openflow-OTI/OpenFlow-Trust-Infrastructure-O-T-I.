@@ -157,6 +157,12 @@ textarea {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  /* Hide scrollbar visually — scroll still works on results page */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.app-main::-webkit-scrollbar {
+  display: none;
 }
 
 /* Home */
