@@ -13,6 +13,12 @@ import { ErrorPanel } from '@/components/ErrorPanel'
 import { LoadingPanel } from '@/components/LoadingPanel'
 import { ShareButton } from '@/components/ShareButton'
 import { ChainIcon } from '@/components/ChainIcon'
+import { CopyButton } from '@/components/CopyButton'
+
+function truncateAddress(addr: string): string {
+  if (addr.length <= 13) return addr
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+}
 
 export function Home() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -65,7 +71,10 @@ export function Home() {
         <div className="results-hero-icon-wrap">
           <ChainIcon chainId={chain} size={44} />
         </div>
-        <p className="results-hero-address">{wallet}</p>
+        <div className="results-hero-address-row">
+          <p className="results-hero-address">{truncateAddress(wallet)}</p>
+          <CopyButton value={wallet} className="results-copy-btn" />
+        </div>
         {chainInfo && <span className="results-hero-chain">{chainInfo.label}</span>}
       </div>
 
@@ -108,13 +117,7 @@ export function Home() {
                 ))}
               </div>
 
-              <ShareButton
-                score={scoreQuery.data.score}
-                signals={scoreQuery.data.signals}
-                metadata={scoreQuery.data.metadata}
-                chain={chain}
-                wallet={wallet}
-              />
+              <ShareButton chain={chain} wallet={wallet} />
             </>
           )}
         </div>

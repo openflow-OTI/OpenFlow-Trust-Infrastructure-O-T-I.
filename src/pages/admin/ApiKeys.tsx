@@ -87,15 +87,21 @@ export function ApiKeys() {
       </div>
 
       {newKeySecret && (
-        <div className="admin-alert admin-alert--success">
-          <strong>Key created — copy it now, it won't be shown again:</strong>
-          <div className="admin-key-reveal-row">
-            <code className="admin-key-reveal">{newKeySecret}</code>
-            <CopyButton value={newKeySecret} />
+        <div className="key-modal-overlay" onClick={() => setNewKeySecret(null)}>
+          <div className="key-modal" onClick={e => e.stopPropagation()}>
+            <h3 className="key-modal-title">API Key Created</h3>
+            <p className="key-modal-warning">
+              ⚠ Copy this key now — it will not be shown again.
+            </p>
+            <code className="key-modal-value">{newKeySecret}</code>
+            <CopyButton value={newKeySecret} label="Copy Key" className="key-modal-copy-btn" />
+            <button
+              className="admin-btn admin-btn--ghost key-modal-dismiss"
+              onClick={() => setNewKeySecret(null)}
+            >
+              Dismiss
+            </button>
           </div>
-          <button className="admin-btn admin-btn--ghost" onClick={() => setNewKeySecret(null)}>
-            Dismiss
-          </button>
         </div>
       )}
 

@@ -456,6 +456,13 @@ textarea {
   flex-shrink: 0;
 }
 
+.results-hero-address-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
 .results-hero-address {
   margin: 0;
   font-size: 0.9rem;
@@ -464,6 +471,24 @@ textarea {
   color: var(--text);
   line-height: 1.5;
   max-width: 52ch;
+}
+
+.results-copy-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.results-copy-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .results-hero-chain {
@@ -681,12 +706,88 @@ textarea {
   }
 }
 
-/* Share button */
+/* ── New API key modal ── */
 
-.share-wrapper {
-  position: relative;
-  align-self: center;
+.key-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
 }
+
+.key-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem 1.5rem 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.key-modal-title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+
+.key-modal-warning {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #f59e0b;
+  line-height: 1.5;
+}
+
+.key-modal-value {
+  display: block;
+  background: rgba(0, 229, 160, 0.05);
+  border: 1px solid rgba(0, 229, 160, 0.25);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  color: var(--accent);
+  word-break: break-all;
+  line-height: 1.6;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.key-modal-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.88rem;
+  font-family: var(--mono);
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: opacity 0.15s;
+  width: 100%;
+}
+
+.key-modal-copy-btn:hover {
+  opacity: 0.85;
+}
+
+.key-modal-dismiss {
+  align-self: center;
+  font-size: 0.8rem;
+}
+
+/* Share button */
 
 .share-btn {
   display: inline-flex;
