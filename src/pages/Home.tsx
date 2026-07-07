@@ -142,15 +142,17 @@ export function Home() {
                 <ShareButton chain={chain} wallet={wallet} />
                 <button
                   className="share-btn"
-                  onClick={() =>
+                  onClick={() => {
+                    const d = scoreQuery.data
+                    if (!d || d.compromised) return
                     generateScoreCard({
-                      score: scoreQuery.data.score,
-                      signals: scoreQuery.data.signals,
-                      metadata: scoreQuery.data.metadata,
+                      score: d.score,
+                      signals: d.signals,
+                      metadata: d.metadata,
                       chain,
                       wallet,
                     })
-                  }
+                  }}
                   aria-label="Save score card as image"
                 >
                   <span className="share-btn-icon">⬇</span>
