@@ -7,18 +7,25 @@ class PlanConfigsErrorBoundary extends Component<{ children: ReactNode }, { erro
   state = { error: null }
   static getDerivedStateFromError(e: Error) { return { error: e.message } }
   render() {
-    if (this.state.error) return <p className="admin-error">Failed to render Plan Configs: {this.state.error}</p>
+    if (this.state.error)
+      return <p className="admin-error">Failed to render Plan Configs: {this.state.error}</p>
     return this.props.children
   }
 }
 
-// Schema: snake_case throughout (matches schema.gen.ts PlanConfig)
+// Defensive interface — live API may return `plan` or `plan_name`
 interface PlanConfig {
   id: string
-  plan_name: 'anonymous' | 'free' | 'pro' | 'enterprise'
-  daily_limit: number | null
-  description: string
-  updated_at: string
+  plan_name?: string
+  plan?: string
+  daily_limit?: number | null
+  description?: string | null
+  updated_at?: string | null
+}
+
+// Resolve plan name regardless of which field the API uses
+function getPlanName(cfg: PlanConfig): string {
+  return cfg.plan_name ?? cfg.plan ?? cfg.id
 }
 
 function fmtLimit(limit: number | null | undefined) {
@@ -32,7 +39,11 @@ function fmt(ts: string | null | undefined) {
 }
 
 export function PlanConfigs() {
-  return <PlanConfigsErrorBoundary><PlanConfigsInner /></PlanConfigsErrorBoundary>
+  return (
+    <PlanConfigsErrorBoundary>
+      <PlanConfigsInner />
+    </PlanConfigsErrorBoundary>
+  )
 }
 
 function PlanConfigsInner() {
@@ -44,7 +55,8 @@ function PlanConfigsInner() {
     retry: false,
   })
 
-  const [editPlan, setEditPlan] = useState<string | null>(null)
+  // Track by cfg.id — guaranteed unique regardless of API field name shape
+  const [editId, setEditId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<{ daily_limit: string; description: string }>({
     daily_limit: '',
     description: '',
@@ -52,35 +64,35 @@ function PlanConfigsInner() {
   const [inputError, setInputError] = useState<string | null>(null)
 
   const editMutation = useMutation({
-    // PATCH /admin/plan-configs/{plan_name} — uses plan name, not UUID
-    mutationFn: ({ plan_name, body }: { plan_name: string; body: { daily_limit?: number | null; description?: string } }) =>
-      adminFetch<PlanConfig>(`/admin/plan-configs/${plan_name}`, {
+    // PATCH /admin/plan-configs/{plan_name} per backend spec
+    mutationFn: ({ planName, body }: { planName: string; body: { daily_limit?: number | null; description?: string } }) =>
+      adminFetch<PlanConfig>(`/admin/plan-configs/${planName}`, {
         method: 'PATCH',
         body: JSON.stringify(body),
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'plan-configs'] })
-      setEditPlan(null)
+      setEditId(null)
     },
   })
 
   function startEdit(cfg: PlanConfig) {
-    setEditPlan(cfg.plan_name)
+    setEditId(cfg.id)
     setInputError(null)
     editMutation.reset()
     setEditForm({
-      daily_limit: cfg.daily_limit !== null ? String(cfg.daily_limit) : '',
+      daily_limit: cfg.daily_limit != null ? String(cfg.daily_limit) : '',
       description: cfg.description ?? '',
     })
   }
 
   function cancelEdit() {
-    setEditPlan(null)
+    setEditId(null)
     setInputError(null)
     editMutation.reset()
   }
 
-  function handleSave(e: React.FormEvent, plan_name: string) {
+  function handleSave(e: React.FormEvent, cfg: PlanConfig) {
     e.preventDefault()
     setInputError(null)
     const raw = editForm.daily_limit.trim()
@@ -93,7 +105,10 @@ function PlanConfigsInner() {
       }
       daily_limit = n
     }
-    editMutation.mutate({ plan_name, body: { daily_limit, description: editForm.description } })
+    editMutation.mutate({
+      planName: getPlanName(cfg),
+      body: { daily_limit, description: editForm.description },
+    })
   }
 
   if (configs.isLoading) return <p className="admin-loading">Loading plan configs…</p>
@@ -124,7 +139,9 @@ function PlanConfigsInner() {
           {configs.data!.map(cfg => (
             <React.Fragment key={cfg.id}>
               <tr>
-                <td className="admin-td-mono" style={{ maxWidth: 'unset' }}>{cfg.plan_name}</td>
+                <td className="admin-td-mono" style={{ maxWidth: 'unset' }}>
+                  {getPlanName(cfg)}
+                </td>
                 <td>{fmtLimit(cfg.daily_limit)}</td>
                 <td style={{ color: cfg.description ? 'var(--text)' : 'var(--text-dim)' }}>
                   {cfg.description || '—'}
@@ -133,19 +150,19 @@ function PlanConfigsInner() {
                 <td>
                   <button
                     className="admin-btn admin-btn--ghost"
-                    onClick={() => editPlan === cfg.plan_name ? cancelEdit() : startEdit(cfg)}
+                    onClick={() => editId === cfg.id ? cancelEdit() : startEdit(cfg)}
                   >
-                    {editPlan === cfg.plan_name ? 'Cancel' : 'Edit'}
+                    {editId === cfg.id ? 'Cancel' : 'Edit'}
                   </button>
                 </td>
               </tr>
 
-              {editPlan === cfg.plan_name && (
-                <tr key={`${cfg.id}-edit`} className="admin-edit-row">
+              {editId === cfg.id && (
+                <tr className="admin-edit-row">
                   <td colSpan={5}>
                     <form
                       className="admin-form admin-form--inline"
-                      onSubmit={e => handleSave(e, cfg.plan_name)}
+                      onSubmit={e => handleSave(e, cfg)}
                     >
                       <div className="admin-form-row">
                         <label>Daily Limit</label>
