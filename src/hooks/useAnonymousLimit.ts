@@ -1,22 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/api/client'
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL as string
 
 export function useAnonymousLimit() {
   return useQuery({
     queryKey: ['anonymous-limit'],
     queryFn: async () => {
-      const { data, error } = await apiClient.GET('/admin/plan-configs')
-      if (error || !data) throw new Error('Could not fetch plan configs')
-
-      // Live API may return camelCase (planName, dailyLimit) or
-      // snake_case (plan_name, daily_limit) — handle both
-      const rows = data as Array<Record<string, unknown>>
-      const anon = rows.find(p =>
-        p['plan_name'] === 'anonymous' || p['planName'] === 'anonymous'
-      )
-      if (!anon) throw new Error('Anonymous plan not found')
-
-      const limit = (anon['daily_limit'] ?? anon['dailyLimit']) as number | null | undefined
+      // Use the public endpoint — not the admin one (which requires x-admin-secret)
+      const res = await fetch(`${baseUrl}/api/config/anonymous-limit`)
+      if (!res.ok) throw new Error('Could not fetch anonymous limit')
+      const data = await res.json() as { daily_limit: number | null }
+      const limit = data.daily_limit
       if (limit == null || !Number.isFinite(limit)) {
         throw new Error('Limit is unlimited or not set')
       }
