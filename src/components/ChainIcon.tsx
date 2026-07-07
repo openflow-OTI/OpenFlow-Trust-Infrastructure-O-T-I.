@@ -53,5 +53,10 @@ export function ChainIcon({ chainId, size = 20, className }: ChainIconProps) {
     )
   }
 
-  return <Icon variant="branded" size={size} className={className} />
+  // zkSync and Linea branded icons are near-black/dark and invisible on the dark UI bg.
+  // "mono" variant renders them in a light/white form that stays readable.
+  const MONO_CHAINS = new Set(['zksync', 'linea'])
+  const variant = MONO_CHAINS.has(chainId) ? 'mono' : 'branded'
+
+  return <Icon variant={variant} size={size} className={className} />
 }

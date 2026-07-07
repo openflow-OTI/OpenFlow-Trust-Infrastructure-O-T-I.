@@ -171,8 +171,8 @@ textarea {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 1.75rem;
-  padding: 2.5rem 0 1.5rem;
+  gap: 1.5rem;
+  padding: 1.5rem 0 1.5rem;
   position: relative;
   isolation: isolate; /* contains watermark z-index */
 }
@@ -196,7 +196,7 @@ textarea {
 .home-logo-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .home-logo-spin {
@@ -307,7 +307,7 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .home-wor-link {
@@ -323,6 +323,41 @@ textarea {
 .home-wor-link:hover {
   color: var(--accent);
   opacity: 1;
+}
+
+/* Report badge — distinct mint card (replaces ghost link) */
+.home-report-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid rgba(0, 229, 160, 0.38);
+  background: rgba(0, 229, 160, 0.07);
+  border-radius: 0.45rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  font-family: var(--mono);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.home-report-badge:hover {
+  background: rgba(0, 229, 160, 0.13);
+  border-color: rgba(0, 229, 160, 0.6);
+  box-shadow: 0 0 12px rgba(0, 229, 160, 0.14);
+}
+
+.home-report-badge:focus-visible {
+  outline: none;
+  border-color: rgba(0, 229, 160, 0.7);
+  box-shadow: 0 0 0 2px rgba(0, 229, 160, 0.3);
+}
+
+.home-report-badge-icon {
+  font-size: 0.85rem;
+  opacity: 0.85;
 }
 
 /* Home footer — matches results-footer */
@@ -364,6 +399,57 @@ textarea {
   letter-spacing: 0.01em;
   margin-top: auto;
   padding-bottom: 0.5rem;
+}
+
+/* ── Mobile tightening ── 375px phone: all content visible without scroll ── */
+@media (max-width: 480px) {
+  .home-page {
+    padding: 0.75rem 0 0.75rem;
+    gap: 0.9rem;
+  }
+
+  .home-logo-wrap {
+    margin-bottom: 0.5rem;
+  }
+
+  .home-logo-spin {
+    width: 72px;
+    height: 72px;
+  }
+
+  .home-title {
+    font-size: 2.4rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .home-wordmark-sub {
+    margin-bottom: 0.35rem;
+  }
+
+  .home-tagline {
+    font-size: 0.82rem;
+  }
+
+  .home-form-card {
+    padding: 1.1rem 1.1rem;
+  }
+
+  .home-example-wrap {
+    margin-top: 0.65rem;
+  }
+
+  .home-rate-badge-wrap {
+    /* stays as-is */
+  }
+
+  .home-wor-links {
+    gap: 0.45rem;
+  }
+
+  .home-footer {
+    padding: 0.75rem 0 0.25rem;
+    margin-top: 0;
+  }
 }
 
 /* Wallet form */
@@ -440,9 +526,9 @@ textarea {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
-  padding: 0.7rem 0.85rem;
+  padding: 0.85rem 1.1rem;
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-family: var(--mono);
   cursor: pointer;
   outline: none;
@@ -505,16 +591,23 @@ textarea {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
   background: transparent;
   border: none;
   border-radius: 0.4rem;
-  padding: 0.55rem 0.6rem;
+  padding: 0.65rem 0.75rem;
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-family: var(--mono);
   cursor: pointer;
   text-align: left;
+}
+
+/* Chain icon size override — CSS width/height beats SVG size attribute */
+.chain-select-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
 
 .chain-select-option:hover {
@@ -572,6 +665,18 @@ textarea {
 .wallet-form-submit:hover {
   opacity: 1;
   box-shadow: 0 0 24px rgba(0, 229, 160, 0.40), 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* Wallet form mobile tightening — must live after base rules to win cascade */
+@media (max-width: 480px) {
+  .wallet-form-label {
+    margin-top: 0.5rem;
+  }
+
+  .wallet-form-submit {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+  }
 }
 
 /* Results */

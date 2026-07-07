@@ -59,8 +59,8 @@ export function Home() {
             <img
               src="/logo.svg"
               alt=""
-              width={56}
-              height={56}
+              width={84}
+              height={84}
               className="home-logo-spin"
               aria-hidden="true"
             />
@@ -96,7 +96,10 @@ export function Home() {
 
         <div className="home-wor-links">
           <a href="#" className="home-wor-link">🔒 Own this wallet? Register it</a>
-          <a href="#" className="home-wor-link">⚑ Report a compromised wallet</a>
+          <a href="#" className="home-report-badge">
+            <span className="home-report-badge-icon">⚑</span>
+            <span>Report a compromised wallet</span>
+          </a>
         </div>
 
         <footer className="home-footer">
