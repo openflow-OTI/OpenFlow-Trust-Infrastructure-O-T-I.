@@ -15,52 +15,63 @@ export function Dashboard() {
     retry: false,
   })
 
-  if (stats.isLoading) return <p className="admin-loading">Loading stats…</p>
-  if (stats.isError)
-    return <p className="admin-error">{stats.error instanceof Error ? stats.error.message : String(stats.error)}</p>
-
-  const s = stats.data!
-
   return (
     <div className="admin-section">
       <h2 className="admin-section-title">Dashboard</h2>
 
-      <div className="admin-stat-grid">
-        <div className="admin-stat-card">
-          <span className="admin-stat-value">{s.today_requests.toLocaleString()}</span>
-          <span className="admin-stat-label">Requests today</span>
-        </div>
-        <div className="admin-stat-card">
-          <span className="admin-stat-value">{s.total_keys.toLocaleString()}</span>
-          <span className="admin-stat-label">Active API keys</span>
-        </div>
-        <div className="admin-stat-card">
-          <span className="admin-stat-value">{s.total_compromised.toLocaleString()}</span>
-          <span className="admin-stat-label">Flagged wallets (DB total)</span>
-        </div>
-      </div>
+      {stats.isLoading && <p className="admin-loading">Loading stats…</p>}
 
-      {s.requests_by_plan.length > 0 && (
+      {stats.isError && (
+        <div className="admin-error-block">
+          <p className="admin-error">
+            {stats.error instanceof Error ? stats.error.message : String(stats.error)}
+          </p>
+          <button className="admin-btn admin-btn--ghost" onClick={() => stats.refetch()}>
+            ↻ Retry
+          </button>
+        </div>
+      )}
+
+      {stats.isSuccess && (
         <>
-          <h3 className="admin-subsection-title">Requests by plan (today)</h3>
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Plan</th>
-                  <th>Requests</th>
-                </tr>
-              </thead>
-              <tbody>
-                {s.requests_by_plan.map(row => (
-                  <tr key={row.plan_name}>
-                    <td>{row.plan_name}</td>
-                    <td>{row.req_count.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="admin-stat-grid">
+            <div className="admin-stat-card">
+              <span className="admin-stat-value">{stats.data.today_requests.toLocaleString()}</span>
+              <span className="admin-stat-label">Requests today</span>
+            </div>
+            <div className="admin-stat-card">
+              <span className="admin-stat-value">{stats.data.total_keys.toLocaleString()}</span>
+              <span className="admin-stat-label">Active API keys</span>
+            </div>
+            <div className="admin-stat-card">
+              <span className="admin-stat-value">{stats.data.total_compromised.toLocaleString()}</span>
+              <span className="admin-stat-label">Flagged wallets (DB total)</span>
+            </div>
           </div>
+
+          {stats.data.requests_by_plan.length > 0 && (
+            <>
+              <h3 className="admin-subsection-title">Requests by plan (today)</h3>
+              <div className="admin-table-wrap">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Plan</th>
+                      <th>Requests</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stats.data.requests_by_plan.map(row => (
+                      <tr key={row.plan_name}>
+                        <td>{row.plan_name}</td>
+                        <td>{row.req_count.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
