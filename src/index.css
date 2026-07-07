@@ -171,25 +171,183 @@ textarea {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 2.5rem;
-  padding: 3rem 0 1.5rem;
+  gap: 1.75rem;
+  padding: 2.5rem 0 1.5rem;
+  position: relative;
+  isolation: isolate; /* contains watermark z-index */
+}
+
+/* Faint spiral watermark — CSS only, behind all content */
+.home-watermark {
+  position: absolute;
+  inset: 0;
+  background: url('/logo.svg') center 42% / 380px 380px no-repeat;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Logo — hover rotation (GPU-accelerated, no JS) */
+@keyframes logo-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.home-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.home-logo-spin {
+  display: block;
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .home-logo-wrap:hover .home-logo-spin {
+    animation: logo-rotate 2.5s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-logo-spin {
+    animation: none !important;
+  }
 }
 
 .home-intro {
   text-align: center;
 }
 
+/* OTI wordmark — brand weight */
 .home-title {
-  font-size: 2rem;
-  margin: 0 0 1rem;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  font-size: clamp(2.6rem, 8vw, 3.6rem);
+  margin: 0 0 0.4rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  font-weight: 800;
   background: linear-gradient(135deg, #e8f4ff 0%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* "OpenFlow Trust Infrastructure" subtitle */
+.home-wordmark-sub {
+  margin: 0 0 0.6rem;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Tagline */
+.home-tagline {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(0, 229, 160, 0.72);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+/* Form card — mint border glow */
+.home-form-card {
+  background: var(--surface);
+  border: 1px solid rgba(0, 229, 160, 0.14);
+  border-radius: 1rem;
+  padding: 2.25rem;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset,
+              0 4px 40px rgba(0,0,0,0.4),
+              0 0 32px rgba(0, 229, 160, 0.07);
+}
+
+/* "Try an example →" link */
+.home-example-wrap {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.home-example-link {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.home-example-link:hover {
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(0, 229, 160, 0.35);
+}
+
+/* Rate limit pill badge */
+.home-rate-badge-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.home-rate-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.95rem;
+  border: 1px solid rgba(0, 229, 160, 0.28);
+  background: rgba(0, 229, 160, 0.05);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 0.74rem;
+  letter-spacing: 0.05em;
+  font-family: var(--mono);
+}
+
+/* WOR ghost links */
+.home-wor-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-wor-link {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.15s ease;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.home-wor-link:hover {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* Home footer — matches results-footer */
+.home-footer {
+  margin-top: auto;
+  padding: 1.25rem 0 0.5rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  border-top: 1px solid var(--border);
+}
+
+.home-footer-link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.home-footer-link:hover {
+  opacity: 0.75;
+}
+
+/* Keep home-subtitle in CSS (unused but harmless) */
 .home-subtitle {
   color: var(--text-dim);
   margin: 0;
@@ -197,15 +355,7 @@ textarea {
   line-height: 1.7;
 }
 
-.home-form-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  padding: 2.25rem;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset,
-              0 4px 40px rgba(0,0,0,0.4);
-}
-
+/* home-rate-note kept for safety (no longer rendered) */
 .home-rate-note {
   text-align: center;
   color: var(--text-dim);

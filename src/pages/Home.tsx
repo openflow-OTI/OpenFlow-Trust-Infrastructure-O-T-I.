@@ -51,21 +51,65 @@ export function Home() {
   if (!hasQuery) {
     return (
       <div className="home-page">
+        {/* Faint spiral watermark — CSS only, opacity 0.04 */}
+        <div className="home-watermark" aria-hidden="true" />
+
         <div className="home-intro">
-          <h1 className="home-title">Is This Wallet Safe to Trust?</h1>
-          <p className="home-subtitle">
-            Paste a wallet address, pick a chain, get a 0–100 trust score backed by five
-            on-chain signals. Free, no login required.
-          </p>
+          <div className="home-logo-wrap">
+            <img
+              src="/logo.svg"
+              alt=""
+              width={56}
+              height={56}
+              className="home-logo-spin"
+              aria-hidden="true"
+            />
+          </div>
+          <h1 className="home-title">OTI</h1>
+          <p className="home-wordmark-sub">OpenFlow Trust Infrastructure</p>
+          <p className="home-tagline">On-chain trust scoring for any wallet, any chain</p>
         </div>
+
         <div className="home-form-card">
           <WalletForm onSubmit={handleSearch} />
+          <div className="home-example-wrap">
+            <a
+              href="#"
+              className="home-example-link"
+              onClick={(e) => {
+                e.preventDefault()
+                handleSearch('0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', 'ethereum')
+              }}
+            >
+              Try an example →
+            </a>
+          </div>
         </div>
-        <p className="home-rate-note">
-          {limitQuery.isSuccess
-            ? `Anonymous lookups are limited to ${limitQuery.data} per day. Choose your wallet carefully.`
-            : 'Anonymous lookups are limited per day. Choose your wallet carefully.'}
-        </p>
+
+        <div className="home-rate-badge-wrap">
+          <span className="home-rate-pill">
+            {limitQuery.isSuccess
+              ? `${limitQuery.data} free lookups / day`
+              : 'Free · No login required'}
+          </span>
+        </div>
+
+        <div className="home-wor-links">
+          <a href="#" className="home-wor-link">🔒 Own this wallet? Register it</a>
+          <a href="#" className="home-wor-link">⚑ Report a compromised wallet</a>
+        </div>
+
+        <footer className="home-footer">
+          © 2026 OpenFlow Labs ·{' '}
+          <a
+            href="https://openflowlabs.io"
+            className="home-footer-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            openflowlabs.io
+          </a>
+        </footer>
       </div>
     )
   }
