@@ -10,36 +10,39 @@
 
 ## Completed Tasks
 
-### ✅ Admin Panel — Plan Configs Tab
-Implemented the Plan Configs tab in the admin panel. Allows editing `daily_limit` and `description` per plan tier (anonymous, free, pro, enterprise) via PATCH /admin/plan-configs/{plan_name}.
-
-### ✅ Admin Panel — Desktop Layout Fix
-Root cause: `Layout.tsx` wraps all routes including `/admin` in `.app-main` (max-width 720px). Fixed using CSS `:has()` selector so `.app-main:has(.admin-shell)` expands to full width with no padding constraints.
-
-### ✅ useAnonymousLimit Hook Fix
-Hook was calling the admin-protected GET /admin/plan-configs endpoint (requires x-admin-secret) on the public homepage — always failing silently. Fixed to call the correct public endpoint GET /api/config/anonymous-limit. Falls back to architectural default of 3 when DB returns null.
-
-### ✅ Homepage Scrollbar + Layout Fix
-Switched from inner-div scroll to browser-level scroll. html/body/root use `min-height`, `.app-shell` has no `overflow: hidden`, `.app-main` has no `overflow-y: auto`, navbar is `position: sticky; top: 0`. Rate-note pinned to bottom via `margin-top: auto`.
+### ✅ Task 7B — txCount Cap Indicator
+Confirmed done by Manager (July 7, 2026).
 
 ### ✅ Task 7C — Dynamic Rate Limit Display
-Homepage now shows "Anonymous lookups are limited to 20 per day." (or current DB value) dynamically from the live backend. Confirmed working live by Manager.
+Homepage shows live DB value from /api/config/anonymous-limit. Confirmed live showing "20 per day". Falls back to architectural default of 3 when DB returns null.
 
----
+### ✅ Task 9 — Admin Panel UI
+Full admin panel implemented and confirmed working live by Manager (July 7, 2026).
 
-### ✅ API Keys Tab — Error Resilience Fix
-Header and Create Key button always visible even when keys list fails to load. Error renders inline with a Retry button. No backend changes.
+### ✅ Task 10 — Navbar API Health Status Dot
+Confirmed done by Manager (July 7, 2026).
 
----
+### ✅ Plan Configs Tab (Admin Panel)
+PATCH /admin/plan-configs/{plan_name} with clean body (description omitted when empty). Invalidates both admin and public anonymous-limit queries on success.
 
-## Active Tasks
+### ✅ Admin Panel Desktop Layout Fix
+CSS `:has()` selector removes max-width/padding constraints from `.app-main` when admin shell is present. Full-width layout on desktop.
 
-### 🔄 Task 8 — Professional Results Page Redesign
-Full spec in FRONTEND_TASKS.md. Frontend Builder actively working on this.
+### ✅ useAnonymousLimit Hook Fix
+Was calling admin-protected endpoint on public homepage. Fixed to call correct public endpoint GET /api/config/anonymous-limit.
+
+### ✅ Homepage Scrollbar + Layout Fix
+Switched to browser-level scroll. Navbar sticky. Rate note pinned to bottom of viewport.
+
+### ✅ API Keys Tab — UI Resilience Fix
+Header and Create Key button always visible. Error renders inline with Retry button. Confirmed working (create/list/edit/delete) — Manager verified July 7, 2026.
 
 ---
 
 ## Pending Tasks
 
+### ⬜ Task 8 — Professional Results Page Redesign
+Standing by for Manager instruction.
+
 ### ⬜ 🔵 Task 9C — Plan Limit Enforcement Verification (Backend task, Frontend aware)
-Backend Builder is verifying that `daily_limit` changes made via Admin Panel → Plan Configs are correctly enforced by the API for all plan types (free, pro, enterprise). No frontend changes needed.
+Backend Builder verifying `daily_limit` enforcement across all plan types (free, pro, enterprise). No frontend changes needed.

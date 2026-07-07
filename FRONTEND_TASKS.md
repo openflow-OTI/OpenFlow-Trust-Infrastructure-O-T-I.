@@ -9,6 +9,21 @@
 
 ## Completed
 
+### ✅ Task 7B — txCount Cap Indicator
+Confirmed done by Manager (July 7, 2026).
+
+### ✅ Task 7C — Dynamic Rate Limit Display
+- File: `src/hooks/useAnonymousLimit.ts`
+- Switched from GET /admin/plan-configs (admin-protected) to GET /api/config/anonymous-limit (public)
+- Falls back to 3 when backend returns null (architectural default)
+- Homepage shows live DB value; confirmed live showing "20 per day" (Manager verified)
+
+### ✅ Task 9 — Admin Panel UI
+Full admin panel implemented and confirmed working live by Manager (July 7, 2026).
+
+### ✅ Task 10 — Navbar API Health Status Dot
+Confirmed done by Manager (July 7, 2026).
+
 ### ✅ Plan Configs Tab (Admin Panel)
 - File: `src/pages/admin/PlanConfigs.tsx`
 - PATCH /admin/plan-configs/{plan_name} with body `{ daily_limit, description? }`
@@ -22,9 +37,8 @@
 
 ### ✅ useAnonymousLimit Hook Fix
 - File: `src/hooks/useAnonymousLimit.ts`
-- Switched from GET /admin/plan-configs (admin-protected) to GET /api/config/anonymous-limit (public)
-- Falls back to 3 when backend returns null (architectural default, anonymous plan = 3/day)
-- staleTime: 5 minutes
+- Switched from admin-protected endpoint to correct public endpoint
+- staleTime: 5 minutes; falls back to architectural default of 3 when DB returns null
 
 ### ✅ Homepage Scrollbar + Layout Fix
 - File: `src/index.css`
@@ -34,36 +48,20 @@
 - `.navbar`: `position: sticky; top: 0; z-index: 50; background: var(--bg)`
 - `.home-rate-note`: `margin-top: auto` pins rate note to bottom of viewport
 
-### ✅ Task 7C — Dynamic Rate Limit Display
-- Homepage shows live DB value from /api/config/anonymous-limit
-- Confirmed working live with value "20 per day" (Manager verified)
-
----
-
-### ✅ API Keys Tab — Error Resilience Fix
+### ✅ API Keys Tab — UI Resilience Fix
 - File: `src/pages/admin/ApiKeys.tsx`
-- Removed early-return on error/loading; section header + `+ New Key` button always rendered
-- Loading state shows inline below header
-- Error state shows inline with `.admin-error-block` styling + `↻ Retry` button wired to `keys.refetch()`
+- Section header + `+ New Key` button always rendered regardless of load state
+- Loading state renders inline below header
+- Error state renders inline with `.admin-error-block` styling + `↻ Retry` button wired to `keys.refetch()`
 - Table guarded behind `keys.isSuccess`; removed `keys.data!` non-null assertions
-- New `.admin-error-block` CSS added to `src/index.css`
-
----
-
-## Active
-
-### 🔄 Task 8 — Professional Results Page Redesign
-**Goal:** Redesign the results page (wallet trust score output) to look polished and professional.
-
-**Current state:**
-- Back button → hero (chain icon + truncated address + chain label) → score gauge (SVG circle 120px) → signal bars (5 bars) → share button
-- All in a single centered 720px column
-
-**Spec:** _(to be filled from Manager spec)_
+- Confirmed working (create/list/edit/delete) — Manager verified July 7, 2026
 
 ---
 
 ## Pending
+
+### ⬜ Task 8 — Professional Results Page Redesign
+Standing by for Manager instruction.
 
 ### ⬜ Task 9C — Plan Limit Enforcement Verification (Backend, Frontend aware)
 Backend Builder verifying `daily_limit` enforcement across all plan types (free, pro, enterprise). No frontend changes needed. Logged for record completeness.
