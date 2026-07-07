@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminFetch } from '@/lib/adminClient'
 
@@ -19,6 +19,36 @@ interface ApiKeyCreated extends ApiKey {
 function fmt(ts?: string | null) {
   if (!ts) return '—'
   return new Date(ts).toLocaleString()
+}
+
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false)
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(value).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    }).catch(() => {
+      // Fallback for older browsers
+      const el = document.createElement('textarea')
+      el.value = value
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    })
+  }, [value])
+  return (
+    <button
+      className="admin-copy-btn"
+      onClick={handleCopy}
+      title={copied ? 'Copied!' : 'Copy to clipboard'}
+      type="button"
+    >
+      {copied ? '✓' : '⧉'}
+    </button>
+  )
 }
 
 export function ApiKeys() {
@@ -87,7 +117,10 @@ export function ApiKeys() {
       {newKeySecret && (
         <div className="admin-alert admin-alert--success">
           <strong>Key created — copy it now, it won't be shown again:</strong>
-          <code className="admin-key-reveal">{newKeySecret}</code>
+          <div className="admin-key-reveal-row">
+            <code className="admin-key-reveal">{newKeySecret}</code>
+            <CopyButton value={newKeySecret} />
+          </div>
           <button className="admin-btn admin-btn--ghost" onClick={() => setNewKeySecret(null)}>
             Dismiss
           </button>
@@ -177,7 +210,12 @@ export function ApiKeys() {
               {keys.data.map(k => (
                 <React.Fragment key={k.id}>
                   <tr>
-                    <td className="admin-td-mono">{k.owner_address}</td>
+                    <td className="admin-td-mono">
+                      <span className="admin-copy-row">
+                        <span>{k.owner_address}</span>
+                        <CopyButton value={k.owner_address} />
+                      </span>
+                    </td>
                     <td>{k.plan}</td>
                     <td className="admin-td-mono">…{k.last4}</td>
                     <td>{fmt(k.created_at)}</td>
