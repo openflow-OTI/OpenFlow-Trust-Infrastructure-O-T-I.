@@ -9,9 +9,13 @@ export function useAnonymousLimit() {
       // Use the public endpoint — not the admin one (which requires x-admin-secret).
       // cache: 'no-store' ensures the browser never serves a stale response from
       // its HTTP cache after an admin change.
-      const res = await fetch(`${baseUrl}/api/config/anonymous-limit`, {
-        cache: 'no-store',
-      })
+      // Append a timestamp so every request is a unique URL. This defeats any
+      // edge/CDN cache (e.g. Railway Hikari) that may cache by URL regardless
+      // of Cache-Control request headers.
+      const res = await fetch(
+        `${baseUrl}/api/config/anonymous-limit?_t=${Date.now()}`,
+        { cache: 'no-store' },
+      )
       if (!res.ok) throw new Error('Could not fetch anonymous limit')
       const data = await res.json() as { daily_limit: number | null }
       const limit = data.daily_limit

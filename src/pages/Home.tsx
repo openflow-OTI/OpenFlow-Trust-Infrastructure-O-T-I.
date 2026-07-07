@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { WalletForm } from '@/components/WalletForm'
 import { useScore } from '@/hooks/useScore'
@@ -39,6 +40,16 @@ export function Home() {
 
   const scoreQuery = useScore(wallet, chain)
   const limitQuery = useAnonymousLimit()
+
+  // If Home stays mounted across a clear/back-navigation (hasQuery → false),
+  // refetchOnMount never fires again. Explicitly refetch when the landing
+  // section becomes visible so the pill always shows the current server value.
+  useEffect(() => {
+    if (!hasQuery) {
+      limitQuery.refetch()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasQuery])
 
   function handleSearch(address: string, selectedChain: string) {
     setSearchParams({ wallet: address, chain: selectedChain })
