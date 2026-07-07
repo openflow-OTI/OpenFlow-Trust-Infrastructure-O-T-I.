@@ -818,6 +818,15 @@ textarea {
   border-radius: 6px;
 }
 
+/* ── app-main override: admin takes full width, no centering/padding ── */
+.app-main:has(.admin-shell),
+.app-main:has(.admin-gate) {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* ── Shell (sidebar + main) ── */
 .admin-shell {
   display: flex;
