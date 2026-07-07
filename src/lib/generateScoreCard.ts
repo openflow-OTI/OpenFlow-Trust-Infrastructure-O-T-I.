@@ -1,5 +1,6 @@
 import type { ScoreMetadata } from './types'
 import type { components } from '@/api/schema.gen'
+import { getChainInfo } from './chains'
 
 type SignalBreakdown = components['schemas']['SignalBreakdown']
 
@@ -11,9 +12,27 @@ const SIGNAL_LABELS: Record<string, string> = {
   transactionTimingPatterns: 'Transaction Timing Patterns',
 }
 
-function scoreColor(v: number): string {
-  if (v >= 70) return '#00E5A0'
-  if (v >= 40) return '#ffb020'
+// ── Colour helpers ────────────────────────────────────────────
+function scoreTierColor(v: number): string {
+  if (v >= 85) return '#00E5A0'
+  if (v >= 65) return '#4ade80'
+  if (v >= 45) return '#f59e0b'
+  if (v >= 25) return '#f97316'
+  return '#ff4d5e'
+}
+
+function scoreTierLabel(v: number): string {
+  if (v >= 85) return 'HIGHLY TRUSTED'
+  if (v >= 65) return 'TRUSTED'
+  if (v >= 45) return 'CAUTION'
+  if (v >= 25) return 'SUSPICIOUS'
+  return 'HIGH RISK'
+}
+
+function signalBarColor(ratio: number): string {
+  const pct = ratio * 100
+  if (pct >= 70) return '#00E5A0'
+  if (pct >= 40) return '#ffb020'
   return '#ff4d5e'
 }
 
@@ -37,9 +56,9 @@ function getMetaLabel(key: string, metadata: ScoreMetadata): string {
     case 'tokenHoldingBehavior':
       return `${fmt(metadata.uniqueTokens)} unique tokens`
     case 'smartContractInteractions':
-      return `${fmt(metadata.contractInteractions)} smart-contract transactions`
+      return `${fmt(metadata.contractInteractions)} smart-contract txns`
     case 'transactionTimingPatterns':
-      return `${fmt(metadata.internalTxCount)} internal transactions`
+      return `${fmt(metadata.internalTxCount)} internal txns`
     default:
       return ''
   }
@@ -71,8 +90,24 @@ function roundedRect(
   ctx.closePath()
 }
 
-import { getChainInfo } from './chains'
+// ── Panel (rounded rectangle with dark-blue tint) ────────────
+function drawPanel(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number, w: number, h: number,
+  borderColor = '#1c2535',
+) {
+  // fill
+  ctx.fillStyle = '#0b0f1a'
+  roundedRect(ctx, x, y, w, h, 14)
+  ctx.fill()
+  // border
+  ctx.strokeStyle = borderColor
+  ctx.lineWidth = 1
+  roundedRect(ctx, x + 0.5, y + 0.5, w - 1, h - 1, 14)
+  ctx.stroke()
+}
 
+// ── Main export ───────────────────────────────────────────────
 export async function generateScoreCard(params: {
   score: number
   signals: SignalBreakdown
@@ -82,179 +117,210 @@ export async function generateScoreCard(params: {
 }): Promise<void> {
   const { score, signals, metadata, chain, wallet } = params
   const chainColor = getChainInfo(chain)?.color ?? '#00E5A0'
+  const tierColor = scoreTierColor(score)
+  const tierLabel = scoreTierLabel(score)
 
   await document.fonts.ready
   const logoImg = await loadImage('/logo.svg')
 
+  // ── Canvas setup ─────────────────────────────────────────────
   const W = 640
-  const H = 800
-  const PAD = 40
-  const SCALE = 2  // render at 2× for crisp output on all screens
+  const H = 860
+  const PAD = 36
+  // SCALE=3 → 1920×2580 px — crisp on all Retina/high-DPI screens
+  const SCALE = 3
 
   const canvas = document.createElement('canvas')
-  canvas.width = W * SCALE
+  canvas.width  = W * SCALE
   canvas.height = H * SCALE
   const ctx = canvas.getContext('2d')!
   ctx.scale(SCALE, SCALE)
 
-  // Background
-  ctx.fillStyle = '#000000'
+  // ── Background ───────────────────────────────────────────────
+  ctx.fillStyle = '#05080f'
   ctx.fillRect(0, 0, W, H)
 
-  // Border
-  ctx.strokeStyle = '#1e1e1e'
+  // Outer border
+  ctx.strokeStyle = '#1c2535'
   ctx.lineWidth = 1
   ctx.strokeRect(0.5, 0.5, W - 1, H - 1)
 
-  // --- Header: logo + brand ---
-  const LOGO_SIZE = 40
-  const LOGO_X = PAD - 8
-  const LOGO_Y = 18
-  ctx.drawImage(logoImg, LOGO_X, LOGO_Y, LOGO_SIZE, LOGO_SIZE)
+  // ── Header ───────────────────────────────────────────────────
+  const LOGO_SIZE = 38
+  ctx.drawImage(logoImg, PAD - 6, 18, LOGO_SIZE, LOGO_SIZE)
 
   ctx.textBaseline = 'alphabetic'
   ctx.textAlign = 'left'
   ctx.fillStyle = '#00E5A0'
   ctx.font = 'bold 20px "JetBrains Mono", monospace'
-  ctx.fillText('OTI', 104, 50)
+  ctx.fillText('OTI', 100, 44)
 
-  ctx.fillStyle = '#8a9994'
+  ctx.fillStyle = '#7a8fa8'
   ctx.font = '10px "JetBrains Mono", monospace'
-  ctx.fillText('OpenFlow Trust Infrastructure', 104, 68)
+  ctx.fillText('OpenFlow Trust Infrastructure', 100, 62)
 
-  // Header separator
-  ctx.strokeStyle = '#1e1e1e'
+  // header separator
+  ctx.strokeStyle = '#1c2535'
   ctx.lineWidth = 1
   ctx.beginPath()
-  ctx.moveTo(PAD, 90)
-  ctx.lineTo(W - PAD, 90)
+  ctx.moveTo(PAD, 86)
+  ctx.lineTo(W - PAD, 86)
   ctx.stroke()
 
-  // Chain name
-  ctx.fillStyle = '#00E5A0'
-  ctx.font = '11px "JetBrains Mono", monospace'
+  // ── Chain + wallet ───────────────────────────────────────────
   ctx.textAlign = 'center'
-  ctx.fillText(chain.toUpperCase(), W / 2, 112)
+  ctx.fillStyle = '#7a8fa8'
+  ctx.font = '10px "JetBrains Mono", monospace'
+  ctx.fillText(chain.toUpperCase(), W / 2, 106)
 
-  // Wallet address truncated
   const truncated =
     wallet.length > 14
       ? `${wallet.slice(0, 6)}...${wallet.slice(-4)}`
       : wallet
-  ctx.fillStyle = '#eafff4'
-  ctx.font = '12px "JetBrains Mono", monospace'
-  ctx.fillText(truncated, W / 2, 134)
+  ctx.fillStyle = '#e8f4ff'
+  ctx.font = '13px "JetBrains Mono", monospace'
+  ctx.fillText(truncated, W / 2, 128)
 
-  // --- Score ring ---
+  // ── Score panel ──────────────────────────────────────────────
+  const scorePanelY = 148
+  const scorePanelH = 240
+  // tinted border using chain color (mix 22 % chain + 78 % base border)
+  // We approximate this by drawing a slightly transparent chainColor stroke
+  drawPanel(ctx, PAD, scorePanelY, W - PAD * 2, scorePanelH, '#1c2535')
+
+  // subtle chain-color border overlay (20 % opacity)
+  ctx.save()
+  ctx.globalAlpha = 0.20
+  ctx.strokeStyle = chainColor
+  ctx.lineWidth = 1
+  roundedRect(ctx, PAD + 0.5, scorePanelY + 0.5, W - PAD * 2 - 1, scorePanelH - 1, 14)
+  ctx.stroke()
+  ctx.restore()
+
+  // Ring gauge
   const ringCx = W / 2
-  const ringCy = 258
-  const ringR = 82
+  const ringCy = scorePanelY + 116
+  const ringR  = 78
   const ringLW = 14
 
+  // track
   ctx.beginPath()
   ctx.arc(ringCx, ringCy, ringR, 0, 2 * Math.PI)
-  ctx.strokeStyle = '#1e1e1e'
+  ctx.strokeStyle = '#1c2535'
   ctx.lineWidth = ringLW
   ctx.stroke()
 
+  // fill arc
   const startAngle = -Math.PI / 2
-  const endAngle = startAngle + (score / 100) * 2 * Math.PI
+  const endAngle   = startAngle + (score / 100) * 2 * Math.PI
   ctx.beginPath()
   ctx.arc(ringCx, ringCy, ringR, startAngle, endAngle)
   ctx.strokeStyle = chainColor
-  ctx.lineWidth = ringLW
-  ctx.lineCap = 'round'
+  ctx.lineWidth   = ringLW
+  ctx.lineCap     = 'round'
   ctx.stroke()
 
-  // Score text: number + %
-  ctx.textAlign = 'center'
+  // score number
+  ctx.textAlign    = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillStyle = scoreColor(score)
-  ctx.font = 'bold 44px "JetBrains Mono", monospace'
-  ctx.fillText(`${score}%`, ringCx, ringCy - 4)
+  ctx.fillStyle    = tierColor
+  ctx.font         = 'bold 46px "JetBrains Mono", monospace'
+  ctx.fillText(`${score}%`, ringCx, ringCy - 2)
 
+  // tier label
   ctx.textBaseline = 'alphabetic'
-  ctx.fillStyle = '#8a9994'
-  ctx.font = '10px "JetBrains Mono", monospace'
-  ctx.fillText('Trust Score', ringCx, ringCy + 54)
+  ctx.fillStyle    = tierColor
+  ctx.font         = 'bold 11px "JetBrains Mono", monospace'
+  ctx.textAlign    = 'center'
+  ctx.fillText(tierLabel, W / 2, scorePanelY + scorePanelH - 22)
 
-  // Divider below ring
-  ctx.strokeStyle = '#1e1e1e'
-  ctx.lineWidth = 1
-  ctx.beginPath()
-  ctx.moveTo(PAD, 358)
-  ctx.lineTo(W - PAD, 358)
-  ctx.stroke()
+  // ── Signals panel ────────────────────────────────────────────
+  const signalPanelY = scorePanelY + scorePanelH + 16
+  const signalKeys   = Object.keys(signals) as (keyof SignalBreakdown)[]
+  const ROW_H        = 58
+  const signalPanelH = 36 + signalKeys.length * ROW_H + 4
 
-  // --- Signal bars ---
-  const barX = PAD
-  const barW = W - PAD * 2
+  drawPanel(ctx, PAD, signalPanelY, W - PAD * 2, signalPanelH)
+
+  // "TRUST SIGNALS" heading
+  ctx.textAlign    = 'left'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillStyle    = '#7a8fa8'
+  ctx.font         = 'bold 9.5px "JetBrains Mono", monospace'
+  ctx.fillText('TRUST SIGNALS', PAD + 16, signalPanelY + 22)
+
+  const barX = PAD + 16
+  const barW = W - PAD * 2 - 32
   const barH = 5
-  const barR = 2.5
-
-  const signalKeys = Object.keys(signals) as (keyof SignalBreakdown)[]
-  let sigY = 382
-
-  ctx.textAlign = 'left'
-  ctx.textBaseline = 'alphabetic'
+  const barRad = 2.5
+  let sigY = signalPanelY + 40
 
   for (const key of signalKeys) {
     const sig = signals[key] as { score: number; weighted: number; maxWeight: number }
-    const ratio = sig.weighted / sig.maxWeight
-    const color = scoreColor(ratio * 100)
-    const label = SIGNAL_LABELS[key] ?? String(key)
-    const valueLabel = `${fmtWeighted(sig.weighted)}/${sig.maxWeight}`
-    const meta = metadata ? getMetaLabel(key, metadata) : ''
+    const ratio  = sig.weighted / sig.maxWeight
+    const color  = signalBarColor(ratio)
+    const label  = SIGNAL_LABELS[key] ?? String(key)
+    const valLbl = `${fmtWeighted(sig.weighted)}/${sig.maxWeight}`
+    const meta   = metadata ? getMetaLabel(key, metadata) : ''
 
-    // Signal label
-    ctx.fillStyle = '#8a9994'
-    ctx.font = '10.5px "JetBrains Mono", monospace'
-    ctx.textAlign = 'left'
+    // signal label
+    ctx.fillStyle    = '#7a8fa8'
+    ctx.font         = '10.5px "JetBrains Mono", monospace'
+    ctx.textAlign    = 'left'
+    ctx.textBaseline = 'alphabetic'
     ctx.fillText(label, barX, sigY)
 
-    // Signal value (right-aligned)
+    // value right-aligned
     ctx.fillStyle = color
-    ctx.font = 'bold 10.5px "JetBrains Mono", monospace'
+    ctx.font      = 'bold 10.5px "JetBrains Mono", monospace'
     ctx.textAlign = 'right'
-    ctx.fillText(valueLabel, W - barX, sigY)
+    ctx.fillText(valLbl, barX + barW, sigY)
 
-    // Metadata label
+    // metadata line
     if (meta) {
-      ctx.textAlign = 'left'
-      ctx.fillStyle = '#00E5A0'
-      ctx.font = '9.5px "JetBrains Mono", monospace'
-      ctx.globalAlpha = 0.8
+      ctx.textAlign    = 'left'
+      ctx.fillStyle    = '#00E5A0'
+      ctx.font         = '9px "JetBrains Mono", monospace'
+      ctx.globalAlpha  = 0.8
       ctx.fillText(meta, barX, sigY + 14)
-      ctx.globalAlpha = 1
+      ctx.globalAlpha  = 1
     }
 
-    // Track
+    // track
     const trackY = sigY + 22
-    ctx.fillStyle = '#101010'
-    roundedRect(ctx, barX, trackY, barW, barH, barR)
+    ctx.fillStyle = '#0f1520'
+    roundedRect(ctx, barX, trackY, barW, barH, barRad)
     ctx.fill()
 
-    // Fill
-    const fillW = Math.max(barR * 2, ratio * barW)
+    // fill
+    const fillW = Math.max(barRad * 2, ratio * barW)
     ctx.fillStyle = color
-    roundedRect(ctx, barX, trackY, fillW, barH, barR)
+    roundedRect(ctx, barX, trackY, fillW, barH, barRad)
     ctx.fill()
 
-    sigY += 65
+    sigY += ROW_H
   }
 
-  // Footer
-  ctx.fillStyle = '#8a9994'
-  ctx.font = '9px "JetBrains Mono", monospace'
-  ctx.textAlign = 'center'
+  // ── Footer ───────────────────────────────────────────────────
+  ctx.strokeStyle = '#1c2535'
+  ctx.lineWidth   = 1
+  ctx.beginPath()
+  ctx.moveTo(PAD, H - 38)
+  ctx.lineTo(W - PAD, H - 38)
+  ctx.stroke()
+
+  ctx.fillStyle    = '#7a8fa8'
+  ctx.font         = '9px "JetBrains Mono", monospace'
+  ctx.textAlign    = 'center'
   ctx.textBaseline = 'alphabetic'
   ctx.fillText('otiscore.vercel.app · OTI Trust Score', W / 2, H - 18)
 
+  // ── Download ─────────────────────────────────────────────────
   canvas.toBlob((blob) => {
     if (!blob) return
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
+    const a   = document.createElement('a')
+    a.href     = url
     a.download = `oti-${chain}-${wallet.slice(0, 8)}.png`
     document.body.appendChild(a)
     a.click()
