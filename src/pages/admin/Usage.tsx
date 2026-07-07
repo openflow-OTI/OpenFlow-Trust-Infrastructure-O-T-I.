@@ -93,7 +93,7 @@ export function Usage() {
 
       {usage.isLoading && <p className="admin-loading">Loading usage…</p>}
       {usage.isError && (
-        <p className="admin-error">Failed to load usage: {String(usage.error)}</p>
+        <p className="admin-error">{usage.error instanceof Error ? usage.error.message : String(usage.error)}</p>
       )}
 
       {usage.data && (
@@ -101,33 +101,35 @@ export function Usage() {
           <p className="admin-section-desc" style={{ marginTop: '0.25rem' }}>
             {usage.data.length} rows — {total.toLocaleString()} total requests
           </p>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Key / IP</th>
-                <th>Plan</th>
-                <th>Date</th>
-                <th>Requests</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usage.data.map(row => (
-                <tr key={row.id}>
-                  <td className="admin-td-mono">{row.key_ref}</td>
-                  <td>{row.plan_name}</td>
-                  <td>{row.usage_date}</td>
-                  <td>{row.req_count.toLocaleString()}</td>
-                </tr>
-              ))}
-              {usage.data.length === 0 && (
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
-                    No usage data for these filters.
-                  </td>
+                  <th>Key / IP</th>
+                  <th>Plan</th>
+                  <th>Date</th>
+                  <th>Requests</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {usage.data.map(row => (
+                  <tr key={row.id}>
+                    <td className="admin-td-mono">{row.key_ref}</td>
+                    <td>{row.plan_name}</td>
+                    <td>{row.usage_date}</td>
+                    <td>{row.req_count.toLocaleString()}</td>
+                  </tr>
+                ))}
+                {usage.data.length === 0 && (
+                  <tr>
+                    <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
+                      No usage data for these filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

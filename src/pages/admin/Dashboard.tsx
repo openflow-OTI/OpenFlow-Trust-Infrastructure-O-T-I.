@@ -17,7 +17,7 @@ export function Dashboard() {
 
   if (stats.isLoading) return <p className="admin-loading">Loading stats…</p>
   if (stats.isError)
-    return <p className="admin-error">Failed to load stats: {String(stats.error)}</p>
+    return <p className="admin-error">{stats.error instanceof Error ? stats.error.message : String(stats.error)}</p>
 
   const s = stats.data!
 
@@ -43,22 +43,24 @@ export function Dashboard() {
       {s.requests_by_plan.length > 0 && (
         <>
           <h3 className="admin-subsection-title">Requests by plan (today)</h3>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Plan</th>
-                <th>Requests</th>
-              </tr>
-            </thead>
-            <tbody>
-              {s.requests_by_plan.map(row => (
-                <tr key={row.plan_name}>
-                  <td>{row.plan_name}</td>
-                  <td>{row.req_count.toLocaleString()}</td>
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Requests</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {s.requests_by_plan.map(row => (
+                  <tr key={row.plan_name}>
+                    <td>{row.plan_name}</td>
+                    <td>{row.req_count.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

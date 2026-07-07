@@ -64,7 +64,7 @@ export function CompromisedWallets() {
 
   if (list.isLoading) return <p className="admin-loading">Loading flagged wallets…</p>
   if (list.isError)
-    return <p className="admin-error">Failed to load: {String(list.error)}</p>
+    return <p className="admin-error">{list.error instanceof Error ? list.error.message : String(list.error)}</p>
 
   return (
     <div className="admin-section">
@@ -131,48 +131,50 @@ export function CompromisedWallets() {
         </form>
       )}
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Address</th>
-            <th>Chain family</th>
-            <th>Reason</th>
-            <th>Flagged</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {list.data!.map(w => (
-            <React.Fragment key={w.id}>
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Chain family</th>
+              <th>Reason</th>
+              <th>Flagged</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list.data!.map(w => (
+              <React.Fragment key={w.id}>
+                <tr>
+                  <td className="admin-td-mono">{w.address}</td>
+                  <td>{w.chain_family}</td>
+                  <td>{w.reason}</td>
+                  <td>{fmt(w.reported_at)}</td>
+                  <td>
+                    <button
+                      className="admin-btn admin-btn--danger"
+                      disabled={removeMutation.isPending}
+                      onClick={() => {
+                        if (confirm(`Remove ${w.address} from the denylist?`))
+                          removeMutation.mutate(w.id)
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              </React.Fragment>
+            ))}
+            {list.data!.length === 0 && (
               <tr>
-                <td className="admin-td-mono">{w.address}</td>
-                <td>{w.chain_family}</td>
-                <td>{w.reason}</td>
-                <td>{fmt(w.reported_at)}</td>
-                <td>
-                  <button
-                    className="admin-btn admin-btn--danger"
-                    disabled={removeMutation.isPending}
-                    onClick={() => {
-                      if (confirm(`Remove ${w.address} from the denylist?`))
-                        removeMutation.mutate(w.id)
-                    }}
-                  >
-                    Remove
-                  </button>
+                <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
+                  No flagged wallets.
                 </td>
               </tr>
-            </React.Fragment>
-          ))}
-          {list.data!.length === 0 && (
-            <tr>
-              <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
-                No flagged wallets.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

@@ -127,7 +127,7 @@ function PlanConfigsInner() {
 
   if (configs.isLoading) return <p className="admin-loading">Loading plan configs…</p>
   if (configs.isError)
-    return <p className="admin-error">Failed to load plan configs: {String(configs.error)}</p>
+    return <p className="admin-error">{configs.error instanceof Error ? configs.error.message : String(configs.error)}</p>
 
   return (
     <div className="admin-section">
@@ -139,6 +139,7 @@ function PlanConfigsInner() {
         Unlimited.
       </p>
 
+      <div className="admin-table-wrap">
       <table className="admin-table">
         <thead>
           <tr>
@@ -218,7 +219,7 @@ function PlanConfigsInner() {
                       </div>
                       {inputError && <p className="admin-error">{inputError}</p>}
                       {editMutation.isError && (
-                        <p className="admin-error">{String(editMutation.error)}</p>
+                        <p className="admin-error">{editMutation.error instanceof Error ? editMutation.error.message : String(editMutation.error)}</p>
                       )}
                       {editMutation.isSuccess && (
                         <p className="admin-success">Saved.</p>
@@ -238,6 +239,7 @@ function PlanConfigsInner() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

@@ -77,7 +77,7 @@ export function ApiKeys() {
 
   if (keys.isLoading) return <p className="admin-loading">Loading keys…</p>
   if (keys.isError)
-    return <p className="admin-error">Failed to load keys: {String(keys.error)}</p>
+    return <p className="admin-error">{keys.error instanceof Error ? keys.error.message : String(keys.error)}</p>
 
   return (
     <div className="admin-section">
@@ -143,11 +143,12 @@ export function ApiKeys() {
             {createMutation.isPending ? 'Creating…' : 'Create key'}
           </button>
           {createMutation.isError && (
-            <p className="admin-error">{String(createMutation.error)}</p>
+            <p className="admin-error">{createMutation.error instanceof Error ? createMutation.error.message : String(createMutation.error)}</p>
           )}
         </form>
       )}
 
+      <div className="admin-table-wrap">
       <table className="admin-table">
         <thead>
           <tr>
@@ -245,7 +246,7 @@ export function ApiKeys() {
                         </button>
                       </div>
                       {editMutation.isError && (
-                        <p className="admin-error">{String(editMutation.error)}</p>
+                        <p className="admin-error">{editMutation.error instanceof Error ? editMutation.error.message : String(editMutation.error)}</p>
                       )}
                     </form>
                   </td>
@@ -262,6 +263,7 @@ export function ApiKeys() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
