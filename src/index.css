@@ -603,6 +603,16 @@ textarea {
   border-top: 1px solid var(--border);
 }
 
+.results-footer-link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.results-footer-link:hover {
+  opacity: 0.75;
+}
+
 /* Score gauge */
 
 .score-gauge {

@@ -243,7 +243,7 @@ export async function generateScoreCard(params: {
   ctx.font = '9px "JetBrains Mono", monospace'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'alphabetic'
-  ctx.fillText('openflowlabs.io · OTI Trust Score', W / 2, H - 18)
+  ctx.fillText('otiscore.vercel.app · OTI Trust Score', W / 2, H - 18)
 
   canvas.toBlob((blob) => {
     if (!blob) return

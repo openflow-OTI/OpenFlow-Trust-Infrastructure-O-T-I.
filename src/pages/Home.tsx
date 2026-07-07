@@ -163,7 +163,10 @@ export function Home() {
       )}
 
       <footer className="results-footer">
-        © 2026 OpenFlow Labs · openflowlabs.io
+        © 2026{' '}
+        <a href="https://otiscore.vercel.app" className="results-footer-link" target="_blank" rel="noopener noreferrer">
+          OTI-Score
+        </a>
       </footer>
     </div>
   )
