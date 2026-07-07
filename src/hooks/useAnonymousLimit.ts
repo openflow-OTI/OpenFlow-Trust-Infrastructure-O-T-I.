@@ -11,9 +11,9 @@ export function useAnonymousLimit() {
       if (!res.ok) throw new Error('Could not fetch anonymous limit')
       const data = await res.json() as { daily_limit: number | null }
       const limit = data.daily_limit
-      if (limit == null || !Number.isFinite(limit)) {
-        throw new Error('Limit is unlimited or not set')
-      }
+      // null means the DB hasn't been explicitly set yet — fall back to the
+      // architectural default of 3 (anonymous plan always rate-limits to 3/day)
+      if (limit == null || !Number.isFinite(limit)) return 3
       return limit as number
     },
     // Refresh every 5 minutes so it picks up live DB changes without a redeploy
