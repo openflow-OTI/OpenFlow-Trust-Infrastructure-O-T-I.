@@ -56,6 +56,12 @@ Confirmed done by Manager (July 7, 2026).
 - Table guarded behind `keys.isSuccess`; removed `keys.data!` non-null assertions
 - Confirmed working (create/list/edit/delete) — Manager verified July 7, 2026
 
+### Fix: API Key Reveal on Creation ✅
+- POST /api/admin/keys response field corrected: `data.apiKey` → `data.api_key`
+- TypeScript interface updated to match: `apiKey: string` → `api_key: string`
+- Modal now displays full key after creation with copy button and "never shown again" warning
+- Verified live on Vercel by Manager
+
 ---
 
 ## Pending
