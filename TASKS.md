@@ -27,6 +27,11 @@ Homepage now shows "Anonymous lookups are limited to 20 per day." (or current DB
 
 ---
 
+### ✅ API Keys Tab — Error Resilience Fix
+Header and Create Key button always visible even when keys list fails to load. Error renders inline with a Retry button. No backend changes.
+
+---
+
 ## Active Tasks
 
 ### 🔄 Task 8 — Professional Results Page Redesign

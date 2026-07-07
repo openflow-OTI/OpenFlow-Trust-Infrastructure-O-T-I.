@@ -40,6 +40,16 @@
 
 ---
 
+### ✅ API Keys Tab — Error Resilience Fix
+- File: `src/pages/admin/ApiKeys.tsx`
+- Removed early-return on error/loading; section header + `+ New Key` button always rendered
+- Loading state shows inline below header
+- Error state shows inline with `.admin-error-block` styling + `↻ Retry` button wired to `keys.refetch()`
+- Table guarded behind `keys.isSuccess`; removed `keys.data!` non-null assertions
+- New `.admin-error-block` CSS added to `src/index.css`
+
+---
+
 ## Active
 
 ### 🔄 Task 8 — Professional Results Page Redesign

@@ -75,10 +75,6 @@ export function ApiKeys() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'keys'] }),
   })
 
-  if (keys.isLoading) return <p className="admin-loading">Loading keys…</p>
-  if (keys.isError)
-    return <p className="admin-error">{keys.error instanceof Error ? keys.error.message : String(keys.error)}</p>
-
   return (
     <div className="admin-section">
       <div className="admin-section-header">
@@ -148,122 +144,140 @@ export function ApiKeys() {
         </form>
       )}
 
-      <div className="admin-table-wrap">
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Owner</th>
-            <th>Plan</th>
-            <th>Last 4</th>
-            <th>Created</th>
-            <th>Expires</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {keys.data!.map(k => (
-            <React.Fragment key={k.id}>
+      {keys.isLoading && <p className="admin-loading">Loading keys…</p>}
+
+      {keys.isError && (
+        <div className="admin-error-block">
+          <p className="admin-error">
+            {keys.error instanceof Error ? keys.error.message : String(keys.error)}
+          </p>
+          <button
+            className="admin-btn admin-btn--ghost"
+            onClick={() => keys.refetch()}
+          >
+            ↻ Retry
+          </button>
+        </div>
+      )}
+
+      {keys.isSuccess && (
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
               <tr>
-                <td className="admin-td-mono">{k.owner_address}</td>
-                <td>{k.plan}</td>
-                <td className="admin-td-mono">…{k.last4}</td>
-                <td>{fmt(k.created_at)}</td>
-                <td>{fmt(k.expires_at)}</td>
-                <td>
-                  <div className="admin-action-group">
-                    <button
-                      className="admin-btn admin-btn--ghost"
-                      onClick={() => {
-                        setEditId(editId === k.id ? null : k.id)
-                        setEditForm({ plan: k.plan, expires_at: k.expires_at ?? '' })
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="admin-btn admin-btn--danger"
-                      disabled={deleteMutation.isPending}
-                      onClick={() => {
-                        if (confirm(`Delete key …${k.last4}?`)) deleteMutation.mutate(k.id)
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
+                <th>Owner</th>
+                <th>Plan</th>
+                <th>Last 4</th>
+                <th>Created</th>
+                <th>Expires</th>
+                <th>Actions</th>
               </tr>
-              {editId === k.id && (
-                <tr key={`${k.id}-edit`} className="admin-edit-row">
-                  <td colSpan={6}>
-                    <form
-                      className="admin-form admin-form--inline"
-                      onSubmit={e => {
-                        e.preventDefault()
-                        editMutation.mutate({
-                          id: k.id,
-                          body: {
-                            plan: editForm.plan,
-                            expires_at: editForm.expires_at || null,
-                          },
-                        })
-                      }}
-                    >
-                      <div className="admin-form-row">
-                        <label>Plan</label>
-                        <select
-                          className="admin-input"
-                          value={editForm.plan}
-                          onChange={e => setEditForm(f => ({ ...f, plan: e.target.value }))}
-                        >
-                          <option value="free">free</option>
-                          <option value="pro">pro</option>
-                          <option value="enterprise">enterprise</option>
-                        </select>
-                      </div>
-                      <div className="admin-form-row">
-                        <label>Expires at</label>
-                        <input
-                          className="admin-input"
-                          type="datetime-local"
-                          value={editForm.expires_at ?? ''}
-                          onChange={e => setEditForm(f => ({ ...f, expires_at: e.target.value }))}
-                        />
-                      </div>
-                      <div className="admin-form-row">
-                        <button
-                          className="admin-btn admin-btn--primary"
-                          type="submit"
-                          disabled={editMutation.isPending}
-                        >
-                          {editMutation.isPending ? 'Saving…' : 'Save'}
-                        </button>
+            </thead>
+            <tbody>
+              {keys.data.map(k => (
+                <React.Fragment key={k.id}>
+                  <tr>
+                    <td className="admin-td-mono">{k.owner_address}</td>
+                    <td>{k.plan}</td>
+                    <td className="admin-td-mono">…{k.last4}</td>
+                    <td>{fmt(k.created_at)}</td>
+                    <td>{fmt(k.expires_at)}</td>
+                    <td>
+                      <div className="admin-action-group">
                         <button
                           className="admin-btn admin-btn--ghost"
-                          type="button"
-                          onClick={() => setEditId(null)}
+                          onClick={() => {
+                            setEditId(editId === k.id ? null : k.id)
+                            setEditForm({ plan: k.plan, expires_at: k.expires_at ?? '' })
+                          }}
                         >
-                          Cancel
+                          Edit
+                        </button>
+                        <button
+                          className="admin-btn admin-btn--danger"
+                          disabled={deleteMutation.isPending}
+                          onClick={() => {
+                            if (confirm(`Delete key …${k.last4}?`)) deleteMutation.mutate(k.id)
+                          }}
+                        >
+                          Delete
                         </button>
                       </div>
-                      {editMutation.isError && (
-                        <p className="admin-error">{editMutation.error instanceof Error ? editMutation.error.message : String(editMutation.error)}</p>
-                      )}
-                    </form>
+                    </td>
+                  </tr>
+                  {editId === k.id && (
+                    <tr key={`${k.id}-edit`} className="admin-edit-row">
+                      <td colSpan={6}>
+                        <form
+                          className="admin-form admin-form--inline"
+                          onSubmit={e => {
+                            e.preventDefault()
+                            editMutation.mutate({
+                              id: k.id,
+                              body: {
+                                plan: editForm.plan,
+                                expires_at: editForm.expires_at || null,
+                              },
+                            })
+                          }}
+                        >
+                          <div className="admin-form-row">
+                            <label>Plan</label>
+                            <select
+                              className="admin-input"
+                              value={editForm.plan}
+                              onChange={e => setEditForm(f => ({ ...f, plan: e.target.value }))}
+                            >
+                              <option value="free">free</option>
+                              <option value="pro">pro</option>
+                              <option value="enterprise">enterprise</option>
+                            </select>
+                          </div>
+                          <div className="admin-form-row">
+                            <label>Expires at</label>
+                            <input
+                              className="admin-input"
+                              type="datetime-local"
+                              value={editForm.expires_at ?? ''}
+                              onChange={e => setEditForm(f => ({ ...f, expires_at: e.target.value }))}
+                            />
+                          </div>
+                          <div className="admin-form-row">
+                            <button
+                              className="admin-btn admin-btn--primary"
+                              type="submit"
+                              disabled={editMutation.isPending}
+                            >
+                              {editMutation.isPending ? 'Saving…' : 'Save'}
+                            </button>
+                            <button
+                              className="admin-btn admin-btn--ghost"
+                              type="button"
+                              onClick={() => setEditId(null)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                          {editMutation.isError && (
+                            <p className="admin-error">{editMutation.error instanceof Error ? editMutation.error.message : String(editMutation.error)}</p>
+                          )}
+                        </form>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+              {keys.data.length === 0 && (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
+                    No keys issued yet.
                   </td>
                 </tr>
               )}
-            </React.Fragment>
-          ))}
-          {keys.data!.length === 0 && (
-            <tr>
-              <td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-dim)' }}>
-                No keys issued yet.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
