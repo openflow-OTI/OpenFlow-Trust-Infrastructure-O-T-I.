@@ -13,19 +13,33 @@ class PlanConfigsErrorBoundary extends Component<{ children: ReactNode }, { erro
   }
 }
 
-// Defensive interface — live API may return `plan` or `plan_name`
+// Defensive interface — covers snake_case and camelCase variants
 interface PlanConfig {
   id: string
+  // snake_case variants
   plan_name?: string
   plan?: string
   daily_limit?: number | null
-  description?: string | null
   updated_at?: string | null
+  // camelCase variants (live API may return these)
+  planName?: string
+  dailyLimit?: number | null
+  updatedAt?: string | null
+  // common to both
+  description?: string | null
 }
 
 // Resolve plan name regardless of which field the API uses
 function getPlanName(cfg: PlanConfig): string {
-  return cfg.plan_name ?? cfg.plan ?? cfg.id
+  return cfg.plan_name ?? cfg.planName ?? cfg.plan ?? ''
+}
+
+function getLimit(cfg: PlanConfig): number | null | undefined {
+  return cfg.daily_limit ?? cfg.dailyLimit
+}
+
+function getUpdatedAt(cfg: PlanConfig): string | null | undefined {
+  return cfg.updated_at ?? cfg.updatedAt
 }
 
 function fmtLimit(limit: number | null | undefined) {
@@ -81,7 +95,7 @@ function PlanConfigsInner() {
     setInputError(null)
     editMutation.reset()
     setEditForm({
-      daily_limit: cfg.daily_limit != null ? String(cfg.daily_limit) : '',
+      daily_limit: getLimit(cfg) != null ? String(getLimit(cfg)) : '',
       description: cfg.description ?? '',
     })
   }
@@ -142,11 +156,11 @@ function PlanConfigsInner() {
                 <td className="admin-td-mono" style={{ maxWidth: 'unset' }}>
                   {getPlanName(cfg)}
                 </td>
-                <td>{fmtLimit(cfg.daily_limit)}</td>
+                <td>{fmtLimit(getLimit(cfg))}</td>
                 <td style={{ color: cfg.description ? 'var(--text)' : 'var(--text-dim)' }}>
                   {cfg.description || '—'}
                 </td>
-                <td>{fmt(cfg.updated_at)}</td>
+                <td>{fmt(getUpdatedAt(cfg))}</td>
                 <td>
                   <button
                     className="admin-btn admin-btn--ghost"
