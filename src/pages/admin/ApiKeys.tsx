@@ -183,13 +183,20 @@ export function ApiKeys() {
                 <React.Fragment key={k.id}>
                   <tr>
                     <td className="admin-td-mono">
-                      <span className="admin-copy-row">
-                        <span>{k.owner_address}</span>
-                        <CopyButton value={k.owner_address} />
-                      </span>
+                      {k.owner_address ? (
+                        <span className="admin-copy-row">
+                          <span>{k.owner_address}</span>
+                          <CopyButton value={k.owner_address} />
+                        </span>
+                      ) : '—'}
                     </td>
                     <td>{k.plan}</td>
-                    <td className="admin-td-mono">…{k.last4}</td>
+                    <td className="admin-td-mono">
+                      <span className="admin-copy-row">
+                        <span>…{k.last4}</span>
+                        <CopyButton value={k.last4} />
+                      </span>
+                    </td>
                     <td>{fmt(k.created_at)}</td>
                     <td>{fmt(k.expires_at)}</td>
                     <td>
