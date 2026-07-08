@@ -6,3 +6,9 @@ id = "lznAf_EMySOPb-Eixluqp"
 uri = "file://screenshots/side-by-side-home-vs-score.jpg"
 type = "image"
 title = "Marketing homepage (/) vs. scoring tool (/score) — side by side"
+
+[[outputs]]
+id = "B1fjtDGwhXWagKA7ocE5X"
+uri = "file://screenshots/side-by-side-11b.jpg"
+type = "image"
+title = "Marketing homepage (/) · Scoring tool (/score) · Whitepaper (/whitepaper)"

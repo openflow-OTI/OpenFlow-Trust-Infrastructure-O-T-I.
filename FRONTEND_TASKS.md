@@ -127,4 +127,14 @@ Completed July 8, 2026, per Ahmad's direct request. Full spec: `docs/FRONTEND_TA
 - Verified responsively: grid sections (`How It Works`, `Trust Signals`, `Use Cases`) collapse to 1–2 columns under the documented breakpoints; hero/nav/footer collapse to a mobile hamburger layout.
 - Side-by-side screenshot of `/` and `/score` sent to Ahmad for sign-off before starting Task 11B (whitepaper), per his explicit request.
 
+### ✅ Task 11B — Whitepaper Page
+Completed July 8, 2026, per Ahmad's next-task assignment (spec in `docs/FRONTEND_TASKS.md` / `docs/TASKS.md`).
+- **Route:** `src/pages/Whitepaper.tsx` at `/whitepaper`, registered in `src/App.tsx`. Not wrapped in `<Layout>` — reuses the same `MarketingNavbar`/`MarketingFooter` built in Task 11A so the page feels like a continuation of the marketing site, not a separate document viewer.
+- **Nav update:** `src/components/marketing/MarketingNavbar.tsx` reordered to `Logo | Score a Wallet | API Docs | Whitepaper | [social icons]` on desktop, `Score a Wallet → API Docs → Whitepaper → [social icons]` on mobile — social icons (X, LinkedIn, Telegram, Discord) added to the navbar itself (previously footer-only) per the 11B nav spec. New `.marketing-navbar-social` CSS added, reusing the existing `.marketing-social-icon` recipe from the footer.
+- **Content:** All 14 sections (Executive Summary → Contact & Links) copied verbatim from the spec, including the signal-weight table, trust-tier table, revenue-tier table, WOR passkey flow, full Team bios, and the Contact & Links table with all placeholder rows intact (`[Ahmad to provide — ...]`) — no paraphrasing.
+- **Design:** New `.whitepaper-*` CSS block in `src/index.css` — 17–18px body / 1.8 line-height per spec, mint section numbers (`01`–`14`), sticky TOC sidebar on desktop (collapses to a "Jump to section" accordion under 900px), faint spiral watermark behind the header (`opacity: 0.04`, CSS-only, same technique as the homepage hero watermark), and a `@media print` stylesheet that hides the navbar/TOC/footer and renders a clean black-on-white A4 layout via `@page { size: A4; margin: 1.5cm }`.
+- "Download PDF" calls `window.print()`; "Score a Wallet →" links to `/score`.
+- Verified via architect code review (post-build, pass with no critical/major gaps) — applied its two minor a11y suggestions: `aria-label` on the mobile TOC nav and `scope="col"` on all table headers.
+- Verified: `npm run build` (the same `tsc -b && vite build` Vercel runs) is clean; `/whitepaper`, `/`, and `/score` all screenshot correctly with the updated navbar; responsive breakpoints for the TOC and grid sections follow the same pattern established in Task 11A.
+
 ## Nothing else currently active.

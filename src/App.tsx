@@ -4,6 +4,7 @@ import { Home } from '@/pages/Home'
 import { Admin } from '@/pages/Admin'
 import { NotFound } from '@/pages/NotFound'
 import { Landing } from '@/pages/Landing'
+import { Whitepaper } from '@/pages/Whitepaper'
 
 // Task 11A: the scoring tool (formerly at "/") now lives at "/score" and
 // keeps the shared app <Layout> (navbar + status dot) exactly as before —
@@ -13,6 +14,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/whitepaper" element={<Whitepaper />} />
       <Route
         path="/score"
         element={

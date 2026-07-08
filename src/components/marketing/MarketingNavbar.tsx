@@ -14,10 +14,17 @@ export function MarketingNavbar() {
         </Link>
 
         <nav className="marketing-navbar-links marketing-navbar-links--desktop">
-          <a href="#" className="marketing-navbar-link">API Docs</a>
           <Link to="/score" className="marketing-btn marketing-btn--outline marketing-btn--sm">
             Score a Wallet
           </Link>
+          <a href="#" className="marketing-navbar-link">API Docs</a>
+          <Link to="/whitepaper" className="marketing-navbar-link">Whitepaper</Link>
+          <div className="marketing-navbar-social">
+            <a href="#" aria-label="Twitter / X" className="marketing-social-icon">𝕏</a>
+            <a href="#" aria-label="LinkedIn" className="marketing-social-icon">in</a>
+            <a href="#" aria-label="Telegram" className="marketing-social-icon">✈</a>
+            <a href="#" aria-label="Discord" className="marketing-social-icon">◈</a>
+          </div>
         </nav>
 
         <button
@@ -34,9 +41,6 @@ export function MarketingNavbar() {
 
       {open && (
         <nav className="marketing-navbar-links marketing-navbar-links--mobile">
-          <a href="#" className="marketing-navbar-link" onClick={() => setOpen(false)}>
-            API Docs
-          </a>
           <Link
             to="/score"
             className="marketing-btn marketing-btn--outline marketing-btn--sm"
@@ -44,6 +48,18 @@ export function MarketingNavbar() {
           >
             Score a Wallet
           </Link>
+          <a href="#" className="marketing-navbar-link" onClick={() => setOpen(false)}>
+            API Docs
+          </a>
+          <Link to="/whitepaper" className="marketing-navbar-link" onClick={() => setOpen(false)}>
+            Whitepaper
+          </Link>
+          <div className="marketing-navbar-social">
+            <a href="#" aria-label="Twitter / X" className="marketing-social-icon">𝕏</a>
+            <a href="#" aria-label="LinkedIn" className="marketing-social-icon">in</a>
+            <a href="#" aria-label="Telegram" className="marketing-social-icon">✈</a>
+            <a href="#" aria-label="Discord" className="marketing-social-icon">◈</a>
+          </div>
         </nav>
       )}
     </header>

@@ -43,6 +43,9 @@ Header and Create Key button always visible. Error renders inline with Retry but
 - Modal now displays full key after creation with copy button and "never shown again" warning
 - Verified live on Vercel by Manager
 
+### Task 11A — Restructure Vercel App: Marketing Front Door + Scoring at /score ✅
+Confirmed live and verified by Manager (July 8, 2026). `/` now shows the full marketing homepage (8 sections); `/score` shows the scoring tool exactly as before, zero visual changes. Full build notes in `FRONTEND_TASKS.md`.
+
 ### Task 8 — Professional Results Page Redesign ✅
 - Score panel in bordered card — ring gauge color matches chain brand (all 15 chains)
 - Tier label beneath gauge: HIGHLY TRUSTED / TRUSTED / CAUTION / SUSPICIOUS / HIGH RISK
