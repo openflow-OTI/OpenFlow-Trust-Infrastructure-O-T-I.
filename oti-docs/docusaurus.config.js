@@ -40,6 +40,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/oti-og.png',
       colorMode: {
         defaultMode: 'dark',
         disableSwitch: false,

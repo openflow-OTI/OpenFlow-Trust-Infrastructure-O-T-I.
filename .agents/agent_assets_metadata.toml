@@ -1,5 +1,10 @@
 uploads = []
-generated = []
+
+[[generated]]
+id = "8D33FSieHTlSBgF2nijpC"
+uri = "file://oti-docs/static/img/oti-og.png"
+type = "image"
+title = "OTI docs OG social card"
 
 [[outputs]]
 id = "lznAf_EMySOPb-Eixluqp"
