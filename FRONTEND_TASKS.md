@@ -107,4 +107,10 @@ Completed July 8, 2026, per Ahmad's direct request (exception to the "chain sele
 - File: `src/components/ChainSelect.tsx` — dropdown no longer renders separate "EVM" / "Non-EVM" group headers; renders one flat list under a single "SELECT COIN" heading, in the new popularity order.
 - Popularity ranking is a reasoned estimate (market cap for L1 native coins, TVL/usage mindshare for L2s) — not pulled from a live ranking API. Flagged to Ahmad for awareness; open to reordering specific chains if he disagrees with any placement.
 
+### ✅ Task 8G — Rotating Ring Effect on Wallet-Input Card and Score/Percentage Card
+Completed July 8, 2026, per Ahmad's direct request (referenced two attached screenshots of the homepage wallet-input card and the results-page score/percentage card).
+- File: `src/pages/Home.tsx` — wrapped the results score panel in a `.results-score-ring-wrap` (mirroring the existing `.home-form-card-wrap` pattern), moved the `--chain-color` CSS var up to the wrap so both the ring and the panel can read it, added a decorative `.results-score-ring` sibling layer.
+- File: `src/index.css` — added `.results-score-ring` using the same rotating conic-gradient technique as `.home-form-card-ring` (reuses the `card-ring-spin` keyframe), with its `::after` painted using the same chain-tinted `color-mix` background as `.results-score-panel` so the ring blends into the existing chain-colored glow instead of covering it. Respects `prefers-reduced-motion`. The homepage wallet-input card already had this ring from earlier work — left unchanged, now the results score panel matches it.
+- Verified both cards render correctly post-restart (screenshots taken of homepage and a live results page for wallet `0xde0B...7BAe` / ethereum).
+
 ## Nothing else currently active.
