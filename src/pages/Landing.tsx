@@ -74,6 +74,9 @@ export function Landing() {
             <Link to="/score" className="marketing-btn marketing-btn--primary marketing-btn--lg">
               Try It Free
             </Link>
+            <Link to="/whitepaper" className="marketing-btn marketing-btn--outline marketing-btn--lg">
+              Read Whitepaper
+            </Link>
             <a href="#" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
               View API Docs
             </a>
