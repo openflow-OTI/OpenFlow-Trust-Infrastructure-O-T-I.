@@ -99,7 +99,11 @@ function PlanConfigsInner() {
       qc.invalidateQueries({ queryKey: ['admin', 'plan-configs'] })
       // Clear any cached score results (rate-limit metadata may have changed).
       qc.removeQueries({ queryKey: ['score'] })
-      setEditId(null)
+      // NOTE: do NOT call setEditId(null) here.
+      // React 18 automatic batching means setEditId(null) and the isSuccess:true
+      // flip would land in the same render — the edit row (guarded by editId===cfg.id)
+      // would be gone before the success banner ever has a chance to show.
+      // The row stays open; the user dismisses it via the "Done ✓" button.
 
       // 2. Propagate the new anonymous plan limit to the homepage badge.
       //
@@ -294,7 +298,7 @@ function PlanConfigsInner() {
                               type="button"
                               onClick={cancelEdit}
                             >
-                              Cancel
+                              {editMutation.isSuccess ? 'Done ✓' : 'Cancel'}
                             </button>
                           </div>
                           {inputError && <p className="admin-error">{inputError}</p>}
@@ -313,18 +317,27 @@ function PlanConfigsInner() {
                               </p>
                             </div>
                           )}
-                          {editMutation.isSuccess && editMutation.data && (
-                            <div className="admin-alert admin-alert--success">
-                              <span style={{ fontWeight: 700 }}>✓ Saved — server confirmed.</span>
-                              <span style={{ fontSize: '0.78rem' }}>
-                                {getPlanName(editMutation.data)} daily limit is now{' '}
-                                <strong>{fmtLimit(getLimit(editMutation.data))}</strong>.
-                                {getPlanName(editMutation.data).trim().toLowerCase() === 'anonymous' && (
-                                  <> Homepage badge will update within seconds.</>
-                                )}
-                              </span>
-                            </div>
-                          )}
+                          {editMutation.isSuccess && editMutation.data && (() => {
+                            const confirmedLimit = getLimit(editMutation.data)
+                            const planName = getPlanName(editMutation.data)
+                            const limitKnown = confirmedLimit !== undefined
+                            return (
+                              <div className="admin-alert admin-alert--success">
+                                <span style={{ fontWeight: 700 }}>✓ Saved — server confirmed.</span>
+                                <span style={{ fontSize: '0.78rem' }}>
+                                  {limitKnown
+                                    ? <>{planName || 'Plan'} daily limit is now{' '}
+                                        <strong>{fmtLimit(confirmedLimit)}</strong>.
+                                        {planName.trim().toLowerCase() === 'anonymous' && (
+                                          <> Homepage badge will update within seconds.</>
+                                        )}
+                                      </>
+                                    : <>Changes saved. Reload the table to see the updated value.</>
+                                  }
+                                </span>
+                              </div>
+                            )
+                          })()}
                         </form>
                       </td>
                     </tr>
