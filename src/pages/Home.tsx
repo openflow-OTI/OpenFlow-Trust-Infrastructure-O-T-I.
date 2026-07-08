@@ -38,7 +38,10 @@ export function Home() {
   const chainInfo = getChainInfo(chain)
 
   const scoreQuery = useScore(wallet, chain)
-  const limitQuery = useAnonymousLimit()
+  // Bug 8 fix: only fire this query when the input form is actually visible.
+  // While a score result is displayed (!hasQuery is false) the badge is hidden,
+  // so a network request would just waste the freshness window.
+  const limitQuery = useAnonymousLimit({ enabled: !hasQuery })
 
   function handleSearch(address: string, selectedChain: string) {
     setSearchParams({ wallet: address, chain: selectedChain })
@@ -89,7 +92,9 @@ export function Home() {
         <div className="home-rate-badge-wrap">
           <span className="home-rate-pill">
             {limitQuery.isSuccess
-              ? `${limitQuery.data} free lookups / day`
+              ? limitQuery.data === null
+                ? 'Unlimited free lookups / day'
+                : `${limitQuery.data} free lookups / day`
               : 'Free · No login required'}
           </span>
         </div>

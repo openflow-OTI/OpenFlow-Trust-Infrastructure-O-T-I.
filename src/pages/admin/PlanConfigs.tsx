@@ -35,7 +35,12 @@ function getPlanName(cfg: PlanConfig): string {
 }
 
 function getLimit(cfg: PlanConfig): number | null | undefined {
-  return cfg.daily_limit ?? cfg.dailyLimit
+  // Cannot use ?? here because null means "Unlimited" and ?? treats null as
+  // nullish — `null ?? cfg.dailyLimit` would return cfg.dailyLimit instead of
+  // preserving the explicit null. Use explicit undefined checks instead.
+  if (cfg.daily_limit !== undefined) return cfg.daily_limit   // null | number
+  if (cfg.dailyLimit  !== undefined) return cfg.dailyLimit    // null | number
+  return undefined // field absent entirely
 }
 
 function getUpdatedAt(cfg: PlanConfig): string | null | undefined {
@@ -84,10 +89,70 @@ function PlanConfigsInner() {
         method: 'PATCH',
         body: JSON.stringify(body),
       }),
-    onSuccess: () => {
+
+    // ── Global onSuccess — fires even if the component unmounts before the
+    //    request resolves (e.g. admin clicks Save then immediately switches tabs).
+    //    ALL cache-update logic lives here. Nothing is split to the per-mutate
+    //    callback so there is no race condition and no silent no-op on unmount.
+    onSuccess: (serverResponse, variables) => {
+      // 1. Refresh the plan-configs table so the admin sees the new value.
       qc.invalidateQueries({ queryKey: ['admin', 'plan-configs'] })
+      // Clear any cached score results (rate-limit metadata may have changed).
       qc.removeQueries({ queryKey: ['score'] })
       setEditId(null)
+
+      // 2. Propagate the new anonymous plan limit to the homepage badge.
+      //
+      //    Use variables.planName (the name we sent in the PATCH request URL)
+      //    as the primary gate — not the response body's plan name field, which
+      //    may be absent or differently named depending on backend version.
+      //    The response plan name is logged as a diagnostic only.
+      const requestedPlanName = variables.planName.trim().toLowerCase()
+
+      if (requestedPlanName !== 'anonymous') {
+        // Log so a future debugging session can see that this save did NOT
+        // affect the anonymous-limit cache (rather than wondering why).
+        console.warn(
+          '[PlanConfigs] Saved plan "' + variables.planName + '" — not "anonymous".' +
+          ' anonymous-limit cache was NOT updated.',
+        )
+        return
+      }
+
+      // We know we saved the anonymous plan. Now decide how to update the cache.
+      // getLimit() correctly preserves null (= Unlimited) without ?? eating it.
+      const serverLimit = getLimit(serverResponse)   // number | null | undefined
+
+      if (serverLimit !== undefined) {
+        // Server response includes the limit field — use it for an optimistic
+        // instant update (setQueryData) AND queue a background refetch
+        // (invalidateQueries) so the cache converges to server truth even if
+        // the optimistic value is somehow off.
+        const newLimit: number | null = serverLimit   // null means Unlimited
+        console.info(
+          '[PlanConfigs] Anonymous plan saved — syncing anonymous-limit cache. New limit:',
+          newLimit === null ? 'Unlimited' : newLimit,
+        )
+        qc.setQueryData(['anonymous-limit'], newLimit)
+        qc.invalidateQueries({ queryKey: ['anonymous-limit'] })
+      } else {
+        // Response omitted the limit field (unexpected shape). Do NOT guess or
+        // coerce to null/Unlimited — that would misrepresent the real value.
+        // Rely on invalidateQueries alone to pull the correct value from the server.
+        console.warn(
+          '[PlanConfigs] Anonymous plan PATCH succeeded but response omitted daily_limit.' +
+          ' Falling back to invalidateQueries — homepage badge will refetch from server.',
+        )
+        qc.invalidateQueries({ queryKey: ['anonymous-limit'] })
+      }
+    },
+
+    // Bug 9: log mutation failures so they're visible without DevTools.
+    onError: (error) => {
+      console.warn(
+        '[PlanConfigs] Plan config PATCH failed:',
+        error instanceof Error ? error.message : String(error),
+      )
     },
   })
 
@@ -124,20 +189,10 @@ function PlanConfigsInner() {
     const body: { daily_limit: number | null; description?: string } = { daily_limit }
     if (editForm.description.trim()) body.description = editForm.description.trim()
 
-    editMutation.mutate(
-      { planName: getPlanName(cfg), body },
-      {
-        onSuccess: () => {
-          // cfg and daily_limit are guaranteed fresh here — no PATCH response
-          // parsing needed, no guess work about field names.
-          if (getPlanName(cfg).trim().toLowerCase() === 'anonymous') {
-            // null daily_limit means Unlimited; fall back to 3 for display
-            const newLimit = daily_limit === null ? 3 : daily_limit
-            qc.setQueryData(['anonymous-limit'], newLimit)
-          }
-        },
-      },
-    )
+    // No per-mutate callbacks — all cache-update logic lives in the global
+    // onSuccess defined in useMutation({...}) above, which fires regardless
+    // of whether this component is still mounted when the request resolves.
+    editMutation.mutate({ planName: getPlanName(cfg), body })
   }
 
   return (
