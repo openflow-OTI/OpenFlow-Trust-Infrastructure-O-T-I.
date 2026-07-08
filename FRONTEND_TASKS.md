@@ -127,8 +127,9 @@ Completed July 8, 2026, per Ahmad's direct request. Full spec: `docs/FRONTEND_TA
 - Verified responsively: grid sections (`How It Works`, `Trust Signals`, `Use Cases`) collapse to 1–2 columns under the documented breakpoints; hero/nav/footer collapse to a mobile hamburger layout.
 - Side-by-side screenshot of `/` and `/score` sent to Ahmad for sign-off before starting Task 11B (whitepaper), per his explicit request.
 
-### ✅ Task 11B — Whitepaper Page
+### ✅ Task 11B — Whitepaper Page (Manager verified July 8, 2026)
 Completed July 8, 2026, per Ahmad's next-task assignment (spec in `docs/FRONTEND_TASKS.md` / `docs/TASKS.md`).
+**Post-build fixes applied (same session):** (1) Body/paragraph text changed from `--text-dim` (#7a8fa8) to `--text` (#e8f4ff); table `td` text also updated. (2) Horizontal scroll on mobile eliminated — all four tables wrapped in `overflow-x: auto` containers; mobile TOC links given `word-break: break-word`. (3) Roadmap section removed entirely; Team renumbered 13→12, Contact & Links 14→13 in both `SECTIONS[]` and JSX headings. (4) Scroll-spy sidebar highlighting via `IntersectionObserver` — active entry shows bold white text, mint left-border, green tint. (5) "Back to top" floating button (bottom-right, appears after 400px scroll, smooth scroll, hidden on print). (6) `~16 min read` estimate in header subtitle in mint. (7) Mint reading progress bar fixed at top of page, fills left-to-right as user scrolls, hidden on print.
 - **Route:** `src/pages/Whitepaper.tsx` at `/whitepaper`, registered in `src/App.tsx`. Not wrapped in `<Layout>` — reuses the same `MarketingNavbar`/`MarketingFooter` built in Task 11A so the page feels like a continuation of the marketing site, not a separate document viewer.
 - **Nav update:** `src/components/marketing/MarketingNavbar.tsx` reordered to `Logo | Score a Wallet | API Docs | Whitepaper | [social icons]` on desktop, `Score a Wallet → API Docs → Whitepaper → [social icons]` on mobile — social icons (X, LinkedIn, Telegram, Discord) added to the navbar itself (previously footer-only) per the 11B nav spec. New `.marketing-navbar-social` CSS added, reusing the existing `.marketing-social-icon` recipe from the footer.
 - **Content:** All 14 sections (Executive Summary → Contact & Links) copied verbatim from the spec, including the signal-weight table, trust-tier table, revenue-tier table, WOR passkey flow, full Team bios, and the Contact & Links table with all placeholder rows intact (`[Ahmad to provide — ...]`) — no paraphrasing.
@@ -138,3 +139,9 @@ Completed July 8, 2026, per Ahmad's next-task assignment (spec in `docs/FRONTEND
 - Verified: `npm run build` (the same `tsc -b && vite build` Vercel runs) is clean; `/whitepaper`, `/`, and `/score` all screenshot correctly with the updated navbar; responsive breakpoints for the TOC and grid sections follow the same pattern established in Task 11A.
 
 ## Nothing else currently active.
+
+---
+
+## Task 11 — Developer Docs Site (Docusaurus) 🔄
+
+Started July 8, 2026. Docusaurus 3.10.1 classic project at `oti-docs/`. OTI branding applied. All 6 sections complete. Deployment: Ahmad pushes `oti-docs/` to git → Vercel auto-detects Docusaurus → zero-config build. See TASKS.md for full notes.

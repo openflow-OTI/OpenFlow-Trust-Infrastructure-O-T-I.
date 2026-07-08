@@ -1,0 +1,92 @@
+/* OTI brand color system — mint #00e5a0 on dark #05080f */
+
+:root {
+  --ifm-color-primary: #00c98d;
+  --ifm-color-primary-dark: #00b57f;
+  --ifm-color-primary-darker: #00ab78;
+  --ifm-color-primary-darkest: #008d62;
+  --ifm-color-primary-light: #00dd9b;
+  --ifm-color-primary-lighter: #00e3a0;
+  --ifm-color-primary-lightest: #1ffcb5;
+  --ifm-code-font-size: 93%;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 229, 160, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #00e5a0;
+  --ifm-color-primary-dark: #00ce90;
+  --ifm-color-primary-darker: #00c288;
+  --ifm-color-primary-darkest: #009f70;
+  --ifm-color-primary-light: #1aebaa;
+  --ifm-color-primary-lighter: #26edb0;
+  --ifm-color-primary-lightest: #4ef2bc;
+  --ifm-background-color: #05080f;
+  --ifm-background-surface-color: #0b0f1a;
+  --ifm-navbar-background-color: rgba(5, 8, 15, 0.92);
+  --ifm-footer-background-color: #0b0f1a;
+  --ifm-toc-border-color: #1c2535;
+  --ifm-color-content: #e8f4ff;
+  --ifm-color-content-secondary: #7a8fa8;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 229, 160, 0.08);
+}
+
+[data-theme='dark'] .navbar {
+  border-bottom: 1px solid #1c2535;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+[data-theme='dark'] .footer {
+  border-top: 1px solid #1c2535;
+}
+
+[data-theme='dark'] .menu {
+  background: #05080f;
+}
+
+[data-theme='dark'] .menu__link--active {
+  color: #00e5a0;
+}
+
+[data-theme='dark'] code {
+  background: #0f1520;
+  border: 1px solid #1c2535;
+  color: #00e5a0;
+}
+
+[data-theme='dark'] pre code {
+  color: inherit;
+  background: transparent;
+  border: none;
+}
+
+[data-theme='dark'] .theme-code-block {
+  background: #0b0f1a;
+  border: 1px solid #1c2535;
+}
+
+[data-theme='dark'] table td,
+[data-theme='dark'] table th {
+  border: 1px solid #1c2535;
+}
+
+[data-theme='dark'] table tr:nth-child(2n) {
+  background: #0b0f1a;
+}
+
+/* Admonition (note/warning/tip) theming */
+[data-theme='dark'] .alert--info {
+  background: rgba(0, 229, 160, 0.06);
+  border-left-color: #00e5a0;
+}
+
+[data-theme='dark'] .alert--warning {
+  background: rgba(255, 176, 32, 0.08);
+  border-left-color: #ffb020;
+}
+
+[data-theme='dark'] .alert--danger {
+  background: rgba(255, 77, 94, 0.08);
+  border-left-color: #ff4d5e;
+}

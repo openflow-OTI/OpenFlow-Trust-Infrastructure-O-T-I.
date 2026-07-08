@@ -1,0 +1,102 @@
+---
+id: getting-started
+title: Getting Started
+slug: /
+sidebar_position: 1
+---
+
+# Getting Started
+
+## What is OTI?
+
+**OTI (OpenFlow Trust Infrastructure)** is a real-time, on-chain wallet trust scoring API. You send a wallet address and a blockchain, and OTI returns a 0–100 trust score computed from five on-chain signals — wallet age, transaction count, token holding behavior, smart contract interactions, and transaction timing patterns. OTI currently supports 15 blockchains including Bitcoin, Ethereum, Solana, BNB Smart Chain, Tron, and TON, with no proprietary ML model and no off-chain data — every number is derived directly from verifiable on-chain activity.
+
+---
+
+## Step 1 — Get a Free API Key
+
+Contact the OTI team at [openflowlabs.io](https://openflowlabs.io) to request a free API key. Keys are issued in the format `oti_<32 hex chars>`.
+
+You can also **use the API anonymously** (no key required) for up to **100 requests per day** — enough to evaluate OTI before committing to a plan.
+
+---
+
+## Step 2 — Make Your First Request
+
+No setup needed. The following cURL command scores a real Ethereum wallet right now:
+
+```bash
+curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?chain=ethereum"
+```
+
+**Example response:**
+
+```json
+{
+  "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+  "chain": "ethereum",
+  "cached": false,
+  "compromised": false,
+  "score": 87,
+  "signals": {
+    "walletAge": {
+      "score": 100,
+      "weighted": 25,
+      "maxWeight": 25
+    },
+    "transactionCount": {
+      "score": 100,
+      "weighted": 20,
+      "maxWeight": 20
+    },
+    "tokenHoldingBehavior": {
+      "score": 90,
+      "weighted": 18,
+      "maxWeight": 20
+    },
+    "smartContractInteractions": {
+      "score": 85,
+      "weighted": 17,
+      "maxWeight": 20
+    },
+    "transactionTimingPatterns": {
+      "score": 46,
+      "weighted": 7,
+      "maxWeight": 15
+    }
+  }
+}
+```
+
+The `score` field is the overall trust score (0–100). Each signal in `signals` contains its raw `score`, the `weighted` points it contributes, and its `maxWeight` cap. See [Score Explanation](/score-explanation) for what each number means.
+
+---
+
+## Step 3 — Add Your API Key (Optional)
+
+When you have a key, pass it in the `x-api-key` header:
+
+```bash
+curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?chain=ethereum" \
+  -H "x-api-key: oti_your_key_here"
+```
+
+---
+
+## Base URL
+
+All API requests go to:
+
+```
+https://workspaceapi-server-production-5c0c.up.railway.app/api
+```
+
+---
+
+## Next Steps
+
+- [API Reference](/api-reference) — all endpoints, parameters, and response shapes
+- [Score Explanation](/score-explanation) — what the 5 signals measure and how tiers work
+- [Supported Chains](/supported-chains) — all 15 chains and any limitations
+- [Rate Limits & Plans](/rate-limits) — anonymous and keyed plan limits
+- [Code Examples](/code-examples) — copy-paste JavaScript, Python, and cURL examples

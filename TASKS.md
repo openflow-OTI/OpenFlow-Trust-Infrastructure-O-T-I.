@@ -58,6 +58,16 @@ Confirmed live and verified by Manager (July 8, 2026). `/` now shows the full ma
 - Full color system upgrade (see OTI Color System section)
 - Verified live on Vercel by Manager — July 7, 2026
 
+### ✅ Task 11B — Whitepaper Page (Manager verified July 8, 2026)
+Route `/whitepaper` — full whitepaper with 13 sections, sticky TOC sidebar, mobile accordion TOC, print stylesheet (A4). Post-build fixes: white body text, mobile horizontal scroll eliminated (table overflow wrappers), Roadmap section removed and sections renumbered (Team=12, Contact=13), scroll-spy TOC highlighting, back-to-top button, `~16 min read` header badge, reading progress bar.
+
+---
+
+## Active Tasks
+
+### 🔄 Task 11 — Developer Docs Site (Docusaurus)
+Started July 8, 2026. Docusaurus 3.10.1 classic project scaffolded at `oti-docs/`. Six sections completed: Getting Started, API Reference, Score Explanation, Supported Chains, Rate Limits & Plans, Code Examples. OTI branding applied (dark #05080f, mint #00e5a0, dark mode default). Anonymous limit verified live (100/day). All chain IDs verified from live API. Awaiting Ahmad to push `oti-docs/` to git for Vercel auto-deployment.
+
 ---
 
 ## Pending Tasks
