@@ -97,9 +97,9 @@ Backend Builder verifying `daily_limit` enforcement across all plan types (free,
 
 ## Active
 
-### ✅ Task 8E — Disable Mobile Pinch/Double-Tap Zoom Across the App (compromise version)
-Completed July 8, 2026. Per Ahmad's accessibility compromise: viewport meta set to `maximum-scale=2, minimum-scale=1` (not `user-scalable=no`/`maximum-scale=1`) — curbs runaway pinch-zoom while preserving accessibility zoom. Added `touch-action: manipulation` on html/body as an iOS double-tap-zoom backstop; verified it does not affect `.admin-table-wrap` horizontal scroll or the `.chain-select-panel` dropdown. Desktop zoom (Ctrl+/-, Ctrl+scroll) unaffected — those properties are touch/viewport-only.
-*(Note: maximum-scale was further reduced from 5→2 on Ahmad's follow-up request in the same session. Verified by inspection and static screenshots only — no physical touch-gesture test was possible in this environment; recommend a quick real-device check.)*
+### ✅ Task 8E — Disable Mobile Pinch/Double-Tap Zoom Across the App
+Completed July 8, 2026. Final state: viewport meta set to `maximum-scale=1, minimum-scale=1`. Added `touch-action: manipulation` on html/body as an iOS double-tap-zoom backstop; verified it does not affect `.admin-table-wrap` horizontal scroll or the `.chain-select-panel` dropdown. Desktop zoom (Ctrl+/-, Ctrl+scroll) unaffected — those properties are touch/viewport-only.
+*(History: started at maximum-scale=5 as an accessibility compromise (avoiding user-scalable=no / maximum-scale=1 per Ahmad's initial accessibility concern), then reduced to 2, then explicitly set to 1 by Ahmad on final follow-up — overriding the earlier accessibility carve-out. Flagged to Ahmad both times before applying; he confirmed 1 explicitly. Mobile zoom is now fully disabled, same effective result as user-scalable=no. Verified by inspection and static screenshots only — no physical touch-gesture test was possible in this environment; recommend a quick real-device check.)*
 
 ### ✅ Task 8F — Reorder Chain Selector by Popularity, Remove EVM/Non-EVM Grouping
 Completed July 8, 2026, per Ahmad's direct request (exception to the "chain selector is off-limits" rule — confirmed explicitly by Ahmad in-session).
