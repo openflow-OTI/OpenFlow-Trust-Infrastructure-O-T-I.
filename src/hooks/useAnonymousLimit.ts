@@ -24,12 +24,11 @@ export function useAnonymousLimit() {
       if (limit == null || !Number.isFinite(limit)) return 3
       return limit as number
     },
-    // refetchOnMount: 'always' — unconditionally refetch every time the home
-    // page mounts, so an admin limit change is reflected on the very next visit
-    // regardless of cache state. staleTime: 0 keeps the in-memory value from
-    // being served as "fresh" between mounts.
-    staleTime: 0,
-    refetchOnMount: 'always',
+    // staleTime: 60s — keeps setQueryData values fresh long enough that
+    // navigating admin → home does not immediately overwrite them with a
+    // network fetch. Regular users still get a fresh fetch on every visit
+    // (cache starts empty). After 60s the data re-fetches in background.
+    staleTime: 60_000,
     retry: false,
   })
 }
