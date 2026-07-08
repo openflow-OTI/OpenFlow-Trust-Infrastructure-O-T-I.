@@ -292,15 +292,17 @@ textarea {
               0 0 32px rgba(0, 229, 160, 0.07);
 }
 
-/* Animated "Try an example →" border — CSS conic-gradient trick */
-@property --example-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
+/* Animated "Try an example →" border — GPU-cheap version.
+   Previous implementation animated a custom @property (--example-angle) that
+   drove the conic-gradient's `from` angle directly. That forces the browser
+   to recompute and repaint the gradient itself on every frame — expensive,
+   and the actual cause of the mobile jank (not box-shadow/filter, there
+   weren't any animated here — the gradient repaint was the culprit).
+   This version instead rotates a small pseudo-element with `transform`,
+   which is compositor-only (no paint, no layout) and is masked down to a
+   thin ring so only a moving mint highlight is visible around the pill. */
 @keyframes example-border-spin {
-  to { --example-angle: 360deg; }
+  to { transform: rotate(360deg); }
 }
 
 /* "Try an example →" link */
@@ -310,6 +312,7 @@ textarea {
 }
 
 .home-example-link {
+  position: relative;
   display: inline-block;
   font-size: 0.8rem;
   color: #ffffff;
@@ -317,21 +320,41 @@ textarea {
   letter-spacing: 0.02em;
   padding: 0.3rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid transparent;
-  background:
-    linear-gradient(var(--surface), var(--surface)) padding-box,
-    conic-gradient(
-      from var(--example-angle),
-      transparent 0%,
-      transparent 58%,
-      rgba(0, 229, 160, 0.5) 64%,
-      var(--accent) 72%,
-      rgba(0, 229, 160, 0.5) 80%,
-      transparent 86%
-    ) border-box;
-  animation: example-border-spin 2.2s linear infinite;
+  background: var(--surface);
   transition: color 0.15s ease, text-shadow 0.15s ease;
   cursor: pointer;
+}
+
+/* Thin rotating mint ring, carved out via mask so only the border strip
+   (not the whole pill) shows the gradient. `transform: rotate` is the only
+   animated property — GPU compositor handles it, zero repaint per frame. */
+.home-example-link::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 58%,
+    rgba(0, 229, 160, 0.5) 64%,
+    var(--accent) 72%,
+    rgba(0, 229, 160, 0.5) 80%,
+    transparent 86%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  will-change: transform;
+  animation: example-border-spin 2.2s linear infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-example-link::before {
+    animation: none !important;
+  }
 }
 
 .home-example-link:hover {
@@ -457,66 +480,116 @@ textarea {
   padding-bottom: 0.5rem;
 }
 
-/* ── Mobile: lock home page to viewport — everything fits, nothing scrolls ── */
+/* ── Mobile: lock home page to viewport — everything fits, nothing scrolls ──
+   `.app-main` has `flex: 1` (flex-basis: 0%) from the base rule above, which
+   makes a flex child's `height` property get ignored in favor of flex-basis
+   sizing. Previous Builder set `height` here expecting it to take effect,
+   but since app-shell's own height also depends on a min-height percentage
+   chain (not a hard height), there's no free space for flex-grow to
+   distribute — so app-main silently collapsed to content size instead of
+   the intended fixed viewport-minus-navbar height. That's what was
+   swallowing the reclaimed spacing into one dead gap at the bottom instead
+   of distributing it via `.home-page`'s `justify-content: space-between`.
+   Fix: `flex: none` so the explicit `height` is actually honored. */
 @media (max-width: 768px) {
   .app-main:has(.home-page) {
+    flex: none;
     height: calc(100dvh - 70px);
     overflow: hidden;
     padding-bottom: 0;
   }
 }
 
-/* ── Small phone tightening (≤480px) ── */
+/* ── Small phone tightening (≤480px) ──
+   Sizing pass: every element reduced consistently so the page reads at
+   comfortable (not "zoomed-in") scale on a 375–414px phone. The space saved
+   is reinvested as gap below, concentrated where the layout felt most
+   cramped (rate badge → WOR links), and typography is re-tiered:
+   primary (wordmark, submit button) > secondary (tagline, input) > tertiary
+   (labels, badge, footer, WOR links) instead of one flat size. */
 @media (max-width: 480px) {
   .app-main:has(.home-page) {
-    padding-top: 0.35rem;
+    padding-top: 0.3rem;
     padding-left: 1rem;
     padding-right: 1rem;
   }
 
   .home-page {
-    padding: 0.15rem 0 0;
-    gap: 0.45rem;
-  }
-
-  .home-logo-wrap {
-    margin-bottom: 0.2rem;
-  }
-
-  .home-logo-spin {
-    width: 54px;
-    height: 54px;
-  }
-
-  .home-title {
-    font-size: 1.75rem;
-    margin-bottom: 0.1rem;
-  }
-
-  .home-wordmark-sub {
-    font-size: 0.55rem;
-    margin-bottom: 0.15rem;
-  }
-
-  .home-tagline {
-    font-size: 0.72rem;
-  }
-
-  .home-form-card {
-    padding: 0.8rem 0.8rem;
-  }
-
-  .home-example-wrap {
-    margin-top: 0.4rem;
-  }
-
-  .home-wor-links {
+    padding: 0.1rem 0 0;
     gap: 0.4rem;
   }
 
+  .home-logo-wrap {
+    margin-bottom: 0.15rem;
+  }
+
+  .home-logo-spin {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Primary: wordmark stays the loudest thing on the page */
+  .home-title {
+    font-size: 1.55rem;
+    margin-bottom: 0.15rem;
+  }
+
+  /* Tertiary: small + muted */
+  .home-wordmark-sub {
+    font-size: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
+  /* Secondary: readable but clearly a step below the wordmark */
+  .home-tagline {
+    font-size: 0.66rem;
+  }
+
+  .home-form-card {
+    padding: 0.65rem 0.7rem;
+    border-radius: 0.85rem;
+  }
+
+  .home-example-wrap {
+    margin-top: 0.35rem;
+  }
+
+  /* Tertiary */
+  .home-example-link {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  /* Breathing room: this was the most cramped gap on the page */
+  .home-rate-badge-wrap {
+    margin-top: 0.85rem;
+  }
+
+  /* Tertiary */
+  .home-rate-pill {
+    font-size: 0.66rem;
+    padding: 0.25rem 0.8rem;
+  }
+
+  .home-wor-links {
+    gap: 0.45rem;
+    margin-top: 0.9rem;
+  }
+
+  /* Tertiary */
+  .home-wor-link {
+    font-size: 0.68rem;
+  }
+
+  .home-report-badge {
+    font-size: 0.7rem;
+    padding: 0.45rem 0.9rem;
+  }
+
   .home-footer {
-    padding: 0.5rem 0 0.1rem;
-    margin-top: 0;
+    padding: 0.45rem 0 0.1rem;
+    margin-top: 0.3rem;
+    font-size: 0.62rem;
   }
 }
 
@@ -557,7 +630,7 @@ textarea {
 }
 
 .wallet-form-input::placeholder {
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .wallet-form-input:focus {
@@ -741,13 +814,34 @@ textarea {
 
 /* Wallet form mobile tightening — must live after base rules to win cascade */
 @media (max-width: 480px) {
+  /* Tertiary */
   .wallet-form-label {
     margin-top: 0.5rem;
+    font-size: 0.68rem;
   }
 
+  /* Secondary: input text one step down from primary wordmark/button */
+  .wallet-form-input {
+    padding: 0.65rem 2.2rem 0.65rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .chain-select-trigger {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .chain-select-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Primary: the loudest interactive element on the page, alongside the wordmark */
   .wallet-form-submit {
-    margin-top: 1rem;
+    margin-top: 0.9rem;
     padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
   }
 }
 
