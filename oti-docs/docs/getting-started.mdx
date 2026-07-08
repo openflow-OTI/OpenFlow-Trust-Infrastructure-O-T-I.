@@ -5,11 +5,21 @@ slug: /
 sidebar_position: 1
 ---
 
+import WalletScorer from '@site/src/components/WalletScorer';
+
 # Getting Started
 
 ## What is OTI?
 
 **OTI (OpenFlow Trust Infrastructure)** is a real-time, on-chain wallet trust scoring API. You send a wallet address and a blockchain, and OTI returns a 0–100 trust score computed from five on-chain signals — wallet age, transaction count, token holding behavior, smart contract interactions, and transaction timing patterns. OTI currently supports 15 blockchains including Bitcoin, Ethereum, Solana, BNB Smart Chain, Tron, and TON, with no proprietary ML model and no off-chain data — every number is derived directly from verifiable on-chain activity.
+
+---
+
+## Try It Live
+
+Enter any wallet address below and hit **▶ Score** to get a real response from the OTI API — no sign-up, no key needed.
+
+<WalletScorer />
 
 ---
 
@@ -39,31 +49,11 @@ curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8d
   "compromised": false,
   "score": 87,
   "signals": {
-    "walletAge": {
-      "score": 100,
-      "weighted": 25,
-      "maxWeight": 25
-    },
-    "transactionCount": {
-      "score": 100,
-      "weighted": 20,
-      "maxWeight": 20
-    },
-    "tokenHoldingBehavior": {
-      "score": 90,
-      "weighted": 18,
-      "maxWeight": 20
-    },
-    "smartContractInteractions": {
-      "score": 85,
-      "weighted": 17,
-      "maxWeight": 20
-    },
-    "transactionTimingPatterns": {
-      "score": 46,
-      "weighted": 7,
-      "maxWeight": 15
-    }
+    "walletAge":                 { "score": 100, "weighted": 25, "maxWeight": 25 },
+    "transactionCount":          { "score": 100, "weighted": 20, "maxWeight": 20 },
+    "tokenHoldingBehavior":      { "score": 90,  "weighted": 18, "maxWeight": 20 },
+    "smartContractInteractions": { "score": 85,  "weighted": 17, "maxWeight": 20 },
+    "transactionTimingPatterns": { "score": 46,  "weighted": 7,  "maxWeight": 15 }
   }
 }
 ```
