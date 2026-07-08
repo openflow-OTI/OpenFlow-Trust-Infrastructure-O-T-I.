@@ -501,7 +501,13 @@ textarea {
   .app-main:has(.home-page) {
     flex: none;
     height: calc(100dvh - 70px);
-    overflow: hidden;
+    /* `overflow-y: auto` (not `hidden`): on every phone height this was
+       tuned against, content fits exactly and this never engages — but the
+       bigger text sizes below mean a handful of unusually short/old phones
+       (e.g. 320×568) can't fit everything. A safety-net scroll there beats
+       silently clipping content off-screen. */
+    overflow-y: auto;
+    overflow-x: hidden;
     padding-bottom: 0;
   }
 
@@ -530,7 +536,7 @@ textarea {
 
   .home-page {
     padding: 0.1rem 0 0;
-    gap: 0.6rem;
+    gap: 0.55rem;
   }
 
   .home-logo-wrap {
@@ -542,21 +548,21 @@ textarea {
     height: 44px;
   }
 
-  /* Primary: wordmark stays the loudest thing on the page */
+  /* Primary: wordmark stays the loudest thing on the page — sized up */
   .home-title {
-    font-size: 1.55rem;
+    font-size: 2rem;
     margin-bottom: 0.15rem;
   }
 
-  /* Tertiary: small + muted */
+  /* Tertiary: still the smallest, but sized up to stay readable */
   .home-wordmark-sub {
-    font-size: 0.5rem;
+    font-size: 0.66rem;
     margin-bottom: 0.2rem;
   }
 
   /* Secondary: readable but clearly a step below the wordmark */
   .home-tagline {
-    font-size: 0.66rem;
+    font-size: 0.85rem;
   }
 
   .home-form-card {
@@ -570,8 +576,8 @@ textarea {
 
   /* Tertiary */
   .home-example-link {
-    font-size: 0.7rem;
-    padding: 0.25rem 0.75rem;
+    font-size: 0.82rem;
+    padding: 0.3rem 0.85rem;
   }
 
   .home-rate-badge-wrap {
@@ -580,28 +586,28 @@ textarea {
 
   /* Tertiary */
   .home-rate-pill {
-    font-size: 0.66rem;
-    padding: 0.25rem 0.8rem;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.9rem;
   }
 
   .home-wor-links {
-    gap: 0.45rem;
+    gap: 0.5rem;
     margin-top: 0;
   }
 
   /* Tertiary */
   .home-wor-link {
-    font-size: 0.68rem;
+    font-size: 0.82rem;
   }
 
   .home-report-badge {
-    font-size: 0.7rem;
-    padding: 0.45rem 0.9rem;
+    font-size: 0.82rem;
+    padding: 0.5rem 1rem;
   }
 
   .home-footer {
     padding: 0.45rem 0 0.1rem;
-    font-size: 0.62rem;
+    font-size: 0.72rem;
   }
 }
 
@@ -851,18 +857,18 @@ textarea {
   /* Tertiary */
   .wallet-form-label {
     margin-top: 0.5rem;
-    font-size: 0.68rem;
+    font-size: 0.8rem;
   }
 
   /* Secondary: input text one step down from primary wordmark/button */
   .wallet-form-input {
-    padding: 0.65rem 2.2rem 0.65rem 0.75rem;
-    font-size: 0.85rem;
+    padding: 0.7rem 2.2rem 0.7rem 0.8rem;
+    font-size: 1rem;
   }
 
   .chain-select-trigger {
-    padding: 0.7rem 0.9rem;
-    font-size: 0.85rem;
+    padding: 0.75rem 0.9rem;
+    font-size: 1rem;
   }
 
   .chain-select-icon {
@@ -873,9 +879,22 @@ textarea {
   /* Primary: the loudest interactive element on the page, alongside the wordmark */
   .wallet-form-submit {
     margin-top: 0.9rem;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
+    padding: 0.8rem 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
+  }
+
+  .wallet-form-error {
+    font-size: 0.85rem;
+  }
+
+  .chain-select-group-label {
+    font-size: 0.72rem;
+  }
+
+  .chain-select-option {
+    font-size: 1rem;
+    padding: 0.7rem 0.8rem;
   }
 }
 
