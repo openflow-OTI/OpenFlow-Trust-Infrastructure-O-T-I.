@@ -108,15 +108,15 @@ export function Home() {
         </div>
 
         <footer className="home-footer">
-          © 2026 OpenFlow Labs ·{' '}
           <a
-            href="https://openflowlabs.io"
+            href="https://otiscore.vercel.app"
             className="home-footer-link"
             target="_blank"
             rel="noopener noreferrer"
           >
-            openflowlabs.io
+            otiscore.vercel.app
           </a>
+          {' · '}OTI Trust Score
         </footer>
       </div>
     )
