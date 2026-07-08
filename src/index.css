@@ -53,6 +53,29 @@ textarea {
   user-select: text;
 }
 
+/* Allow selection on any element that displays data the user needs to copy.
+   body has user-select:none to prevent accidental drag-selection of nav/buttons;
+   these overrides restore it for actual content. */
+.results-hero-address,
+.results-body,
+.error-panel-message,
+.compromised-banner-reason,
+.compromised-banner-meta,
+.score-gauge-number,
+.score-gauge-percent,
+.signal-bar-value,
+.signal-bar-label,
+.signal-bar-meta,
+.admin-table td,
+.admin-td-mono,
+.admin-error,
+.admin-success,
+.admin-section-desc,
+.cached-badge {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 .app-shell {
   min-height: 100%;
   display: flex;
@@ -756,6 +779,17 @@ textarea {
   max-width: 52ch;
 }
 
+@media (max-width: 480px) {
+  .results-hero-address {
+    max-width: 100%;
+    font-size: 0.78rem;
+  }
+  .results-back {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
 .results-copy-btn {
   flex-shrink: 0;
   background: none;
@@ -882,6 +916,12 @@ textarea {
 
 .results-share-wrap .share-btn {
   flex: 1;
+}
+
+@media (max-width: 480px) {
+  .results-share-wrap {
+    flex-direction: column;
+  }
 }
 
 /* Task 8 — footer */

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminFetch } from '@/lib/adminClient'
 import { CopyButton } from './CopyButton'
+import { CHAINS as CHAIN_LIST } from '@/lib/chains'
 
 interface CompromisedWallet {
   id: string
@@ -11,11 +12,9 @@ interface CompromisedWallet {
   reported_at: string
 }
 
-const CHAINS = [
-  'ethereum', 'bsc', 'polygon', 'arbitrum', 'optimism',
-  'base', 'avalanche', 'fantom', 'linea', 'zksync',
-  'ton', 'solana', 'sui', 'bitcoin', 'tron',
-]
+// Derive chain IDs from the canonical chains list — stays in sync automatically
+// when chains are added or removed from src/lib/chains.ts.
+const CHAINS = CHAIN_LIST.map(c => c.id)
 
 function fmt(ts: string) {
   if (!ts) return '—'

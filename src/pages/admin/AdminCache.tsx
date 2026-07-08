@@ -15,7 +15,7 @@ export function AdminCache() {
       setMessage('Cache flushed successfully.')
     } catch (err) {
       setStatus('error')
-      setMessage(String(err))
+      setMessage(err instanceof Error ? err.message : String(err))
     }
   }
 

@@ -299,10 +299,31 @@ function PlanConfigsInner() {
                           </div>
                           {inputError && <p className="admin-error">{inputError}</p>}
                           {editMutation.isError && (
-                            <p className="admin-error">{editMutation.error instanceof Error ? editMutation.error.message : String(editMutation.error)}</p>
+                            <div className="admin-error-block">
+                              <p className="admin-error" style={{ fontWeight: 700 }}>
+                                ✗ Save failed — the daily limit was NOT changed.
+                              </p>
+                              <p className="admin-error">
+                                {editMutation.error instanceof Error
+                                  ? editMutation.error.message
+                                  : String(editMutation.error)}
+                              </p>
+                              <p className="admin-error" style={{ fontSize: '0.74rem', opacity: 0.7 }}>
+                                Check the backend connection and admin secret, then try again.
+                              </p>
+                            </div>
                           )}
-                          {editMutation.isSuccess && (
-                            <p className="admin-success">Saved.</p>
+                          {editMutation.isSuccess && editMutation.data && (
+                            <div className="admin-alert admin-alert--success">
+                              <span style={{ fontWeight: 700 }}>✓ Saved — server confirmed.</span>
+                              <span style={{ fontSize: '0.78rem' }}>
+                                {getPlanName(editMutation.data)} daily limit is now{' '}
+                                <strong>{fmtLimit(getLimit(editMutation.data))}</strong>.
+                                {getPlanName(editMutation.data).trim().toLowerCase() === 'anonymous' && (
+                                  <> Homepage badge will update within seconds.</>
+                                )}
+                              </span>
+                            </div>
                           )}
                         </form>
                       </td>
