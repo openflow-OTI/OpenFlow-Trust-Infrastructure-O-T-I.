@@ -84,16 +84,21 @@ function PlanConfigsInner() {
         method: 'PATCH',
         body: JSON.stringify(body),
       }),
-    onSuccess: () => {
+    onSuccess: (updatedConfig) => {
       qc.invalidateQueries({ queryKey: ['admin', 'plan-configs'] })
-      // Mark stale — useAnonymousLimit has refetchOnMount:'always' so the home
-      // page unconditionally re-fetches on next mount, picking up the new number.
-      qc.invalidateQueries({ queryKey: ['anonymous-limit'] })
-      // Remove ALL cached score results (including cached 429 errors).
-      // useScore has retry:false and no gcTime override, so a 429 returned before
-      // the limit change sits in cache for 5 min and blocks fresh lookups even
-      // after the limit is raised. Evicting here forces the next lookup to hit
-      // the network and get a real response under the new limit.
+
+      // The PATCH response already contains the updated daily_limit.
+      // Write it directly into the home-page cache — no GET refetch needed,
+      // no server-side or edge caching to fight.
+      if (getPlanName(updatedConfig).trim().toLowerCase() === 'anonymous') {
+        const raw = getLimit(updatedConfig)
+        const coerced = Number(raw)
+        const newLimit = (raw == null || !Number.isFinite(coerced) || coerced < 0)
+          ? 3
+          : Math.floor(coerced)
+        qc.setQueryData(['anonymous-limit'], newLimit)
+      }
+
       qc.removeQueries({ queryKey: ['score'] })
       setEditId(null)
     },
