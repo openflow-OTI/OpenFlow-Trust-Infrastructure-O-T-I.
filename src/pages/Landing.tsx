@@ -77,7 +77,7 @@ export function Landing() {
             <Link to="/whitepaper" className="marketing-btn marketing-btn--outline marketing-btn--lg">
               Read Whitepaper
             </Link>
-            <a href="#" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
+            <a href="https://docs.otiscore.vercel.app" target="_blank" rel="noopener noreferrer" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
               View API Docs
             </a>
           </div>
@@ -146,13 +146,13 @@ export function Landing() {
         <div className="marketing-container marketing-api-inner">
           <h2 className="marketing-section-heading">Free API Key. No Credit Card.</h2>
           <p className="marketing-api-sub">
-            Anonymous: 3 lookups/day. Register free for higher limits.
+            Anonymous: 100 lookups/day. Register free for higher limits.
           </p>
           <div className="marketing-code-block">
             <pre><code>{CURL_EXAMPLE}</code></pre>
             <CopyButton value={CURL_EXAMPLE} className="marketing-code-copy-btn" />
           </div>
-          <a href="#" className="marketing-btn marketing-btn--primary">
+          <a href="https://docs.otiscore.vercel.app" target="_blank" rel="noopener noreferrer" className="marketing-btn marketing-btn--primary">
             Read the Docs
           </a>
         </div>
