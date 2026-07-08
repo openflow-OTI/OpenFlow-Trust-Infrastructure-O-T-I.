@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { MarketingNavbar } from '@/components/marketing/MarketingNavbar'
 import { MarketingFooter } from '@/components/marketing/MarketingFooter'
@@ -205,6 +205,33 @@ function ContactTable() {
 
 export function Whitepaper() {
   const [tocOpen, setTocOpen] = useState(false)
+  const [activeId, setActiveId] = useState<string>(SECTIONS[0].id)
+  const observerRef = useRef<IntersectionObserver | null>(null)
+
+  useEffect(() => {
+    const headings = SECTIONS.map((s) => document.getElementById(s.id)).filter(Boolean) as HTMLElement[]
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id)
+            break
+          }
+        }
+      },
+      {
+        rootMargin: '-20% 0px -70% 0px',
+        threshold: 0,
+      },
+    )
+
+    headings.forEach((el) => observerRef.current!.observe(el))
+
+    return () => {
+      observerRef.current?.disconnect()
+    }
+  }, [])
 
   function handlePrint() {
     window.print()
@@ -257,7 +284,7 @@ export function Whitepaper() {
         <aside className="whitepaper-toc-desktop" aria-label="Table of contents">
           <nav className="whitepaper-toc-desktop-list">
             {SECTIONS.map((s) => (
-              <a key={s.id} href={`#${s.id}`}>
+              <a key={s.id} href={`#${s.id}`} className={activeId === s.id ? 'is-active' : ''}>
                 <span className="whitepaper-toc-number">{s.number}</span> {s.title}
               </a>
             ))}

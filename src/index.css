@@ -962,6 +962,13 @@ textarea {
   color: var(--text);
 }
 
+.whitepaper-toc-desktop-list a.is-active {
+  color: var(--accent);
+  border-left: 2px solid var(--accent);
+  margin-left: -1.1rem;
+  padding-left: calc(1.1rem - 2px);
+}
+
 .whitepaper-toc-number {
   color: var(--accent);
   font-family: var(--mono);
