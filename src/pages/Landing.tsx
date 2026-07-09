@@ -77,7 +77,7 @@ export function Landing() {
             <Link to="/whitepaper" className="marketing-btn marketing-btn--outline marketing-btn--lg">
               Read Whitepaper
             </Link>
-            <a href="https://docs.otiscore.vercel.app" target="_blank" rel="noopener noreferrer" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
+            <a href="/docs/" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
               View API Docs
             </a>
           </div>
@@ -152,7 +152,7 @@ export function Landing() {
             <pre><code>{CURL_EXAMPLE}</code></pre>
             <CopyButton value={CURL_EXAMPLE} className="marketing-code-copy-btn" />
           </div>
-          <a href="https://docs.otiscore.vercel.app" target="_blank" rel="noopener noreferrer" className="marketing-btn marketing-btn--primary">
+          <a href="/docs/" className="marketing-btn marketing-btn--primary">
             Read the Docs
           </a>
         </div>

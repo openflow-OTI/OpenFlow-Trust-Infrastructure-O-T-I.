@@ -17,7 +17,7 @@ export function MarketingNavbar() {
           <Link to="/score" className="marketing-btn marketing-btn--outline marketing-btn--sm">
             Score a Wallet
           </Link>
-          <a href="https://docs.otiscore.vercel.app" target="_blank" rel="noopener noreferrer" className="marketing-navbar-link">API Docs</a>
+          <a href="/docs/" className="marketing-navbar-link">API Docs</a>
           <Link to="/whitepaper" className="marketing-navbar-link">Whitepaper</Link>
           <div className="marketing-navbar-social">
             <a href="#" aria-label="Twitter / X" className="marketing-social-icon">𝕏</a>
@@ -48,7 +48,7 @@ export function MarketingNavbar() {
           >
             Score a Wallet
           </Link>
-          <a href="https://docs.otiscore.vercel.app" target="_blank" rel="noopener noreferrer" className="marketing-navbar-link" onClick={() => setOpen(false)}>
+          <a href="/docs/" className="marketing-navbar-link" onClick={() => setOpen(false)}>
             API Docs
           </a>
           <Link to="/whitepaper" className="marketing-navbar-link" onClick={() => setOpen(false)}>

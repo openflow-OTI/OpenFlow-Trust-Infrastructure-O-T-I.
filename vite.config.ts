@@ -10,6 +10,12 @@ export default defineConfig({
     port: 5000,
     allowedHosts: true,
     strictPort: true,
+    proxy: {
+      '/docs': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {
