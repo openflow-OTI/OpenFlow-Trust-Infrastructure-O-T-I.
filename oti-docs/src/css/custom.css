@@ -23,7 +23,7 @@
   --ifm-color-primary-lightest: #4ef2bc;
   --ifm-background-color: #05080f;
   --ifm-background-surface-color: #0b0f1a;
-  --ifm-navbar-background-color: rgba(5, 8, 15, 0.92);
+  --ifm-navbar-background-color: rgba(5, 8, 15, 0.95);
   --ifm-footer-background-color: #0b0f1a;
   --ifm-toc-border-color: #1c2535;
   --ifm-color-content: #e8f4ff;
@@ -33,8 +33,6 @@
 
 [data-theme='dark'] .navbar {
   border-bottom: 1px solid #1c2535;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 [data-theme='dark'] .footer {
@@ -75,7 +73,7 @@
   background: #0b0f1a;
 }
 
-/* Admonition (note/warning/tip) theming */
+/* ── Admonition (note/warning/tip) theming ── */
 [data-theme='dark'] .alert--info {
   background: rgba(0, 229, 160, 0.06);
   border-left-color: #00e5a0;
@@ -89,4 +87,68 @@
 [data-theme='dark'] .alert--danger {
   background: rgba(255, 77, 94, 0.08);
   border-left-color: #ff4d5e;
+}
+
+[data-theme='dark'] .alert--success {
+  background: rgba(0, 229, 160, 0.06);
+  border-left-color: #00e5a0;
+}
+
+/* ── Table overflow on mobile ── */
+.markdown table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+}
+
+/* ── Mobile navbar hamburger — force nav items to render ── */
+.navbar-sidebar__item .navbar__item {
+  display: block !important;
+}
+
+.navbar-sidebar .navbar__items {
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* ── Mobile navbar sidebar background ── */
+[data-theme='dark'] .navbar-sidebar {
+  background: #05080f;
+  border-right: 1px solid #1c2535;
+}
+
+[data-theme='dark'] .navbar-sidebar__brand {
+  background: #05080f;
+  border-bottom: 1px solid #1c2535;
+}
+
+[data-theme='dark'] .navbar-sidebar__back {
+  background: #0b0f1a;
+  border-bottom: 1px solid #1c2535;
+}
+
+/* ── Sidebar items on mobile ── */
+[data-theme='dark'] .navbar-sidebar .menu__link {
+  color: #e8f4ff;
+}
+
+[data-theme='dark'] .navbar-sidebar .menu__link:hover {
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.06);
+}
+
+/* ── Clean table header ── */
+[data-theme='dark'] table th {
+  background: #0b0f1a;
+  color: #7a8fa8;
+  font-size: 0.8em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── Smooth scrolling ── */
+html {
+  scroll-behavior: smooth;
 }

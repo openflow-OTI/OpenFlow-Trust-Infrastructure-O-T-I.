@@ -6,18 +6,30 @@ sidebar_position: 2
 
 # API Reference
 
-**Base URL:** `https://workspaceapi-server-production-5c0c.up.railway.app/api`
+## Base URL
 
-All responses are `Content-Type: application/json`. Authentication is optional for anonymous requests; keyed requests include `x-api-key: oti_<your_key>` in the header.
+All requests go to:
+
+```
+https://workspaceapi-server-production-5c0c.up.railway.app/api
+```
+
+:::info
+This is the official, live OTI API — hosted on Railway (a cloud infrastructure provider). The URL is correct. A shorter branded domain is being configured and this doc will be updated when it goes live.
+:::
+
+All responses are `Content-Type: application/json`.
 
 ---
 
 ## Authentication
 
-| Method | Header | Notes |
-|--------|--------|-------|
-| Anonymous | _(none)_ | Up to 100 requests/day per IP |
-| API Key | `x-api-key: oti_<key>` | Higher limits depending on plan |
+| Method | Header | Daily Limit |
+|--------|--------|-------------|
+| Anonymous | _(none required)_ | 100 req/day per IP |
+| API Key | `x-api-key: oti_<your_key>` | Higher limit depending on plan |
+
+Anonymous access is always available with no setup. Add `x-api-key` when you need higher limits or production use.
 
 ---
 
@@ -26,8 +38,6 @@ All responses are `Content-Type: application/json`. Authentication is optional f
 ### `GET /healthz`
 
 Health check. Returns immediately with no computation.
-
-**Request**
 
 ```bash
 curl https://workspaceapi-server-production-5c0c.up.railway.app/api/healthz
@@ -43,9 +53,7 @@ curl https://workspaceapi-server-production-5c0c.up.railway.app/api/healthz
 
 ### `GET /chains`
 
-Returns all chains OTI can score, with their internal chain IDs.
-
-**Request**
+Returns all chains OTI recognizes, with their internal chain identifiers.
 
 ```bash
 curl https://workspaceapi-server-production-5c0c.up.railway.app/api/chains
@@ -76,20 +84,24 @@ curl https://workspaceapi-server-production-5c0c.up.railway.app/api/chains
 }
 ```
 
+:::note
+Some chains appear in `/chains` but return `503` when scored — see [Supported Chains](/supported-chains) for current availability.
+:::
+
 ---
 
 ### `GET /score/{address}`
 
-Computes or returns a cached trust score for the given wallet address on the specified chain.
+Computes or returns a cached trust score for a wallet address on the specified chain.
 
-Results are cached in memory. The first call fetches live on-chain data; subsequent calls for the same address + chain return `"cached": true`.
+Results are cached in memory. The first call fetches live on-chain data; subsequent calls for the same address + chain return `"cached": true` instantly.
 
 **Parameters**
 
 | Name | In | Type | Required | Description |
 |------|----|------|----------|-------------|
-| `address` | path | string | ✅ | Wallet address. EVM addresses are case-insensitive (lowercased internally). |
-| `chain` | query | string | ✅ | Chain identifier. See [Supported Chains](/supported-chains). |
+| `address` | path | string | ✅ | Wallet address. EVM addresses are lowercased internally. |
+| `chain` | query | string | ✅ | Chain identifier — see [Supported Chains](/supported-chains). |
 
 **Request**
 
@@ -107,38 +119,16 @@ curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8d
   "compromised": false,
   "score": 87,
   "signals": {
-    "walletAge": {
-      "score": 100,
-      "weighted": 25,
-      "maxWeight": 25
-    },
-    "transactionCount": {
-      "score": 100,
-      "weighted": 20,
-      "maxWeight": 20
-    },
-    "tokenHoldingBehavior": {
-      "score": 90,
-      "weighted": 18,
-      "maxWeight": 20
-    },
-    "smartContractInteractions": {
-      "score": 85,
-      "weighted": 17,
-      "maxWeight": 20
-    },
-    "transactionTimingPatterns": {
-      "score": 46,
-      "weighted": 7,
-      "maxWeight": 15
-    }
+    "walletAge":                 { "score": 100, "weighted": 25, "maxWeight": 25 },
+    "transactionCount":          { "score": 100, "weighted": 20, "maxWeight": 20 },
+    "tokenHoldingBehavior":      { "score": 90,  "weighted": 18, "maxWeight": 20 },
+    "smartContractInteractions": { "score": 85,  "weighted": 17, "maxWeight": 20 },
+    "transactionTimingPatterns": { "score": 46,  "weighted": 7,  "maxWeight": 15 }
   }
 }
 ```
 
 **Response `200 OK` — Compromised wallet**
-
-If the address is on the denylist, OTI returns `200` (not a 4xx error) with `"compromised": true` and `"score": null`:
 
 ```json
 {
@@ -151,34 +141,34 @@ If the address is on the denylist, OTI returns `200` (not a 4xx error) with `"co
 }
 ```
 
+:::note
+Compromised wallets return **`200`**, not a 4xx. Always check `"compromised": true` before trusting the score. When `compromised` is `true`, `score` is `null`.
+:::
+
 **Response fields**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `address` | string | Wallet address (EVM addresses lowercased) |
+| `address` | string | Wallet address (EVM lowercased) |
 | `chain` | string | Chain the score was computed on |
-| `cached` | boolean | `true` if result came from memory cache |
-| `compromised` | boolean | `false` on a normal response |
-| `score` | number | Overall trust score 0–100 |
-| `signals.walletAge` | WeightedSignal | How long the wallet has been active |
-| `signals.transactionCount` | WeightedSignal | Number of transactions (capped at 1,000) |
-| `signals.tokenHoldingBehavior` | WeightedSignal | Token holding patterns |
-| `signals.smartContractInteractions` | WeightedSignal | Smart contract usage history |
-| `signals.transactionTimingPatterns` | WeightedSignal | Timing regularity between transactions |
+| `cached` | boolean | `true` if result came from cache |
+| `compromised` | boolean | `true` if the wallet is on the denylist |
+| `score` | number \| null | Overall trust score 0–100, or `null` if compromised |
+| `signals` | object | Five weighted signal scores — see below |
 
-**WeightedSignal shape**
+**WeightedSignal shape** (each entry in `signals`)
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `score` | number | Raw signal score 0–100, independent of weight |
-| `weighted` | number | Points this signal contributes to the overall score. `weighted = score × (maxWeight / 100)` |
+| `score` | number | Raw signal score 0–100 |
+| `weighted` | number | Points contributed to the overall score |
 | `maxWeight` | number | Maximum points this signal can contribute |
 
 ---
 
 ### `POST /score`
 
-Alternative to `GET /score/{address}`. Accepts `address` and `chain` in the request body instead of path and query. Behaviour is identical — same caching, same compromised-wallet check, same response shapes.
+Same as `GET /score/{address}` but accepts `address` and `chain` in the JSON body instead of the path and query string. Behaviour, caching, and response shapes are identical.
 
 **Request body**
 
@@ -197,26 +187,20 @@ curl -X POST https://workspaceapi-server-production-5c0c.up.railway.app/api/scor
   -d '{"address":"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045","chain":"ethereum"}'
 ```
 
-**Response:** Identical to `GET /score/{address}`.
-
 ---
 
 ### `GET /score/{address}/history`
 
-Returns persisted score history for the given wallet address, ordered by most recent first, limited to the **50 most recent records**.
+Returns the 50 most recent persisted score records for a wallet, ordered most-recent first.
 
-`?chain=` is optional. When omitted, results include history across all chains sharing the wallet's chain family (e.g. all EVM chains for an EVM address) — in this case the response's top-level `chain` is `null` and each history entry carries its own `chain`.
-
-:::note
-EVM addresses are ambiguous across the 10 supported EVM chains, so `?chain=` must be supplied when the address alone cannot be auto-detected.
-:::
+`?chain=` is optional. When omitted, history is returned across all chains in the same address family (e.g. all EVM chains for an EVM address).
 
 **Parameters**
 
 | Name | In | Type | Required | Description |
 |------|----|------|----------|-------------|
 | `address` | path | string | ✅ | Wallet address |
-| `chain` | query | string | ❌ | Filter results to a specific chain |
+| `chain` | query | string | ❌ | Filter to a specific chain |
 
 **Request**
 
@@ -230,7 +214,7 @@ curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8d
 {
   "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
   "chain": "ethereum",
-  "count": 3,
+  "count": 1,
   "history": [
     {
       "score": 87,
@@ -250,7 +234,7 @@ curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8d
 ```
 
 :::info
-History `signals` contain **raw scores only** (not weighted), as stored at the time the record was created. This differs from the live `/score` endpoint which returns the full `WeightedSignal` shape.
+History `signals` contain **raw scores only** (not weighted), as recorded at the time the score was first computed. This differs from `/score` which returns the full `WeightedSignal` shape.
 :::
 
 **Response fields**
@@ -258,28 +242,28 @@ History `signals` contain **raw scores only** (not weighted), as stored at the t
 | Field | Type | Description |
 |-------|------|-------------|
 | `address` | string | Wallet address |
-| `chain` | string \| null | Chain filter applied, or `null` when no `?chain=` was provided |
-| `count` | number | Number of history entries (max 50) |
-| `history[]` | array | Array of history entries |
+| `chain` | string \| null | Chain filter applied, or `null` if not filtered |
+| `count` | number | Number of records returned (max 50) |
+| `history[]` | array | Score history entries, newest first |
 | `history[].score` | number | Overall score at time of recording |
 | `history[].signals` | object | Raw signal scores (not weighted) |
 | `history[].chain` | string | Chain this record was computed on |
-| `history[].timestamp` | string | ISO 8601 UTC timestamp when the score was recorded |
+| `history[].timestamp` | string | ISO 8601 UTC timestamp |
 
 ---
 
-## Error Codes
+## Error Reference
 
-| HTTP Status | When | Body shape |
-|-------------|------|------------|
-| `400 Bad Request` | Invalid address format, unknown chain, malformed body | `{ "error": string, "details": string[] \| string }` |
+| Status | When | Body |
+|--------|------|------|
+| `400 Bad Request` | Invalid address, unknown chain, malformed body | `{ "error": string, "details": string[] \| string }` |
 | `404 Not Found` | Resource not found | `{ "error": string }` |
-| `429 Too Many Requests` (daily) | Daily request limit exceeded | `{ "error": "Daily rate limit exceeded", "limit": number, "reset": string }` |
-| `429 Too Many Requests` (IP burst) | Too many requests in a short window | `{ "error": "Too many requests", "details": string }` |
+| `429` (daily) | Daily request limit exceeded | `{ "error": "Daily rate limit exceeded", "limit": number, "reset": string }` |
+| `429` (burst) | Short-window IP burst limit | `{ "error": "Too many requests", "details": string }` |
 | `500 Internal Server Error` | Unexpected server error | `{ "error": string }` |
 | `503 Service Unavailable` | Chain temporarily unavailable | `{ "error": string }` |
 
-**Example 400 response:**
+**Example 400**
 
 ```json
 {
@@ -288,12 +272,12 @@ History `signals` contain **raw scores only** (not weighted), as stored at the t
 }
 ```
 
-**Example 429 daily limit response:**
+**Example 429 daily limit**
 
 ```json
 {
   "error": "Daily rate limit exceeded",
   "limit": 100,
-  "reset": "2026-07-09T00:00:00.000Z"
+  "reset": "2026-07-10T00:00:00.000Z"
 }
 ```

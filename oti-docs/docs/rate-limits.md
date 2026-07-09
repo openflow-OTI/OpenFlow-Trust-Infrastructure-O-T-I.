@@ -6,7 +6,7 @@ sidebar_position: 5
 
 # Rate Limits & Plans
 
-OTI enforces two types of rate limits:
+OTI enforces two independent rate limits:
 
 1. **Daily limit** — maximum requests per UTC calendar day, per plan tier
 2. **IP burst limit** — short-window burst protection applied to all requests regardless of plan
@@ -15,25 +15,32 @@ OTI enforces two types of rate limits:
 
 ## Plan Tiers
 
-| Plan | Daily Limit | API Key Required | Description |
-|------|-------------|-----------------|-------------|
-| Anonymous | Live — see note below | No | Default for unauthenticated requests |
-| Free | Set by OpenFlow Labs | Yes | Entry-level keyed access |
-| Pro | Set by OpenFlow Labs | Yes | Higher-volume integrations |
-| Enterprise | Unlimited | Yes | Full access, no daily cap |
+| Plan | Daily Limit | API Key | Best For |
+|------|-------------|---------|----------|
+| **Anonymous** | 100 req/day | Not required | Evaluation, prototyping, demos |
+| **Free** | Higher limit | Required | Low-volume production |
+| **Pro** | Higher limit | Required | Mid-volume integrations |
+| **Enterprise** | Unlimited | Required | High-volume, SLA-backed |
 
-:::info Live anonymous limit
-The anonymous daily limit is **100 requests per day** (verified from the live API on July 8, 2026). This value is configurable by OpenFlow Labs and may change — check the live endpoint for the current value:
+:::tip Start immediately — no key needed
+Anonymous access gives you **100 requests per day** per IP with zero setup. This resets at midnight UTC and is enough to build and test a complete integration before requesting a key.
+:::
+
+---
+
+## Anonymous Limit
+
+The current anonymous daily limit can always be checked live:
 
 ```bash
 curl https://workspaceapi-server-production-5c0c.up.railway.app/api/config/anonymous-limit
 ```
 
-Response:
 ```json
-{ "daily_limit": 100, "updated_at": "2026-07-08T08:56:58.719Z" }
+{ "daily_limit": 100 }
 ```
-:::
+
+This value is configurable by OpenFlow Labs and the above endpoint always reflects the current live value.
 
 ---
 
@@ -42,23 +49,23 @@ Response:
 - Limits reset at **midnight UTC**.
 - Anonymous requests are tracked by IP address.
 - Keyed requests are tracked per API key.
-- When the daily limit is exceeded, the API returns `429` with the reset timestamp:
+- When the daily limit is exceeded, the API returns `429` with the exact reset timestamp:
 
 ```json
 {
   "error": "Daily rate limit exceeded",
   "limit": 100,
-  "reset": "2026-07-09T00:00:00.000Z"
+  "reset": "2026-07-10T00:00:00.000Z"
 }
 ```
 
-The `reset` field is an ISO 8601 UTC timestamp indicating when the counter resets.
+Parse `reset` (ISO 8601 UTC) to tell your users exactly when they can try again.
 
 ---
 
 ## IP Burst Limit
 
-All requests (anonymous and keyed) are subject to a short-window burst limit per IP. This protects the API from sudden traffic spikes. When triggered, the API returns `429` with a human-readable explanation:
+All requests (anonymous and keyed) are subject to a short-window burst limit per IP. This guards against sudden spikes. When triggered, the API returns `429` with:
 
 ```json
 {
@@ -80,16 +87,16 @@ curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8d
   -H "x-api-key: oti_your_key_here"
 ```
 
-API keys are in the format `oti_<32 hex chars>`. The full key is shown **only once** at creation — store it immediately.
+Keys follow the format `oti_<32 hex chars>`. The full key is shown **only once** at creation — store it immediately.
 
 ---
 
 ## How to Get a Key
 
-Contact [openflowlabs.io](https://openflowlabs.io) to request an API key. Free-tier keys are available for evaluation and low-volume production use.
+Visit [openflowlabs.io](https://openflowlabs.io) to request an API key. Free-tier keys are available for evaluation and low-volume production.
 
 ---
 
 ## Upgrading Your Plan
 
-Plan upgrades are handled by the OpenFlow Labs team. Reach out at [openflowlabs.io](https://openflowlabs.io) with your current key and desired tier.
+Contact the OpenFlow Labs team at [openflowlabs.io](https://openflowlabs.io) with your current API key and the tier you need.

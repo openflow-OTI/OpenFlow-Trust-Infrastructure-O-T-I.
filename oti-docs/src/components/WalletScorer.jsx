@@ -3,18 +3,18 @@ import { useState } from 'react';
 const API_BASE = 'https://workspaceapi-server-production-5c0c.up.railway.app/api';
 
 const CHAINS = [
-  { id: 'bitcoin',   label: 'Bitcoin',   example: '1A1zP1eP5QGefi2DMPTfTL5SLmv7Divfna',        hint: "Satoshi's genesis address" },
   { id: 'ethereum',  label: 'Ethereum',  example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin' },
+  { id: 'bitcoin',   label: 'Bitcoin',   example: '34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo',        hint: 'Binance cold wallet' },
   { id: 'solana',    label: 'Solana',    example: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', hint: 'Binance hot wallet' },
   { id: 'tron',      label: 'Tron',      example: 'TVj7RNVHy6thbM7BWdSe9G6gXwKhjhdNZS',        hint: 'Binance hot wallet' },
-  { id: 'ton',       label: 'TON',       example: 'EQCkR1cGmnsE45N4K0otPl5EnxnRakmGqeJQ1907XfXV7Q27', hint: 'TON Foundation' },
-  { id: 'avalanche', label: 'Avalanche', example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
+  { id: 'ton',       label: 'TON',       example: 'EQD2NmD_lH5f5u1Kj3KfGyTvhZSX0Eg6qp2a5IQUKXxOG3f', hint: 'Known TON whale' },
   { id: 'polygon',   label: 'Polygon',   example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
   { id: 'arbitrum',  label: 'Arbitrum',  example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
-  { id: 'sui',       label: 'Sui',       example: '0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b', hint: 'Sui system address' },
+  { id: 'avalanche', label: 'Avalanche', example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
   { id: 'fantom',    label: 'Fantom',    example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
   { id: 'linea',     label: 'Linea',     example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
   { id: 'zksync',    label: 'zkSync',    example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
+  { id: 'sui',       label: 'Sui',       example: '0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b', hint: 'Sui system address' },
 ];
 
 const TIERS = [
@@ -42,7 +42,7 @@ const s = {
     border: '1px solid #1c2535',
     borderRadius: 10,
     background: '#0b0f1a',
-    padding: '1.5rem',
+    padding: '1.25rem',
     marginBottom: '2rem',
     fontFamily: "'JetBrains Mono', monospace",
   },
@@ -60,14 +60,20 @@ const s = {
     marginBottom: 10,
     fontStyle: 'italic',
   },
-  row: {
+  col: {
     display: 'flex',
-    gap: 10,
-    flexWrap: 'wrap',
+    flexDirection: 'column',
+    gap: 8,
     marginBottom: 6,
   },
+  row: {
+    display: 'flex',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
   input: {
-    flex: '1 1 260px',
+    width: '100%',
+    boxSizing: 'border-box',
     background: '#05080f',
     border: '1px solid #1c2535',
     borderRadius: 6,
@@ -78,6 +84,7 @@ const s = {
     outline: 'none',
   },
   select: {
+    flex: '1 1 130px',
     background: '#05080f',
     border: '1px solid #1c2535',
     borderRadius: 6,
@@ -86,8 +93,10 @@ const s = {
     fontSize: 13,
     fontFamily: "'JetBrains Mono', monospace",
     cursor: 'pointer',
+    minWidth: 0,
   },
   btn: {
+    flex: '0 0 auto',
     background: '#00e5a0',
     color: '#001a0e',
     border: 'none',
@@ -111,7 +120,7 @@ const s = {
     padding: '12px 14px',
     color: '#fca5a5',
     fontSize: 13,
-    marginTop: 12,
+    marginTop: 8,
   },
   scoreRow: {
     display: 'flex',
@@ -119,6 +128,7 @@ const s = {
     gap: 14,
     marginBottom: 16,
     flexWrap: 'wrap',
+    marginTop: 12,
   },
   scoreNum: {
     fontSize: 44,
@@ -139,7 +149,7 @@ const s = {
     borderRadius: 6,
     padding: '12px 14px',
     color: '#fca5a5',
-    marginBottom: 14,
+    marginTop: 8,
   },
   signalRow: {
     display: 'grid',
@@ -181,8 +191,8 @@ const s = {
 };
 
 export default function WalletScorer() {
-  const defaultChain = CHAINS.find((c) => c.id === 'ethereum');
-  const [chain, setChain] = useState('ethereum');
+  const defaultChain = CHAINS[0];
+  const [chain, setChain] = useState(defaultChain.id);
   const [address, setAddress] = useState(defaultChain.example);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -192,10 +202,10 @@ export default function WalletScorer() {
   const currentChain = CHAINS.find((c) => c.id === chain) || CHAINS[0];
 
   function handleChainChange(e) {
-    const newChainId = e.target.value;
-    setChain(newChainId);
-    const newChain = CHAINS.find((c) => c.id === newChainId);
-    if (newChain) setAddress(newChain.example);
+    const newId = e.target.value;
+    setChain(newId);
+    const found = CHAINS.find((c) => c.id === newId);
+    if (found) setAddress(found.example);
     setResult(null);
     setError(null);
   }
@@ -221,7 +231,7 @@ export default function WalletScorer() {
             setError(`Rate limit: ${data.details || data.error}. Wait a moment and retry.`);
           }
         } else if (res.status === 503) {
-          setError(`${chain} is temporarily unavailable. Try ethereum, polygon, or solana.`);
+          setError(`${currentChain.label} is temporarily unavailable on this endpoint.`);
         } else if (res.status === 400) {
           const detail = Array.isArray(data.details) ? data.details[0] : (data.details || data.error);
           setError(`Bad request: ${detail}`);
@@ -245,7 +255,7 @@ export default function WalletScorer() {
     <div style={s.wrap}>
       <form onSubmit={handleScore}>
         <label style={s.label}>Wallet address</label>
-        <div style={s.row}>
+        <div style={s.col}>
           <input
             style={s.input}
             value={address}
@@ -255,31 +265,27 @@ export default function WalletScorer() {
             autoCorrect="off"
             autoCapitalize="off"
           />
-          <select
-            style={s.select}
-            value={chain}
-            onChange={handleChainChange}
-          >
-            {CHAINS.map((c) => (
-              <option key={c.id} value={c.id}>{c.label}</option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            style={loading ? { ...s.btn, ...s.btnLoading } : s.btn}
-            disabled={loading}
-          >
-            {loading ? 'Scoring…' : '▶ Score'}
-          </button>
-        </div>
-        <div style={s.hint}>
-          Example: {currentChain.hint} · Switch chain to auto-fill a different address
+          <div style={s.row}>
+            <select style={s.select} value={chain} onChange={handleChainChange}>
+              {CHAINS.map((c) => (
+                <option key={c.id} value={c.id}>{c.label}</option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              style={loading ? { ...s.btn, ...s.btnLoading } : s.btn}
+              disabled={loading}
+            >
+              {loading ? 'Scoring…' : '▶ Score'}
+            </button>
+          </div>
+          <div style={s.hint}>
+            Example pre-filled: {currentChain.hint} — switching chain auto-fills a new address
+          </div>
         </div>
       </form>
 
-      {error && (
-        <div style={s.errorBox}>⚠ {error}</div>
-      )}
+      {error && <div style={s.errorBox}>⚠ {error}</div>}
 
       {result && result.compromised && (
         <div style={s.compromisedBox}>
@@ -301,7 +307,7 @@ export default function WalletScorer() {
               </span>
               {result.cached && <span style={s.cachedBadge}>cached</span>}
               <div style={{ fontSize: 11, color: '#7a8fa8', marginTop: 4 }}>
-                {result.chain} · {result.address.slice(0, 12)}…
+                {result.chain} · {result.address.slice(0, 14)}…
               </div>
             </div>
           </div>

@@ -11,35 +11,43 @@ import WalletScorer from '@site/src/components/WalletScorer';
 
 ## What is OTI?
 
-**OTI (OpenFlow Trust Infrastructure)** is a real-time, on-chain wallet trust scoring API. You send a wallet address and a blockchain, and OTI returns a 0–100 trust score computed from five on-chain signals — wallet age, transaction count, token holding behavior, smart contract interactions, and transaction timing patterns. OTI currently supports 15 blockchains including Bitcoin, Ethereum, Solana, BNB Smart Chain, Tron, and TON, with no proprietary ML model and no off-chain data — every number is derived directly from verifiable on-chain activity.
+**OTI (OpenFlow Trust Infrastructure)** is a real-time, on-chain wallet trust scoring API. Send any wallet address and a blockchain — OTI returns a 0–100 trust score computed from five on-chain signals: wallet age, transaction count, token holding behavior, smart contract interactions, and transaction timing patterns. No ML model, no off-chain data — every number comes directly from verifiable on-chain activity.
+
+OTI supports **15 blockchains** including Bitcoin, Ethereum, Solana, BNB Smart Chain, Tron, and TON.
 
 ---
 
 ## Try It Live
 
-Enter any wallet address below and hit **▶ Score** to get a real response from the OTI API — no sign-up, no key needed.
+Switch the chain, hit **▶ Score** — live response, no signup, no key needed.
 
 <WalletScorer />
 
 ---
 
-## Step 1 — Get a Free API Key
+## The OTI API
 
-Contact the OTI team at [openflowlabs.io](https://openflowlabs.io) to request a free API key. Keys are issued in the format `oti_<32 hex chars>`.
+All requests go to a single base URL:
 
-You can also **use the API anonymously** (no key required) for up to **100 requests per day** — enough to evaluate OTI before committing to a plan.
+```
+https://workspaceapi-server-production-5c0c.up.railway.app/api
+```
+
+:::info
+This is the official, live OTI API — hosted on Railway (a cloud infrastructure provider). The URL is correct. A shorter branded domain is being set up and docs will be updated when it goes live.
+:::
 
 ---
 
-## Step 2 — Make Your First Request
+## Step 1 — Make Your First Request
 
-No setup needed. The following cURL command scores a real Ethereum wallet right now:
+No setup required. Paste this into your terminal and get a real score in seconds:
 
 ```bash
 curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?chain=ethereum"
 ```
 
-**Example response:**
+**Response:**
 
 ```json
 {
@@ -58,28 +66,24 @@ curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8d
 }
 ```
 
-The `score` field is the overall trust score (0–100). Each signal in `signals` contains its raw `score`, the `weighted` points it contributes, and its `maxWeight` cap. See [Score Explanation](/score-explanation) for what each number means.
+`score` is the overall trust score (0–100). Each entry in `signals` shows the raw `score`, how many `weighted` points it contributed, and its `maxWeight` cap. See [Score Explanation](/score-explanation) for what each signal means.
+
+:::tip Anonymous tier — free, no key needed
+You get **100 requests per day** without any API key, per IP, resetting at midnight UTC. That is enough to build and fully test an integration.
+:::
 
 ---
 
-## Step 3 — Add Your API Key (Optional)
+## Step 2 — Add Your API Key (for production)
 
-When you have a key, pass it in the `x-api-key` header:
+When you're ready for production or need a higher daily limit, add your key to the `x-api-key` header:
 
 ```bash
 curl "https://workspaceapi-server-production-5c0c.up.railway.app/api/score/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?chain=ethereum" \
   -H "x-api-key: oti_your_key_here"
 ```
 
----
-
-## Base URL
-
-All API requests go to:
-
-```
-https://workspaceapi-server-production-5c0c.up.railway.app/api
-```
+Keys follow the format `oti_<32 hex chars>` and are available on request at [openflowlabs.io](https://openflowlabs.io). Free-tier keys are available for low-volume and evaluation use.
 
 ---
 
@@ -87,6 +91,6 @@ https://workspaceapi-server-production-5c0c.up.railway.app/api
 
 - [API Reference](/api-reference) — all endpoints, parameters, and response shapes
 - [Score Explanation](/score-explanation) — what the 5 signals measure and how tiers work
-- [Supported Chains](/supported-chains) — all 15 chains and any limitations
+- [Supported Chains](/supported-chains) — all 15 chains and known limitations
 - [Rate Limits & Plans](/rate-limits) — anonymous and keyed plan limits
-- [Code Examples](/code-examples) — copy-paste JavaScript, Python, and cURL examples
+- [Code Examples](/code-examples) — copy-paste JavaScript, Python, and cURL
