@@ -3,18 +3,18 @@ import { useState } from 'react';
 const API_BASE = 'https://workspaceapi-server-production-5c0c.up.railway.app/api';
 
 const CHAINS = [
-  { id: 'bitcoin',   label: 'Bitcoin' },
-  { id: 'ethereum',  label: 'Ethereum' },
-  { id: 'solana',    label: 'Solana' },
-  { id: 'tron',      label: 'Tron' },
-  { id: 'ton',       label: 'TON' },
-  { id: 'avalanche', label: 'Avalanche' },
-  { id: 'polygon',   label: 'Polygon' },
-  { id: 'arbitrum',  label: 'Arbitrum' },
-  { id: 'sui',       label: 'Sui' },
-  { id: 'fantom',    label: 'Fantom' },
-  { id: 'linea',     label: 'Linea' },
-  { id: 'zksync',    label: 'zkSync' },
+  { id: 'bitcoin',   label: 'Bitcoin',   example: '1A1zP1eP5QGefi2DMPTfTL5SLmv7Divfna',        hint: "Satoshi's genesis address" },
+  { id: 'ethereum',  label: 'Ethereum',  example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin' },
+  { id: 'solana',    label: 'Solana',    example: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', hint: 'Binance hot wallet' },
+  { id: 'tron',      label: 'Tron',      example: 'TVj7RNVHy6thbM7BWdSe9G6gXwKhjhdNZS',        hint: 'Binance hot wallet' },
+  { id: 'ton',       label: 'TON',       example: 'EQCkR1cGmnsE45N4K0otPl5EnxnRakmGqeJQ1907XfXV7Q27', hint: 'TON Foundation' },
+  { id: 'avalanche', label: 'Avalanche', example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
+  { id: 'polygon',   label: 'Polygon',   example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
+  { id: 'arbitrum',  label: 'Arbitrum',  example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
+  { id: 'sui',       label: 'Sui',       example: '0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b', hint: 'Sui system address' },
+  { id: 'fantom',    label: 'Fantom',    example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
+  { id: 'linea',     label: 'Linea',     example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
+  { id: 'zksync',    label: 'zkSync',    example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
 ];
 
 const TIERS = [
@@ -54,11 +54,17 @@ const s = {
     textTransform: 'uppercase',
     marginBottom: 6,
   },
+  hint: {
+    fontSize: 10,
+    color: '#7a8fa8',
+    marginBottom: 10,
+    fontStyle: 'italic',
+  },
   row: {
     display: 'flex',
     gap: 10,
     flexWrap: 'wrap',
-    marginBottom: 14,
+    marginBottom: 6,
   },
   input: {
     flex: '1 1 260px',
@@ -175,12 +181,24 @@ const s = {
 };
 
 export default function WalletScorer() {
-  const [address, setAddress] = useState('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045');
+  const defaultChain = CHAINS.find((c) => c.id === 'ethereum');
   const [chain, setChain] = useState('ethereum');
+  const [address, setAddress] = useState(defaultChain.example);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [showRaw, setShowRaw] = useState(false);
+
+  const currentChain = CHAINS.find((c) => c.id === chain) || CHAINS[0];
+
+  function handleChainChange(e) {
+    const newChainId = e.target.value;
+    setChain(newChainId);
+    const newChain = CHAINS.find((c) => c.id === newChainId);
+    if (newChain) setAddress(newChain.example);
+    setResult(null);
+    setError(null);
+  }
 
   async function handleScore(e) {
     e.preventDefault();
@@ -232,7 +250,7 @@ export default function WalletScorer() {
             style={s.input}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="0x... or a Solana / Bitcoin address"
+            placeholder="Enter a wallet address…"
             spellCheck={false}
             autoCorrect="off"
             autoCapitalize="off"
@@ -240,7 +258,7 @@ export default function WalletScorer() {
           <select
             style={s.select}
             value={chain}
-            onChange={(e) => setChain(e.target.value)}
+            onChange={handleChainChange}
           >
             {CHAINS.map((c) => (
               <option key={c.id} value={c.id}>{c.label}</option>
@@ -253,6 +271,9 @@ export default function WalletScorer() {
           >
             {loading ? 'Scoring…' : '▶ Score'}
           </button>
+        </div>
+        <div style={s.hint}>
+          Example: {currentChain.hint} · Switch chain to auto-fill a different address
         </div>
       </form>
 

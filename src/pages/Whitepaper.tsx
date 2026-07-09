@@ -171,27 +171,27 @@ function ContactTable() {
           </tr>
           <tr>
             <td>API Documentation</td>
-            <td><code>https://docs.otiscore.vercel.app</code> (use <code>#</code> with "Coming soon" tooltip until Task 11 is live)</td>
+            <td><a href="/docs/" style={{ color: '#00e5a0' }}>docs.otiscore.vercel.app</a></td>
           </tr>
           <tr>
             <td>GitHub</td>
-            <td>[Ahmad to provide — public frontend repo URL]</td>
+            <td><span style={{ color: '#7a8fa8' }}>Coming soon</span></td>
           </tr>
           <tr>
             <td>Telegram Bot</td>
-            <td>[Ahmad to provide — Telegram bot invite link, available after Task 12 ships] (use <code>#</code> + "Coming soon" tooltip until then)</td>
+            <td><span style={{ color: '#7a8fa8' }}>Coming soon</span></td>
           </tr>
           <tr>
             <td>Discord Bot</td>
-            <td>[Ahmad to provide — Discord bot invite link, available after Task 13 ships] (use <code>#</code> + "Coming soon" tooltip until then)</td>
+            <td><span style={{ color: '#7a8fa8' }}>Coming soon</span></td>
           </tr>
           <tr>
             <td>Email</td>
-            <td>[Ahmad to provide — company email address]</td>
+            <td><a href="https://openflowlabs.io" style={{ color: '#00e5a0' }}>openflowlabs.io</a></td>
           </tr>
           <tr>
             <td>Twitter / X</td>
-            <td>[Ahmad to provide — Twitter/X profile link]</td>
+            <td><span style={{ color: '#7a8fa8' }}>Coming soon</span></td>
           </tr>
           <tr>
             <td>Crisp Chat</td>
