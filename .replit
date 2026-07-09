@@ -43,7 +43,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd oti-docs && npm install --legacy-peer-deps && npm run start -- --host 0.0.0.0"
+args = "cd oti-docs && pnpm install && pnpm run start --host 0.0.0.0"
 waitForPort = 3000
 
 [[ports]]
