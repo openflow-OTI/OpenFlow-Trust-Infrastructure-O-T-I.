@@ -1,82 +1,78 @@
-# OTI Project Task Log
-
-## Legend
-- ✅ Done (Manager verified)
-- 🔄 In Progress
-- ⬜ Pending
-- 🔵 Backend task
+# OTI — Master Task List
+> Last updated: July 10, 2026 (session 8 — full rewrite. Per Ahmad's instruction, this file now only contains genuine new-build tasks (new pages, new systems, new features). All bug fixes, corrections, hardening, and cleanup/polish work — including the former Task 11C and Task 11E — have moved to `FIXES.md`, numbered and split by Builder there. If you're looking for a fix rather than a new build, check `FIXES.md` first.) | Maintained by: Development Manager
 
 ---
 
-## Completed Tasks
+## How to Read This File
 
-### ✅ Task 7B — txCount Cap Indicator
-Confirmed done by Manager (July 7, 2026).
+This is the complete history and queue of everything either Builder has built or will build — new pages, new systems, new features. Each Builder also has their own copy of just their tasks (`BACKEND_TASKS.md` / `FRONTEND_TASKS.md`) with full prompt text. Bug fixes and cleanup work are tracked separately in `FIXES.md`.
 
-### ✅ Task 7C — Dynamic Rate Limit Display
-Homepage shows live DB value from /api/config/anonymous-limit. Confirmed live showing "20 per day". Falls back to architectural default of 3 when DB returns null.
+## Builder Roles
 
-### ✅ Task 9 — Admin Panel UI
-Full admin panel implemented and confirmed working live by Manager (July 7, 2026).
-
-### ✅ Task 10 — Navbar API Health Status Dot
-Confirmed done by Manager (July 7, 2026).
-
-### ✅ Plan Configs Tab (Admin Panel)
-PATCH /admin/plan-configs/{plan_name} with clean body (description omitted when empty). Invalidates both admin and public anonymous-limit queries on success.
-
-### ✅ Admin Panel Desktop Layout Fix
-CSS `:has()` selector removes max-width/padding constraints from `.app-main` when admin shell is present. Full-width layout on desktop.
-
-### ✅ useAnonymousLimit Hook Fix
-Was calling admin-protected endpoint on public homepage. Fixed to call correct public endpoint GET /api/config/anonymous-limit.
-
-### ✅ Homepage Scrollbar + Layout Fix
-Switched to browser-level scroll. Navbar sticky. Rate note pinned to bottom of viewport.
-
-### ✅ API Keys Tab — UI Resilience Fix
-Header and Create Key button always visible. Error renders inline with Retry button. Confirmed working (create/list/edit/delete) — Manager verified July 7, 2026.
-
-### Fix: API Key Reveal on Creation ✅
-- POST /api/admin/keys response field corrected: `data.apiKey` → `data.api_key`
-- TypeScript interface updated to match: `apiKey: string` → `api_key: string`
-- Modal now displays full key after creation with copy button and "never shown again" warning
-- Verified live on Vercel by Manager
-
-### Task 11A — Restructure Vercel App: Marketing Front Door + Scoring at /score ✅
-Confirmed live and verified by Manager (July 8, 2026). `/` now shows the full marketing homepage (8 sections); `/score` shows the scoring tool exactly as before, zero visual changes. Full build notes in `FRONTEND_TASKS.md`.
-
-### Task 8 — Professional Results Page Redesign ✅
-- Score panel in bordered card — ring gauge color matches chain brand (all 15 chains)
-- Tier label beneath gauge: HIGHLY TRUSTED / TRUSTED / CAUTION / SUSPICIOUS / HIGH RISK
-- Trust Signals in separate bordered card with heading; each signal shows label, metadata, fraction, colored bar
-- Wallet address truncated (0xAb58...eC9B) with copy button; chain icon + name displayed
-- Share — native OS share sheet with clipboard fallback
-- Save as Image — 3× scale PNG (1920×2580px), chain-color ring, tier label, mirrors live UI
-- "⚑ Report this wallet" ghost link in mint — WOR placeholder
-- Footer: "© 2026 OpenFlow Labs · openflowlabs.io"
-- Full color system upgrade (see OTI Color System section)
-- Verified live on Vercel by Manager — July 7, 2026
-
-### ✅ Task 11B — Whitepaper Page (Manager verified July 8, 2026)
-Route `/whitepaper` — full whitepaper with 13 sections, sticky TOC sidebar, mobile accordion TOC, print stylesheet (A4). Post-build fixes: white body text, mobile horizontal scroll eliminated (table overflow wrappers), Roadmap section removed and sections renumbered (Team=12, Contact=13), scroll-spy TOC highlighting, back-to-top button, `~16 min read` header badge, reading progress bar.
+- **Backend Builder** — Node.js/Express API on Railway, scoring engine, database, admin routes, bots
+- **Frontend Builder** — React/Vite app on Vercel, scoring UI, marketing site, docs site, admin panel UI
 
 ---
 
-## Active Tasks
+## ✅ Completed Tasks
 
-Nothing else currently active.
+### TASK 8 — Frontend: Professional Results Page Redesign ✅
+Full visual rebuild of the wallet score results page to the locked black/mint design system: chain-color ring gauge, score tier labels (HIGHLY TRUSTED → HIGH RISK), Trust Signals card with weighted bars, truncated wallet address with copy button, Share (native share sheet) + Save as Image (3× PNG export), "⚑ Report this wallet" placeholder link (activates once WOR/Phase 2 ships), footer. This redesign also established the OTI color system (see `BUILDER_ONBOARDING.md` for the locked token table) that every subsequent page must use.
+
+### TASK 8B — Frontend: Professional Wallet Input Page Redesign ✅
+Matching redesign of the wallet input/landing screen to the same visual system — logo sizing/position, chain icon visibility and sizing (including zkSync/Linea), spacing, report-link styling. Verified live.
+
+### TASK 9 — Frontend: Admin Panel UI ✅
+Built the full admin panel: login, Dashboard, API Keys (create/list/edit/delete with a reveal-once creation modal), Query History, Cache management, Plan Configs. URL-only route (no public nav link), per Ahmad's decision.
+
+### TASK 9-BACKEND — Backend: Admin Panel API Routes ✅
+Built the `/api/admin/*` route surface backing Task 9 — stats, keys CRUD, plan configs CRUD, query history, cache inspection — all behind the `x-admin-secret` auth (`FIXES.md` BF5).
+
+### TASK 11A — Frontend: Marketing Homepage + Restructure Vercel App ✅
+Restructured the single Vercel app into a proper front door: the scoring tool moved intact to `/score`, and `/` became a full marketing homepage — Hero, chain row, How It Works, Trust Signals, Use Cases, Get the API (cURL example), Find Us/Integrations, footer with social links. Crisp.chat chat widget embedded (ID left blank until Ahmad provides it). Live at `otiscore.vercel.app`. Verified by Manager via cache-busted screenshot + JS bundle inspection, and by Ahmad directly.
+
+### TASK 11B — Frontend: Whitepaper Page ✅
+Built `/whitepaper` — full-length technical/business document (Executive Summary through remaining sections), sticky table-of-contents sidebar on desktop (accordion on mobile), section numbers in mint, print-to-PDF support via `window.print()`, shares the homepage's nav/footer and color system. Three post-launch rendering issues (body text color, mobile horizontal scroll, Roadmap section removal) were fixed — see `FIXES.md` FF16.
+
+### TASK 11 — Frontend: Developer Docs Site ✅
+Docusaurus site covering Getting Started, API Reference (weighted signal shape), Score Explanation, Supported Chains, Rate Limits, and code examples in JS/Python/cURL. Deployed as its own Vercel project (`oti-docs`, pnpm-based build) and proxied onto the main site at `otiscore.vercel.app/docs/` via `vercel.json` rewrites. Confirmed fully live July 9, 2026 — `/docs`, `/docs/`, and `/docs/api-reference` all verified 200 via curl. One open follow-up in `FIXES.md` (BF11 — re-verify "Try It Live" widget against the real backend).
 
 ---
 
-## Completed Tasks
+## 🔴 Active Queue
 
-### ✅ Task 11 — Developer Docs Site (Docusaurus) (Manager verified July 9, 2026)
-Started July 8, 2026. Docusaurus 3.10.1 classic project scaffolded at `oti-docs/`. Six sections completed: Getting Started, API Reference, Score Explanation, Supported Chains, Rate Limits & Plans, Code Examples. OTI branding applied (dark #05080f, mint #00e5a0, dark mode default). Anonymous limit verified live (100/day). All chain IDs verified from live API. Deployed as its own Vercel project (oti-docs.vercel.app); main site's vercel.json rewrites `/docs`, `/docs/`, and `/docs/:path*` to it. Fixed baseUrl (`/docs/`) and docs.routeBasePath (`''`) to resolve a root-page 404 caused by the routeBasePath/baseUrl interaction. Manager confirmed live in production: otiscore.vercel.app/docs, /docs/, and /docs/api-reference all working.
+Nothing is currently queued as a new-build task for either Builder. **Backend Builder** is idle — `FIXES.md` BF10 (Signal Accuracy Audit) is scoped but has NOT been sent yet, so it hasn't started; once sent it becomes the active item and nothing new goes to Backend Builder until it's verified done. **Frontend Builder** is idle, awaiting Ahmad's priority call on `FIXES.md` FF17 (AI-native tell cleanup) versus starting the next real task below.
 
 ---
 
-## Pending Tasks
+## ⛔ PHASE 5 GATE — Distribution Channel Tasks Below Depend On Phase 1 Being Fully Closed
 
-### ⬜ 🔵 Task 9C — Plan Limit Enforcement Verification (Backend task, Frontend aware)
-Backend Builder verifying `daily_limit` enforcement across all plan types (free, pro, enterprise). No frontend changes needed.
+Every bot reply, widget badge, and extension popup links back to the marketing homepage, docs site, and whitepaper. Do not start any task below until Ahmad confirms Phase 1 (see `ROADMAP.md`) is fully closed — including the two open Phase 1 fixes in `FIXES.md` (BF11, FF17).
+
+### TASK 12 — Backend: Telegram Bot
+Telegraf (Node.js) bot in `/bots/telegram/` inside the backend repo, deployed as a second Railway process. Commands: `/score [address] [chain]`, `/help`, `/about`. Env vars needed: `TELEGRAM_BOT_TOKEN`, `OTI_BOT_API_KEY`. See `ROADMAP.md` Phase 5 for full context.
+
+### TASK 13 — Backend: Discord Bot
+discord.js bot in `/bots/discord/`, deployed as a third Railway process. Slash commands `/score`, `/help`, rich embed responses. Env vars needed: `DISCORD_BOT_TOKEN`, `DISCORD_CLIENT_ID`, `OTI_BOT_API_KEY`.
+
+### TASK 14 — Backend: Embeddable Widget
+Vanilla JS, zero-dependency widget served from Railway at `GET /widget.js`. One-line integration snippet for site owners. Uses a shared widget API key.
+
+### TASK 15 — Frontend/Extension: Firefox Extension (then Chrome)
+Separate GitHub repo (`oti-firefox-extension`). Content script auto-detects wallet addresses on Etherscan/OpenSea/BscScan and injects a score badge. Firefox first (free to publish), Chrome after first revenue. No backend changes required.
+
+---
+
+## Not Yet Scoped Into Task Prompts
+
+These exist in `ROADMAP.md` as phases but have not yet been broken into individual task prompts for a Builder:
+
+- **Phase 2 — Wallet Ownership Registry (WOR):** `wallet_ownership` table, registration/report endpoints, EIP-191 verification (Backend); registration + report UI (Frontend).
+- **Phase 3 — Monetization infrastructure:** self-serve developer portal, Pro/Enterprise plan rows + checkout, Stripe + Coinbase Commerce integration.
+- **Phase 4 — Growth features:** score history UI, multi-chain wallet comparison, wallet portfolio view, webhook alerts, enterprise exchange compliance path.
+
+---
+
+## Keeping This File Updated
+
+Both Builders update this file — but only when the Manager explicitly tells them to (marking a task ✅, or adding a newly assigned task). Builder copies (`BACKEND_TASKS.md`, `FRONTEND_TASKS.md`) are separate physical files that never auto-sync with this one or with each other — every status change must be explicitly relayed to the relevant Builder.

@@ -1,147 +1,104 @@
-# OTI Frontend Task Log
-
-## Legend
-- ✅ Done (Manager verified)
-- 🔄 In Progress
-- ⬜ Pending
-
----
-
-## Completed
-
-### ✅ Task 7B — txCount Cap Indicator
-Confirmed done by Manager (July 7, 2026).
-
-### ✅ Task 7C — Dynamic Rate Limit Display
-- File: `src/hooks/useAnonymousLimit.ts`
-- Switched from GET /admin/plan-configs (admin-protected) to GET /api/config/anonymous-limit (public)
-- Falls back to 3 when backend returns null (architectural default)
-- Homepage shows live DB value; confirmed live showing "20 per day" (Manager verified)
-
-### ✅ Task 9 — Admin Panel UI
-Full admin panel implemented and confirmed working live by Manager (July 7, 2026).
-
-### ✅ Task 10 — Navbar API Health Status Dot
-Confirmed done by Manager (July 7, 2026).
-
-### ✅ Plan Configs Tab (Admin Panel)
-- File: `src/pages/admin/PlanConfigs.tsx`
-- PATCH /admin/plan-configs/{plan_name} with body `{ daily_limit, description? }`
-- Description only sent if non-empty (avoid backend empty-string edge cases)
-- On success: invalidates both `['admin', 'plan-configs']` and `['anonymous-limit']` queries
-
-### ✅ Admin Panel Desktop Layout Fix
-- File: `src/index.css`
-- `.app-main:has(.admin-shell), .app-main:has(.admin-gate)` → `max-width: 100%; width: 100%; margin: 0; padding: 0`
-- Admin sidebar sticky at `top: 70px; height: calc(100vh - 70px)`
-
-### ✅ useAnonymousLimit Hook Fix
-- File: `src/hooks/useAnonymousLimit.ts`
-- Switched from admin-protected endpoint to correct public endpoint
-- staleTime: 5 minutes; falls back to architectural default of 3 when DB returns null
-
-### ✅ Homepage Scrollbar + Layout Fix
-- File: `src/index.css`
-- html/body/root: `min-height: 100%` (was `height: 100%`)
-- `.app-shell`: removed `overflow: hidden`; uses `min-height: 100%`
-- `.app-main`: removed `overflow-y: auto`; added `min-height: calc(100vh - 62px)`
-- `.navbar`: `position: sticky; top: 0; z-index: 50; background: var(--bg)`
-- `.home-rate-note`: `margin-top: auto` pins rate note to bottom of viewport
-
-### ✅ API Keys Tab — UI Resilience Fix
-- File: `src/pages/admin/ApiKeys.tsx`
-- Section header + `+ New Key` button always rendered regardless of load state
-- Loading state renders inline below header
-- Error state renders inline with `.admin-error-block` styling + `↻ Retry` button wired to `keys.refetch()`
-- Table guarded behind `keys.isSuccess`; removed `keys.data!` non-null assertions
-- Confirmed working (create/list/edit/delete) — Manager verified July 7, 2026
-
-### Fix: API Key Reveal on Creation ✅
-- POST /api/admin/keys response field corrected: `data.apiKey` → `data.api_key`
-- TypeScript interface updated to match: `apiKey: string` → `api_key: string`
-- Modal now displays full key after creation with copy button and "never shown again" warning
-- Verified live on Vercel by Manager
-
-### Task 8 — Professional Results Page Redesign ✅
-- Score panel in bordered card — ring gauge color matches chain brand (all 15 chains)
-- Tier label beneath gauge: HIGHLY TRUSTED / TRUSTED / CAUTION / SUSPICIOUS / HIGH RISK
-- Trust Signals in separate bordered card with heading; each signal shows label, metadata, fraction, colored bar
-- Wallet address truncated (0xAb58...eC9B) with copy button; chain icon + name displayed
-- Share — native OS share sheet with clipboard fallback
-- Save as Image — 3× scale PNG (1920×2580px), chain-color ring, tier label, mirrors live UI
-- "⚑ Report this wallet" ghost link in mint — WOR placeholder
-- Footer: "© 2026 OpenFlow Labs · openflowlabs.io"
-- Full color system upgrade (see OTI Color System section)
-- Verified live on Vercel by Manager — July 7, 2026
-
-### Task 8B — Professional Wallet Input Page Redesign ✅
-Completed July 8, 2026 (initial build + one polish round). Logo, wordmark, tagline, mint-glow input card, rate-limit badge, "Try an example" link, WOR ghost links, footer, watermark all shipped. Polish round fixed logo size/position, zkSync/Linea icon visibility, chain icon sizing, spacing, and report-link styling.
-*(Recorded per Manager's report — matches what is currently present in `src/pages/Home.tsx`/`src/index.css`; live-screenshot verification by Ahmad not independently confirmed by this Builder.)*
-
-### Task 8C — Fix Anonymous Rate Limit Cache Sync Bug ✅
-Completed July 8, 2026. Root cause: `setEditId(null)` inside the admin mutation's `onSuccess` raced with React 18 automatic batching and unmounted the edit row before the success banner (and its cache invalidation) could be trusted. Fixed by keeping the edit row open until the user clicks "Done" instead of auto-closing on success.
-*(Recorded per Manager's report — the described fix and its explanatory comment are confirmed present in `src/pages/admin/PlanConfigs.tsx`; live Vercel behavior verification by Ahmad not independently confirmed by this Builder.)*
-
-### Task 8D — Homepage Visual Polish: Contrast, Animated CTA, Spacing & Density ✅
-Completed July 8, 2026. Fixed placeholder contrast, rebuilt the "Try an example" moving border from a paint-triggering animated @property-driven conic-gradient to a GPU-cheap transform-based rotation (no jank), corrected oversized/zoom sizing, added breathing room between sections, and established a clear typographic hierarchy. Verified live by Ahmad via screen recording — confirmed working normally and looking good.
-*(Recorded per Manager's report — not independently verified by this Builder against the live site or local diff.)*
+# OTI — Frontend Builder Task List
+> Last updated: July 10, 2026 (session 8 — full rewrite. Bug fixes, cleanup, and polish work moved out to `FIXES.md` — including the former Task 11E, now FF17 there. This file now only lists genuine new-build tasks.) | Maintained by: Development Manager
+> **This file contains your tasks only. Read BUILDER_ONBOARDING.md and ARCHITECTURE.md before starting anything here. Read `FIXES.md` too — FF17 (AI-native tell cleanup) is your likely next item, pending Ahmad's priority call.**
+> Build in the exact order listed. Some tasks have hard dependencies — do not start them until the dependency is confirmed merged and deployed.
+>
+> **⚠️ This is YOUR copy of this file, in YOUR own account/repo.** The Manager's copy of this file is separate and does not sync with yours. Only mark a task done here, or add a new task here, when the Manager explicitly tells you to.
 
 ---
 
-## Pending
+## Where You Stand Right Now
 
-### ⬜ Task 9C — Plan Limit Enforcement Verification (Backend, Frontend aware)
-Backend Builder verifying `daily_limit` enforcement across all plan types (free, pro, enterprise). No frontend changes needed. Logged for record completeness.
-
----
-
-## Active
-
-### ✅ Task 8E — Disable Mobile Pinch/Double-Tap Zoom Across the App
-Completed July 8, 2026. Final state: viewport meta set to `maximum-scale=1, minimum-scale=1`. Added `touch-action: manipulation` on html/body as an iOS double-tap-zoom backstop; verified it does not affect `.admin-table-wrap` horizontal scroll or the `.chain-select-panel` dropdown. Desktop zoom (Ctrl+/-, Ctrl+scroll) unaffected — those properties are touch/viewport-only.
-*(History: started at maximum-scale=5 as an accessibility compromise (avoiding user-scalable=no / maximum-scale=1 per Ahmad's initial accessibility concern), then reduced to 2, then explicitly set to 1 by Ahmad on final follow-up — overriding the earlier accessibility carve-out. Flagged to Ahmad both times before applying; he confirmed 1 explicitly. Mobile zoom is now fully disabled, same effective result as user-scalable=no. Verified by inspection and static screenshots only — no physical touch-gesture test was possible in this environment; recommend a quick real-device check.)*
-
-### ✅ Task 8F — Reorder Chain Selector by Popularity, Remove EVM/Non-EVM Grouping
-Completed July 8, 2026, per Ahmad's direct request (exception to the "chain selector is off-limits" rule — confirmed explicitly by Ahmad in-session).
-- File: `src/lib/chains.ts` — reordered the `CHAINS` array by real-world popularity instead of EVM-first: Bitcoin, Ethereum, Solana, BNB Smart Chain, Tron, TON, Avalanche, Polygon, Arbitrum, Optimism, Base, Sui, Fantom, Linea, zkSync. Removed the now-unused `EVM_CHAINS`/`NON_EVM_CHAINS` exports (the `family` field itself is still used by `validateAddress.ts` for per-chain address format validation — not removed).
-- File: `src/components/ChainSelect.tsx` — dropdown no longer renders separate "EVM" / "Non-EVM" group headers; renders one flat list under a single "SELECT COIN" heading, in the new popularity order.
-- Popularity ranking is a reasoned estimate (market cap for L1 native coins, TVL/usage mindshare for L2s) — not pulled from a live ranking API. Flagged to Ahmad for awareness; open to reordering specific chains if he disagrees with any placement.
-
-### ✅ Task 8G — Rotating Ring Effect on Wallet-Input Card and Score/Percentage Card
-Completed July 8, 2026, per Ahmad's direct request (referenced two attached screenshots of the homepage wallet-input card and the results-page score/percentage card).
-- File: `src/pages/Home.tsx` — wrapped the results score panel in a `.results-score-ring-wrap` (mirroring the existing `.home-form-card-wrap` pattern), moved the `--chain-color` CSS var up to the wrap so both the ring and the panel can read it, added a decorative `.results-score-ring` sibling layer.
-- File: `src/index.css` — added `.results-score-ring` using the same rotating conic-gradient technique as `.home-form-card-ring` (reuses the `card-ring-spin` keyframe), with its `::after` painted using the same chain-tinted `color-mix` background as `.results-score-panel` so the ring blends into the existing chain-colored glow instead of covering it. Respects `prefers-reduced-motion`. The homepage wallet-input card already had this ring from earlier work — left unchanged, now the results score panel matches it.
-- Verified both cards render correctly post-restart (screenshots taken of homepage and a live results page for wallet `0xde0B...7BAe` / ethereum).
-
-### ✅ Task 11A — Restructure Vercel App: Marketing Front Door at `/`, Scoring Tool at `/score`
-Completed July 8, 2026, per Ahmad's direct request. Full spec: `docs/FRONTEND_TASKS.md`.
-- **Part A:** `src/App.tsx` restructured — `/score` now renders `<Home/>` wrapped in the exact same `<Layout/>` (navbar + status dot) as before; `/admin` and `404` also kept in `<Layout/>`. Zero changes to `Home.tsx`, `Layout.tsx`, `Navbar.tsx`, or any `.home-*`/`.results-*` CSS — verified with a live screenshot of `/score` against the pre-change baseline. `vercel.json`'s SPA rewrite (`"/(.*)" → "/index.html"`) untouched — it already covers any client-side route.
-- **Part B:** New marketing homepage at `/` — `src/pages/Landing.tsx` + `src/components/marketing/{MarketingNavbar,MarketingFooter,FeedbackModal}.tsx`. All 8 sections built per spec (Navbar, Hero, How It Works, Trust Signals, Use Cases, Get the API, Find Us, Footer), copy taken verbatim from the task spec.
-- Brand fidelity: before writing any CSS, inspected the *live* `/score`/`/admin` pages and `:root` tokens directly rather than trusting the spec's brand-system blurb, which was stale in two places — flagging both to Ahmad:
-  - Font is `var(--mono)` (JetBrains Mono) everywhere in production, not Geist Sans/Inter as the spec assumed. Used JetBrains Mono throughout the new page for true consistency.
-  - Background/border/text tokens used are the real `:root` values (`#05080f` bg, `#0b0f1a` surface, `#1c2535` border, `#00e5a0` accent, etc.) per Ahmad's own confirmed-live palette, not the spec's `#0A0A0A`/`#3EFFC1`-only description.
-  - All new `.marketing-*` CSS (in `src/index.css`) reuses the exact color/radius/shadow recipes already live in `.home-form-card`, `.wallet-form-submit`, `.results-back`, `.admin-btn`, and the app navbar (frosted glass `blur(14px)`) — new button/card classes were added (not the literal old class names) because of different layout context, but every value traces back to an existing on-screen recipe, not an invention.
-  - Reused `ChainIcon`, `CopyButton`, and `Logo` components as-is (no re-implementation) for the hero chain row, cURL copy button, and navbar/footer logos.
-- Chat + feedback: Crisp.chat placeholder script added to `index.html` `<head>` with empty `CRISP_WEBSITE_ID` (Ahmad to provide). Footer "Send Feedback" opens a modal with a `mailto:feedback@openflowlabs.io` fallback (placeholder address) until Ahmad provides the Tally.so embed; modal has Escape-to-close, a Tab focus trap, and returns focus to the trigger on close.
-- Verified via architect code review (post-build) — flagged and fixed one real gap (modal focus management: initial focus + trap + focus-return, now implemented). Also reviewed and *rejected* a review suggestion to swap the reused hardcoded `rgba(0, 229, 160, …)`/`#001a0e` glow and button-text values for CSS-variable equivalents — those exact literal values are the codebase's own established pattern (already used identically in `.home-form-card`, `.wallet-form-submit`, `.chain-select-panel`, etc.), so changing them would have been a deviation, not a fix.
-- Verified responsively: grid sections (`How It Works`, `Trust Signals`, `Use Cases`) collapse to 1–2 columns under the documented breakpoints; hero/nav/footer collapse to a mobile hamburger layout.
-- Side-by-side screenshot of `/` and `/score` sent to Ahmad for sign-off before starting Task 11B (whitepaper), per his explicit request.
-
-### ✅ Task 11B — Whitepaper Page (Manager verified July 8, 2026)
-Completed July 8, 2026, per Ahmad's next-task assignment (spec in `docs/FRONTEND_TASKS.md` / `docs/TASKS.md`).
-**Post-build fixes applied (same session):** (1) Body/paragraph text changed from `--text-dim` (#7a8fa8) to `--text` (#e8f4ff); table `td` text also updated. (2) Horizontal scroll on mobile eliminated — all four tables wrapped in `overflow-x: auto` containers; mobile TOC links given `word-break: break-word`. (3) Roadmap section removed entirely; Team renumbered 13→12, Contact & Links 14→13 in both `SECTIONS[]` and JSX headings. (4) Scroll-spy sidebar highlighting via `IntersectionObserver` — active entry shows bold white text, mint left-border, green tint. (5) "Back to top" floating button (bottom-right, appears after 400px scroll, smooth scroll, hidden on print). (6) `~16 min read` estimate in header subtitle in mint. (7) Mint reading progress bar fixed at top of page, fills left-to-right as user scrolls, hidden on print.
-- **Route:** `src/pages/Whitepaper.tsx` at `/whitepaper`, registered in `src/App.tsx`. Not wrapped in `<Layout>` — reuses the same `MarketingNavbar`/`MarketingFooter` built in Task 11A so the page feels like a continuation of the marketing site, not a separate document viewer.
-- **Nav update:** `src/components/marketing/MarketingNavbar.tsx` reordered to `Logo | Score a Wallet | API Docs | Whitepaper | [social icons]` on desktop, `Score a Wallet → API Docs → Whitepaper → [social icons]` on mobile — social icons (X, LinkedIn, Telegram, Discord) added to the navbar itself (previously footer-only) per the 11B nav spec. New `.marketing-navbar-social` CSS added, reusing the existing `.marketing-social-icon` recipe from the footer.
-- **Content:** All 14 sections (Executive Summary → Contact & Links) copied verbatim from the spec, including the signal-weight table, trust-tier table, revenue-tier table, WOR passkey flow, full Team bios, and the Contact & Links table with all placeholder rows intact (`[Ahmad to provide — ...]`) — no paraphrasing.
-- **Design:** New `.whitepaper-*` CSS block in `src/index.css` — 17–18px body / 1.8 line-height per spec, mint section numbers (`01`–`14`), sticky TOC sidebar on desktop (collapses to a "Jump to section" accordion under 900px), faint spiral watermark behind the header (`opacity: 0.04`, CSS-only, same technique as the homepage hero watermark), and a `@media print` stylesheet that hides the navbar/TOC/footer and renders a clean black-on-white A4 layout via `@page { size: A4; margin: 1.5cm }`.
-- "Download PDF" calls `window.print()`; "Score a Wallet →" links to `/score`.
-- Verified via architect code review (post-build, pass with no critical/major gaps) — applied its two minor a11y suggestions: `aria-label` on the mobile TOC nav and `scope="col"` on all table headers.
-- Verified: `npm run build` (the same `tsc -b && vite build` Vercel runs) is clean; `/whitepaper`, `/`, and `/score` all screenshot correctly with the updated navbar; responsive breakpoints for the TOC and grid sections follow the same pattern established in Task 11A.
-
-## Nothing else currently active.
+You are idle as of July 9, 2026 — all tasks below are done. Your likely next item is `FIXES.md` FF17 (a full "AI-native tell" cleanup pass across the homepage, docs site, and whitepaper — copy/tone, emoji, any other AI-generated tell), but the Manager needs to confirm priority with Ahmad before sending it. Do not start anything new until the Manager assigns it.
 
 ---
 
-## ✅ Task 11 — Developer Docs Site (Docusaurus) (Manager verified July 9, 2026)
+## ✅ Your Completed Tasks (genuine new-build work)
 
-Started July 8, 2026. Docusaurus 3.10.1 classic project at `oti-docs/`. OTI branding applied. All 6 sections complete. Deployed as its own Vercel project at oti-docs.vercel.app, with baseUrl `/docs/` and a routeBasePath/rewrite fix so it serves correctly under the main site. Manager confirmed live: otiscore.vercel.app/docs, /docs/, and /docs/api-reference all working. See TASKS.md for full notes.
+### TASK 8 — Professional Results Page Redesign ✅
+**Completed:** July 7, 2026. Full visual rebuild of the wallet score results page: score panel in its own bordered card with a chain-color ring gauge, score tier label (HIGHLY TRUSTED → HIGH RISK), a separate "Trust Signals" card with weighted signal bars, truncated wallet address with copy button, native-share-sheet Share button, 3× PNG "Save as Image" export, "⚑ Report this wallet" placeholder ghost link (for WOR, Phase 2), and a footer. This task also established the OTI color system below — every later task must use it.
+
+### TASK 8B — Professional Wallet Input Page Redesign ✅
+**Completed:** July 8, 2026. Matching redesign of the landing/input screen: logo sizing and position, gradient wordmark, tagline, mint-glow form card, styled rate-limit badge, "Try an example →" link, WOR ghost links, footer, faint watermark, plus a polish round fixing zkSync/Linea icon visibility, chain icon/dropdown sizing, and mobile vertical spacing.
+
+### TASK 9 — Admin Panel UI ✅
+**Completed:** July 7, 2026. Built the `/admin` route (URL-only, no public nav link, per Ahmad's decision): password gate, Dashboard, API Keys (create/list/edit/delete, reveal-once creation modal), Query History, Cache, and Plan Configs tabs. All calls authenticate with `x-admin-secret` from sessionStorage.
+
+### TASK 11A — Restructure Vercel App: Marketing Front Door + Scoring at /score ✅
+**Completed:** July 8, 2026. Moved the scoring tool intact to `/score` and built a full marketing homepage at `/`: navbar, hero with chain row, How It Works (3 steps), Trust Signals (5 cards), Use Cases (9-tile grid), Get the API (cURL example), Find Us/Integrations row, footer with social links. Crisp.chat live-chat widget embedded in `<head>` (site ID left blank until Ahmad provides it). Brand consistency with `/score` verified via cache-busted screenshot and JS bundle inspection by the Manager, and directly by Ahmad.
+
+### TASK 11B — Whitepaper Page ✅
+**Completed:** July 8, 2026 (build), fixes verified July 8–9, 2026. Built `/whitepaper`: full section-by-section technical/business document, sticky TOC sidebar on desktop (accordion on mobile), mint section numbers, print-to-PDF via `window.print()`, shared navbar/footer/color system with the homepage. Three post-launch rendering fixes (body text color, mobile horizontal scroll, Roadmap section removal) are logged in `FIXES.md` FF16.
+
+### TASK 11 — Developer Docs Site ✅
+**Completed:** July 9, 2026. Docusaurus site (`oti-docs/`) covering Getting Started, API Reference, Score Explanation, Supported Chains, Rate Limits, and JS/Python/cURL examples, plus an OG social-share image and a live "Try It Live" widget. Deployed as its own Vercel project (pnpm-based build — do not switch back to npm, see `MANAGER_HANDOVER.md` for why) and proxied onto the main site at `/docs/` via `vercel.json` rewrites. Confirmed fully live via curl on `/docs`, `/docs/`, and `/docs/api-reference`. One open follow-up: `FIXES.md` BF11/BF-style item — re-verify "Try It Live" hits the real Railway backend post-redeploy (tracked as BF11 in `FIXES.md`, owned by whichever Builder picks it up next — currently unassigned).
+
+---
+
+## 🎨 OTI Color System (Locked — July 7, 2026)
+
+> This palette replaced the old flat black + mint system. Every future task must use these exact values. Do not revert to pure black (`#000000`) or the old surface colors.
+
+| Token | Value | Usage |
+|---|---|---|
+| Background | `#05080f` | Page background — deep blue-black |
+| Surface | `#0b0f1a` | Card backgrounds, panels |
+| Surface-2 | `#0f1520` | Inner elements, signal bar tracks |
+| Borders | `#1c2535` | All card/panel borders |
+| Body text | `#e8f4ff` | Main readable text — slight blue tint |
+| Dimmed text | `#7a8fa8` | Metadata, labels, secondary text |
+| Mint (primary) | `#00e5a0` | CTAs, highlights, active states, mint accents |
+| Mint (gradient end) | `#3EFFC1` | Gradient highlights |
+
+**Chain brand colors (ring gauge + panel tint):** Ethereum `#627EEA` · Bitcoin `#F7931A` · Solana `#9945FF` · BNB `#F3BA2F` · (all 15 chains have their exact brand hex in the codebase — check there before inventing a new one).
+
+**Special effects (do not remove):**
+- Navbar: `backdrop-filter: blur(14px)` frosted glass
+- Submit button: green glow on hover `box-shadow: 0 0 24px rgba(0,229,160,0.40)`
+- Score panel: border + background tint shifts toward the selected chain's brand color via `color-mix()`
+- Signal bars: 5px height, soft color glow on fill
+- All `color-mix()` declarations have plain-value fallbacks above them for older browsers
+
+---
+
+## 🔴 Your Task Queue
+
+Nothing is currently queued. Once Ahmad confirms priority, the Manager will send you `FIXES.md` FF17 (AI-native tell cleanup) as your next active item — it lives in the fixes log, not here, since it corrects existing copy/design rather than building something new.
+
+---
+
+## ⏳ Future Tasks (Not Yet Active — Manager Will Assign When Ready)
+
+- **Phase 5:** Firefox browser extension (then Chrome) — separate repo, content script that detects wallet addresses on Etherscan/OpenSea and injects OTI score badges
+- **Phase 2:** Wallet Ownership Registry (WOR) UI — registration flow, compromise report flow, passkey integration
+- **Phase 3:** Self-serve developer portal — sign up, get API key, choose plan
+
+---
+
+## Keeping This File Updated
+
+You never update either file on your own initiative. Every update — whether marking a task done or adding a new one — happens only when the Manager explicitly tells you to.
+
+**When you complete a task:**
+1. Notify the Manager — do not mark anything done yourself
+2. Wait for the Manager to review and confirm your work
+3. Only when the Manager explicitly tells you to mark it done:
+   - Move it to the ✅ Completed Tasks section in this file
+   - Mark it ✅ in `TASKS.md` as well (or in `FIXES.md`, if it's a fix, not a task)
+4. All your files must always match the Manager's
+
+**When the Manager assigns you a new task:**
+1. The Manager will explicitly tell you to add the new task to your file
+2. Only then: add it to the bottom of your Queue section in this file AND add it to `TASKS.md`
+3. Read it fully before starting — every task has a "Why" and a "Definition of done"
+4. Do not start a task that has a ⚠️ dependency warning until the Manager confirms it is cleared
+
+**General rules:**
+- Never touch Git, never push, never open a PR — Ahmad handles all of that himself
+- Never touch `vercel.json` — ever
+- Never manually edit `src/api/schema.gen.ts` — run `pnpm codegen` instead
+- Ahmad loves the chain selector — do not touch it
+- All CSS goes in `src/index.css` — no new component libraries
+- Test on mobile (375px) — most users are on mobile
+- If a task is blocked, tell the Manager immediately — do not sit on a blocker
+- Never update any file without the Manager's explicit instruction
