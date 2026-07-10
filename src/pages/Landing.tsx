@@ -1,4 +1,23 @@
 import { Link } from 'react-router-dom'
+import type { LucideIcon } from 'lucide-react'
+import {
+  Clock,
+  BarChart3,
+  Coins,
+  Link2,
+  Timer,
+  Landmark,
+  Image,
+  Banknote,
+  Gamepad2,
+  Vote,
+  ShieldCheck,
+  Radio,
+  Wrench,
+  Send,
+  MessageCircle,
+  Globe,
+} from 'lucide-react'
 import { MarketingNavbar } from '@/components/marketing/MarketingNavbar'
 import { MarketingFooter } from '@/components/marketing/MarketingFooter'
 import { ChainIcon } from '@/components/ChainIcon'
@@ -26,31 +45,31 @@ const HOW_IT_WORKS = [
   },
 ]
 
-const TRUST_SIGNALS = [
-  { icon: '🕐', label: 'Wallet Age', weight: '25%', body: 'How long this wallet has been active on-chain' },
-  { icon: '📊', label: 'Transaction Count', weight: '20%', body: 'Volume and frequency of transactions' },
-  { icon: '🪙', label: 'Token Holding Behavior', weight: '20%', body: 'Diversity and quality of tokens held' },
-  { icon: '🔗', label: 'Smart Contract Interactions', weight: '20%', body: 'Depth of DeFi and protocol engagement' },
-  { icon: '⏱', label: 'Transaction Timing', weight: '15%', body: 'Consistency and naturalness of activity patterns' },
+const TRUST_SIGNALS: { icon: LucideIcon; label: string; weight: string; body: string }[] = [
+  { icon: Clock, label: 'Wallet Age', weight: '25%', body: 'How long this wallet has been active on-chain' },
+  { icon: BarChart3, label: 'Transaction Count', weight: '20%', body: 'Volume and frequency of transactions' },
+  { icon: Coins, label: 'Token Holding Behavior', weight: '20%', body: 'Diversity and quality of tokens held' },
+  { icon: Link2, label: 'Smart Contract Interactions', weight: '20%', body: 'Depth of DeFi and protocol engagement' },
+  { icon: Timer, label: 'Transaction Timing', weight: '15%', body: 'Consistency and naturalness of activity patterns' },
 ]
 
-const USE_CASES = [
-  { icon: '💱', label: 'Exchanges & Gateways', body: 'Flag compromised wallets before processing withdrawals.' },
-  { icon: '🏦', label: 'DeFi Protocols', body: 'Risk-adjust lending and collateral requirements based on wallet trust.' },
-  { icon: '🖼', label: 'NFT Marketplaces', body: 'Display trust badges next to seller listings.' },
-  { icon: '💸', label: 'Payment Processors', body: 'Require a minimum trust score before processing.' },
-  { icon: '🎮', label: 'Web3 Gaming', body: 'Prevent fresh-wallet farming in Play-to-Earn.' },
-  { icon: '🗳', label: 'DAO Governance', body: 'Weight votes by wallet trust alongside token balance.' },
-  { icon: '🔐', label: 'Custody Services', body: 'Score source wallets before crediting accounts.' },
-  { icon: '📡', label: 'Bridges & Cross-chain', body: 'Score the source wallet before allowing a bridge transaction.' },
-  { icon: '🛠', label: 'Developer Tooling', body: 'One API call. Any chain. No blockchain infrastructure required.' },
+const USE_CASES: { icon: LucideIcon; label: string; body: string }[] = [
+  { icon: Landmark, label: 'Exchanges & Gateways', body: 'Flag compromised wallets before processing withdrawals.' },
+  { icon: Banknote, label: 'DeFi Protocols', body: 'Risk-adjust lending and collateral requirements based on wallet trust.' },
+  { icon: Image, label: 'NFT Marketplaces', body: 'Display trust badges next to seller listings.' },
+  { icon: Coins, label: 'Payment Processors', body: 'Require a minimum trust score before processing.' },
+  { icon: Gamepad2, label: 'Web3 Gaming', body: 'Prevent fresh-wallet farming in Play-to-Earn.' },
+  { icon: Vote, label: 'DAO Governance', body: 'Weight votes by wallet trust alongside token balance.' },
+  { icon: ShieldCheck, label: 'Custody Services', body: 'Score source wallets before crediting accounts.' },
+  { icon: Radio, label: 'Bridges & Cross-chain', body: 'Score the source wallet before allowing a bridge transaction.' },
+  { icon: Wrench, label: 'Developer Tooling', body: 'One API call. Any chain. No blockchain infrastructure required.' },
 ]
 
-const FIND_US = [
-  { icon: '✈', label: 'Telegram' },
-  { icon: '◈', label: 'Discord' },
-  { icon: '🌐', label: 'Chrome Extension' },
-  { icon: '🦊', label: 'Firefox Extension' },
+const FIND_US: { icon: LucideIcon; label: string }[] = [
+  { icon: Send, label: 'Telegram' },
+  { icon: MessageCircle, label: 'Discord' },
+  { icon: Globe, label: 'Chrome Extension' },
+  { icon: Globe, label: 'Firefox Extension' },
 ]
 
 const CURL_EXAMPLE = `curl https://otiscore.vercel.app/api/score \\
@@ -115,7 +134,7 @@ export function Landing() {
           <div className="marketing-signal-grid">
             {TRUST_SIGNALS.map((s) => (
               <div key={s.label} className="marketing-signal-card">
-                <span className="marketing-signal-icon" aria-hidden="true">{s.icon}</span>
+                <s.icon className="marketing-signal-icon" aria-hidden="true" />
                 <h3 className="marketing-signal-title">{s.label}</h3>
                 <span className="marketing-signal-weight">{s.weight}</span>
                 <p className="marketing-signal-body">{s.body}</p>
@@ -132,7 +151,7 @@ export function Landing() {
           <div className="marketing-usecase-grid">
             {USE_CASES.map((u) => (
               <div key={u.label} className="marketing-usecase-tile">
-                <span className="marketing-usecase-icon" aria-hidden="true">{u.icon}</span>
+                <u.icon className="marketing-usecase-icon" aria-hidden="true" />
                 <h3 className="marketing-usecase-title">{u.label}</h3>
                 <p className="marketing-usecase-body">{u.body}</p>
               </div>
@@ -165,7 +184,7 @@ export function Landing() {
           <div className="marketing-findus-row">
             {FIND_US.map((f) => (
               <a href="#" key={f.label} className="marketing-findus-item">
-                <span className="marketing-findus-icon" aria-hidden="true">{f.icon}</span>
+                <f.icon className="marketing-findus-icon" aria-hidden="true" />
                 <span>{f.label}</span>
               </a>
             ))}

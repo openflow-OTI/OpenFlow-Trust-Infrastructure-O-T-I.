@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { Check, Copy } from 'lucide-react'
 
 interface CopyButtonProps {
   value?: string | null
@@ -36,7 +37,15 @@ export function CopyButton({ value, label, className }: CopyButtonProps) {
       title={copied ? 'Copied!' : 'Copy to clipboard'}
       type="button"
     >
-      {copied ? '✓' : label ? `⧉ ${label}` : '⧉'}
+      {copied ? (
+        <Check className="copy-btn-icon" aria-hidden="true" />
+      ) : label ? (
+        <>
+          <Copy className="copy-btn-icon" aria-hidden="true" /> {label}
+        </>
+      ) : (
+        <Copy className="copy-btn-icon" aria-hidden="true" />
+      )}
     </button>
   )
 }

@@ -579,8 +579,11 @@ textarea {
 }
 
 .marketing-signal-icon {
-  font-size: 1.6rem;
+  width: 1.6rem;
+  height: 1.6rem;
   margin-bottom: 0.25rem;
+  color: var(--accent);
+  stroke-width: 1.75;
 }
 
 .marketing-signal-title {
@@ -638,8 +641,11 @@ textarea {
 
 .marketing-usecase-icon {
   display: block;
-  font-size: 1.4rem;
+  width: 1.4rem;
+  height: 1.4rem;
   margin-bottom: 0.75rem;
+  color: var(--accent);
+  stroke-width: 1.75;
 }
 
 .marketing-usecase-title {
@@ -725,6 +731,14 @@ textarea {
   border-color: rgba(0, 229, 160, 0.35);
 }
 
+.marketing-code-copy-btn .copy-btn-icon,
+.admin-copy-btn .copy-btn-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  stroke-width: 2;
+  vertical-align: -0.15em;
+}
+
 /* ── Find Us ── */
 .marketing-findus-row {
   display: flex;
@@ -753,7 +767,10 @@ textarea {
 }
 
 .marketing-findus-icon {
-  font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--accent);
+  stroke-width: 1.75;
 }
 
 /* ── Footer ── */
@@ -813,14 +830,24 @@ textarea {
   height: 2rem;
   border-radius: 50%;
   border: 1px solid var(--border);
-  color: var(--text-dim);
+  color: var(--accent);
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.marketing-social-icon svg {
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 1.75;
+}
+
+.marketing-social-icon--glyph {
   font-size: 0.85rem;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  font-weight: 600;
 }
 
 .marketing-social-icon:hover {
-  color: var(--accent);
   border-color: rgba(0, 229, 160, 0.4);
+  box-shadow: 0 0 12px rgba(0, 229, 160, 0.2);
 }
 
 /* ── Feedback modal ── */
@@ -851,15 +878,23 @@ textarea {
   position: absolute;
   top: 0.9rem;
   right: 0.9rem;
+  display: inline-flex;
   background: none;
   border: none;
-  color: var(--text-dim);
-  font-size: 1rem;
+  color: var(--accent);
   cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.marketing-modal-close svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  stroke-width: 1.75;
 }
 
 .marketing-modal-close:hover {
-  color: var(--text);
+  opacity: 1;
 }
 
 .marketing-modal-title {

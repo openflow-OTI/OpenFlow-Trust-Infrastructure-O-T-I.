@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { X } from 'lucide-react'
 
 interface FeedbackModalProps {
   open: boolean
@@ -67,7 +68,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <button ref={closeBtnRef} className="marketing-modal-close" onClick={onClose} aria-label="Close">
-          ✕
+          <X aria-hidden="true" />
         </button>
         <h2 id="feedback-modal-title" className="marketing-modal-title">Send Feedback</h2>
         <p className="marketing-modal-body">

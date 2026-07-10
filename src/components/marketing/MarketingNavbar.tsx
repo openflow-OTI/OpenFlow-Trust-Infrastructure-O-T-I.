@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Send, MessageCircle } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 
 export function MarketingNavbar() {
@@ -20,10 +21,10 @@ export function MarketingNavbar() {
           <a href="/docs/" className="marketing-navbar-link">API Docs</a>
           <Link to="/whitepaper" className="marketing-navbar-link">Whitepaper</Link>
           <div className="marketing-navbar-social">
-            <a href="#" aria-label="Twitter / X" className="marketing-social-icon">𝕏</a>
-            <a href="#" aria-label="LinkedIn" className="marketing-social-icon">in</a>
-            <a href="#" aria-label="Telegram" className="marketing-social-icon">✈</a>
-            <a href="#" aria-label="Discord" className="marketing-social-icon">◈</a>
+            <a href="#" aria-label="Twitter / X" className="marketing-social-icon marketing-social-icon--glyph">𝕏</a>
+            <a href="#" aria-label="LinkedIn" className="marketing-social-icon marketing-social-icon--glyph">in</a>
+            <a href="#" aria-label="Telegram" className="marketing-social-icon"><Send aria-hidden="true" /></a>
+            <a href="#" aria-label="Discord" className="marketing-social-icon"><MessageCircle aria-hidden="true" /></a>
           </div>
         </nav>
 
@@ -55,10 +56,10 @@ export function MarketingNavbar() {
             Whitepaper
           </Link>
           <div className="marketing-navbar-social">
-            <a href="#" aria-label="Twitter / X" className="marketing-social-icon">𝕏</a>
-            <a href="#" aria-label="LinkedIn" className="marketing-social-icon">in</a>
-            <a href="#" aria-label="Telegram" className="marketing-social-icon">✈</a>
-            <a href="#" aria-label="Discord" className="marketing-social-icon">◈</a>
+            <a href="#" aria-label="Twitter / X" className="marketing-social-icon marketing-social-icon--glyph">𝕏</a>
+            <a href="#" aria-label="LinkedIn" className="marketing-social-icon marketing-social-icon--glyph">in</a>
+            <a href="#" aria-label="Telegram" className="marketing-social-icon"><Send aria-hidden="true" /></a>
+            <a href="#" aria-label="Discord" className="marketing-social-icon"><MessageCircle aria-hidden="true" /></a>
           </div>
         </nav>
       )}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Send, MessageCircle } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { FeedbackModal } from './FeedbackModal'
 
@@ -31,10 +32,10 @@ export function MarketingFooter() {
         </nav>
 
         <div className="marketing-footer-social">
-          <a href="#" aria-label="Twitter / X" className="marketing-social-icon">𝕏</a>
-          <a href="#" aria-label="LinkedIn" className="marketing-social-icon">in</a>
-          <a href="#" aria-label="Telegram" className="marketing-social-icon">✈</a>
-          <a href="#" aria-label="Discord" className="marketing-social-icon">◈</a>
+          <a href="#" aria-label="Twitter / X" className="marketing-social-icon marketing-social-icon--glyph">𝕏</a>
+          <a href="#" aria-label="LinkedIn" className="marketing-social-icon marketing-social-icon--glyph">in</a>
+          <a href="#" aria-label="Telegram" className="marketing-social-icon"><Send aria-hidden="true" /></a>
+          <a href="#" aria-label="Discord" className="marketing-social-icon"><MessageCircle aria-hidden="true" /></a>
         </div>
       </div>
 
