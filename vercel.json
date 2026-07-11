@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install --legacy-peer-deps --no-audit --no-fund",
+  "installCommand": "npm install --legacy-peer-deps --no-audit --no-fund --loglevel http",
   "rewrites": [
     { "source": "/docs", "destination": "https://oti-docs.vercel.app/" },
     { "source": "/docs/", "destination": "https://oti-docs.vercel.app/" },
