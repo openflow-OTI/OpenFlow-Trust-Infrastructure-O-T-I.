@@ -1,4 +1,5 @@
 {
+  "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
     { "source": "/docs", "destination": "https://oti-docs.vercel.app/" },
     { "source": "/docs/", "destination": "https://oti-docs.vercel.app/" },
