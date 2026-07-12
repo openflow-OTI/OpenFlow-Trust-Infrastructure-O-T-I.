@@ -1,4 +1,4 @@
-# OTI — OpenFlow Trust Infrastructure (Frontend)
+# OTI — OpenFlow Trust Infrastructure.
 
 **Instant, on-chain trust scores for any wallet address — no login, no KYC.**
 
