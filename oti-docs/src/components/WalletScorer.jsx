@@ -9,7 +9,7 @@ const CHAINS = [
   { id: 'bitcoin',   label: 'Bitcoin',   example: '34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo',        hint: 'Binance cold wallet' },
   { id: 'solana',    label: 'Solana',    example: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', hint: 'Binance hot wallet' },
   { id: 'tron',      label: 'Tron',      example: 'TVj7RNVHy6thbM7BWdSe9G6gXwKhjhdNZS',        hint: 'Binance hot wallet' },
-  { id: 'ton',       label: 'TON',       example: 'EQD2NmD_lH5f5u1Kj3KfGyTvhZSX0Eg6qp2a5IQUKXxOG3f', hint: 'Known TON whale' },
+  { id: 'ton',       label: 'TON',       example: 'EQAOobN5eCwKmqhNV-l_TLePKHharXyh2-tFaYrNP14Ew5aK', hint: 'Active TON wallet (txCount 370)' },
   { id: 'polygon',   label: 'Polygon',   example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
   { id: 'arbitrum',  label: 'Arbitrum',  example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
   { id: 'avalanche', label: 'Avalanche', example: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', hint: 'Vitalik Buterin (EVM)' },
