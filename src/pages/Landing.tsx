@@ -33,17 +33,17 @@ const HOW_IT_WORKS = [
   {
     step: 1,
     title: 'Enter wallet address + select chain',
-    body: 'Paste any wallet address and pick from 15 supported chains — EVM and non-EVM alike.',
+    body: 'Paste any wallet address and select from 15 supported chains — Ethereum, Solana, Bitcoin, TON, and more.',
   },
   {
     step: 2,
     title: 'OTI analyzes 5 on-chain behavioral signals',
-    body: 'Wallet age, transaction history, token holdings, contract interactions, and timing patterns — pulled straight from the chain.',
+    body: 'Wallet age, transaction count, token holdings, contract interactions, and timing patterns — sourced directly from on-chain data.',
   },
   {
     step: 3,
     title: 'Get a 0–100 trust score with full signal breakdown',
-    body: 'A single trust score plus the weighted breakdown behind it, ready to act on or pipe into your own systems.',
+    body: 'A single trust score with the full weighted signal breakdown — display it to users or pipe it directly into your own systems.',
   },
 ]
 
@@ -59,7 +59,7 @@ const USE_CASES: { icon: LucideIcon; label: string; body: string }[] = [
   { icon: Landmark, label: 'Exchanges & Gateways', body: 'Flag compromised wallets before processing withdrawals.' },
   { icon: Banknote, label: 'DeFi Protocols', body: 'Risk-adjust lending and collateral requirements based on wallet trust.' },
   { icon: Image, label: 'NFT Marketplaces', body: 'Display trust badges next to seller listings.' },
-  { icon: Coins, label: 'Payment Processors', body: 'Require a minimum trust score before processing.' },
+  { icon: Coins, label: 'Payment Processors', body: 'Require a minimum trust score before processing outbound payments.' },
   { icon: Gamepad2, label: 'Web3 Gaming', body: 'Prevent fresh-wallet farming in Play-to-Earn.' },
   { icon: Vote, label: 'DAO Governance', body: 'Weight votes by wallet trust alongside token balance.' },
   { icon: ShieldCheck, label: 'Custody Services', body: 'Score source wallets before crediting accounts.' },
