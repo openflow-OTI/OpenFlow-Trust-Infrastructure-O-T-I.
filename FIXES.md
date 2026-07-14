@@ -62,6 +62,9 @@
 ### BF11 — Re-verify "Try It Live" Widget Against Railway Backend ✅
 **Fixed:** July 13, 2026. Confirmed `API_BASE` in `oti-docs/src/components/WalletScorer.jsx` is set to the correct Railway URL. Live test against Vitalik's wallet returned score 96 with full weighted signal breakdown. No URL change needed.
 
+### BF13 — Admin Cache Controls Dashboard Tab ✅
+**Fixed:** July 14, 2026. Built full Cache tab in the admin dashboard (`src/pages/admin/AdminCache.tsx`). Replaced a stub "Flush Cache" button with: live stats row (5 stat cards, refresh button), visual pill toggle switch for ON/OFF (mint green), rescore window input, clear-single-wallet form with confirm dialog, clear-all with deletedRows count, and a quick-action scorer pre-filled from the last cleared address. All 6 evidence steps verified live against Railway production. Toggle and rescore-window endpoints unblocked after DB migration ran on prod.
+
 ### BF12 — Railway Deploys Don't Auto-Run Migrations 🔴 OPEN (optional)
 **Priority:** Low, small effort, not urgent. Confirmed July 5, 2026: Railway's deploy pipeline only runs `pnpm install && build && start` — it does **not** run `drizzle-kit push`. Every schema change currently needs Ahmad to manually run the migration against the Railway production DB after deploying (this is how BF3 above was applied). Optional fix: add `drizzle-kit push` to `railway.json`'s `buildCommand` (a one-line change — NOT to `nixpacks.toml`, which stays sacred). Not yet assigned; only worth doing if Ahmad wants to remove the manual step.
 
@@ -139,6 +142,12 @@
 
 ### BF23 — Remove Scroll, Sepolia, Holesky (Frontend Side) ✅
 **Fixed:** July 13, 2026. Audited all frontend surfaces. `src/lib/chains.ts`, `oti-docs/docs/supported-chains.md`, and `oti-docs/src/components/WalletScorer.jsx` were already absent. Removed Scroll, Sepolia, and Holesky from the EVM chain list in `src/pages/Whitepaper.tsx` Section 06. The "15 blockchain networks" count is unchanged — BNB Smart Chain, Base, and Optimism fill those three slots as temporarily unavailable chains.
+
+### FF22 — Query History Filter Bar ✅
+**Fixed:** July 14, 2026. Added client-side filter bar to `src/pages/admin/QueryHistory.tsx`. Four controls: address text filter (partial match, case-insensitive), chain dropdown (populated from live data), from/to date range pickers. "✕ Clear" button appears only when filters are active. Result count line shows "Showing N of M results" with red "no matches" hint. No new API calls — filters on already-fetched data via useMemo.
+
+### FF23 — Cache Tab Visual Toggle Switch + Quick Scorer ✅
+**Fixed:** July 14, 2026. Replaced button-based cache toggle in `src/pages/admin/AdminCache.tsx` with a proper sliding pill toggle switch (CSS in `src/index.css`). Added "Score a wallet" quick-action section at the bottom of the Cache tab — address input, chain dropdown (all 15 chains from `chains.ts`), live score button, inline result card showing score/tier/chain. Address auto-populates from the last cleared wallet so clearing and immediately rescoring is one step.
 
 ---
 
