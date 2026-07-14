@@ -149,8 +149,17 @@
 ### FF24 — Query History Export to CSV ✅
 **Fixed:** July 14, 2026. Added "↓ Export CSV" button to `src/pages/admin/QueryHistory.tsx`. Exports whatever is currently visible (filtered or full). Button label shows filtered count when filters are active (e.g. "↓ Export CSV (12)"). Filename includes date and "-filtered" suffix when filters are on. Pure client-side — no API call, no dependencies. Handles CSV escaping (quoted fields with embedded commas/quotes). Button hidden when there are no results to export.
 
-### FF23 — Cache Tab Visual Toggle Switch + Quick Scorer ✅
-**Fixed:** July 14, 2026. Replaced button-based cache toggle in `src/pages/admin/AdminCache.tsx` with a proper sliding pill toggle switch (CSS in `src/index.css`). Added "Score a wallet" quick-action section at the bottom of the Cache tab — address input, chain dropdown (all 15 chains from `chains.ts`), live score button, inline result card showing score/tier/chain. Address auto-populates from the last cleared wallet so clearing and immediately rescoring is one step.
+### FF23 — Cache Tab Visual Toggle Switch ✅
+**Fixed:** July 14, 2026. Replaced button-based cache toggle in `src/pages/admin/AdminCache.tsx` with a proper sliding pill toggle switch (CSS in `src/index.css`).
+
+### FF25 — Score a Wallet Moved to Dashboard Tab ✅
+**Fixed:** July 14, 2026. Removed the "Score a wallet" quick scorer from the Cache tab (`src/pages/admin/AdminCache.tsx`) and rebuilt it in the Dashboard tab (`src/pages/admin/Dashboard.tsx`). Full result card shows: score number + colour-coded tier badge, signal breakdown table (Signal / Score / Weight for all 5 signals), and on-chain metadata row. Compromised wallet warning included. `CHAINS` import and all scorer types/constants (`SignalDetail`, `ScoreResult`, `SIGNAL_LABELS`, `META_LABELS`, `SCORE_TIERS`, `getTier`) removed from AdminCache; auto-populate-on-clear removed with them.
+
+### FF26 — Query History Chain Filter Shows All 15 Chains ✅
+**Fixed:** July 14, 2026. The chain dropdown in `src/pages/admin/QueryHistory.tsx` was dynamically built from whichever chains appeared in the fetched results — so sessions with only bitcoin/ethereum data showed only those two options. Fixed by replacing the dynamic `useMemo` derivation with the static `CHAINS` list from `src/lib/chains.ts`, so all 15 chains are always available.
+
+### FF27 — Query History Score Range Filter ✅
+**Fixed:** July 14, 2026. Added Score min and Score max number inputs to the filter bar in `src/pages/admin/QueryHistory.tsx`. Filters instantly on the already-fetched data (no API call). Works in combination with address, chain, and date filters. ✕ Clear resets both score bounds. `hasFilters` check updated to include non-empty score bounds.
 
 ---
 
