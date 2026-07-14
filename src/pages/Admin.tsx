@@ -14,7 +14,7 @@ import { AdminCache }         from './admin/AdminCache'
 import { PlanConfigs }        from './admin/PlanConfigs'
 import { CompromisedWallets } from './admin/CompromisedWallets'
 import { ConfigSync }         from './admin/ConfigSync'
-import { WOR }                from './admin/WOR'
+import { WOR, type WORSubView } from './admin/WOR'
 
 class AdminErrorBoundary extends Component<
   { children: ReactNode; onReset: () => void },
@@ -52,6 +52,7 @@ class AdminErrorBoundary extends Component<
 }
 
 type Screen = 'dashboard' | 'keys' | 'usage' | 'history' | 'cache' | 'plans' | 'flagged' | 'sync' | 'wor'
+type WORSubView = 'registry' | 'compromised' | 'override'
 
 const SCREENS: { id: Screen; label: string; icon: string }[] = [
   { id: 'dashboard', label: 'Dashboard',       icon: '▦' },
@@ -70,8 +71,9 @@ export function Admin() {
   const [input,    setInput]    = useState('')
   const [denied,   setDenied]   = useState(false)
   const [probing,  setProbing]  = useState(false)
-  const [screen,   setScreen]   = useState<Screen>('dashboard')
-  const [navOpen,  setNavOpen]  = useState(false)
+  const [screen,      setScreen]      = useState<Screen>('dashboard')
+  const [navOpen,     setNavOpen]     = useState(false)
+  const [worSubView,  setWorSubView]  = useState<WORSubView>('registry')
 
   const lock = useCallback(() => {
     clearAdminSecret()
@@ -109,8 +111,9 @@ export function Admin() {
     setProbing(false)
   }
 
-  function navigate(id: Screen) {
+  function navigate(id: Screen, worView?: WORSubView) {
     setScreen(id)
+    if (worView) setWorSubView(worView)
     setNavOpen(false)
   }
 
@@ -203,7 +206,7 @@ export function Admin() {
         </div>
 
         <div className="admin-content">
-          {screen === 'dashboard' && <Dashboard />}
+          {screen === 'dashboard' && <Dashboard onNavigateToWor={() => navigate('wor', 'compromised')} />}
           {screen === 'keys'      && <ApiKeys />}
           {screen === 'usage'     && <Usage />}
           {screen === 'history'   && <QueryHistory />}
@@ -211,7 +214,7 @@ export function Admin() {
           {screen === 'plans'     && <PlanConfigs />}
           {screen === 'flagged'   && <CompromisedWallets />}
           {screen === 'sync'      && <ConfigSync />}
-          {screen === 'wor'       && <WOR />}
+          {screen === 'wor'       && <WOR subView={worSubView} onSubViewChange={setWorSubView} />}
         </div>
       </div>
     </div>

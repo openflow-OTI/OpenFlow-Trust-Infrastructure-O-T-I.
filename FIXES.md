@@ -161,6 +161,13 @@
 ### FF27 — Query History Score Search Filter ✅
 **Fixed:** July 14, 2026. Added a Score search input to the filter bar in `src/pages/admin/QueryHistory.tsx`. Type any score value (0–100) to instantly show only history entries where the wallet's last score exactly matches. Works in combination with address, chain, and date filters. ✕ Clear resets it. No API call — filters on already-fetched data via useMemo.
 
+### FF28 — WOR Ecosystem Wiring + UI Polish ✅
+**Fixed:** July 14, 2026. Four parts:
+1. **Navigation**: Admin Dashboard "Flagged wallets" stat card is now clickable — navigates directly to WOR → Compromised sub-view. `Admin.tsx` manages `worSubView` state; `Dashboard` accepts an `onNavigateToWor` callback; `WOR` accepts controlled `subView`/`onSubViewChange` props.
+2. **Entry points**: `/score` input page WOR links now navigate to real `/register` and `/report` routes (no longer "coming soon"). Landing page (`/`) gains a "Protect Your Wallet" section between Use Cases and the API block. Results page shows a subtle "Own this wallet? Register it with OTI" banner when the wallet is not compromised and not already registered (live `useRegistrationStatus` hook, 1-min cache).
+3. **UI redesign**: `/register` and `/report` rebuilt with a visual 3-step stepper (numbered dots + connecting lines, active/done states), challenge message styled as a green monospace security artifact with header label, passkey fields inside tinted security panels with ⚠ warning note, result success/error states with icon circles. `/report` gains a red `⚑ SELF-REPORTING` badge on step 1.
+4. **Admin WOR tab**: `Compromised` sub-view now has a "✕ Remove Flag" action button per row → calls `DELETE /admin/wor/flag/:address`. Status column shows colour-coded dot badges (active = green, compromised = red). Manual Override section has an amber warning banner and distinct flag/unflag panels.
+
 ---
 
 ## Adding a New Fix

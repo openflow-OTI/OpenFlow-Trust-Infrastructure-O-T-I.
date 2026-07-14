@@ -12,20 +12,45 @@ declare global {
 
 type Step = 1 | 2 | 3
 
+const STEP_LABELS = ['Address', 'Sign', 'Passkey']
+
+function Stepper({ step }: { step: Step }) {
+  return (
+    <div className="wor-stepper">
+      {[1, 2, 3].map((n, i) => (
+        <div key={n} className="wor-stepper-segment">
+          <div className="wor-stepper-node">
+            <div
+              className={`wor-step-dot${step > n ? ' wor-step-dot--done' : step === n ? ' wor-step-dot--active' : ''}`}
+            >
+              {step > n ? '✓' : n}
+            </div>
+            <span className={`wor-step-label${step === n ? ' wor-step-label--active' : ''}`}>
+              {STEP_LABELS[i]}
+            </span>
+          </div>
+          {n < 3 && (
+            <div className={`wor-step-line${step > n ? ' wor-step-line--done' : ''}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function Register() {
-  const [step, setStep]                   = useState<Step>(1)
-  const [address, setAddress]             = useState('')
+  const [step, setStep]                         = useState<Step>(1)
+  const [address, setAddress]                   = useState('')
   const [challengeMessage, setChallengeMessage] = useState('')
-  const [signature, setSignature]         = useState('')
-  const [passkey, setPasskey]             = useState('')
-  const [confirmPasskey, setConfirmPasskey] = useState('')
-  const [loading, setLoading]             = useState(false)
-  const [error, setError]                 = useState<string | null>(null)
-  const [success, setSuccess]             = useState(false)
+  const [signature, setSignature]               = useState('')
+  const [passkey, setPasskey]                   = useState('')
+  const [confirmPasskey, setConfirmPasskey]     = useState('')
+  const [loading, setLoading]                   = useState(false)
+  const [error, setError]                       = useState<string | null>(null)
+  const [success, setSuccess]                   = useState(false)
 
   function clearError() { setError(null) }
 
-  // ── Step 1: check registration status ───────────────────────────────────
   async function handleAddressSubmit(e: React.FormEvent) {
     e.preventDefault()
     const addr = address.trim()
@@ -40,7 +65,6 @@ export function Register() {
         setError('This address is already registered.')
         return
       }
-      // not_registered or 404 → get challenge
       await loadChallenge(addr)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to check registration status.')
@@ -49,7 +73,6 @@ export function Register() {
     }
   }
 
-  // ── Step 2a: fetch challenge ─────────────────────────────────────────────
   async function loadChallenge(addr: string) {
     const { data } = await worFetch<{ message?: string }>(
       `/wallet/register/challenge?address=${encodeURIComponent(addr)}&chain_family=evm`
@@ -59,10 +82,9 @@ export function Register() {
     setStep(2)
   }
 
-  // ── Step 2b: sign with MetaMask ──────────────────────────────────────────
   async function handleSign() {
     if (!window.ethereum) {
-      setError('MetaMask not detected. Please install MetaMask and try again.')
+      setError('MetaMask not detected. Please install MetaMask to continue.')
       return
     }
     setLoading(true)
@@ -72,27 +94,21 @@ export function Register() {
         method: 'eth_requestAccounts',
       })) as string[]
       if (!accounts || accounts.length === 0) throw new Error('No accounts available in MetaMask.')
-
       const sig = (await window.ethereum.request({
         method: 'personal_sign',
         params: [challengeMessage, accounts[0]],
       })) as string
-
       setSignature(sig)
       setStep(3)
     } catch (err: unknown) {
       const e = err as { code?: number; message?: string }
-      if (e?.code === 4001) {
-        setError('Signature request was rejected.')
-      } else {
-        setError(e?.message ?? 'Failed to sign message.')
-      }
+      if (e?.code === 4001) setError('Signature request cancelled.')
+      else setError(e?.message ?? 'Failed to sign message.')
     } finally {
       setLoading(false)
     }
   }
 
-  // ── Step 3: submit registration ──────────────────────────────────────────
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
     if (passkey.length < 8) { setError('Passkey must be at least 8 characters.'); return }
@@ -125,20 +141,21 @@ export function Register() {
     }
   }
 
-  // ── Success state ────────────────────────────────────────────────────────
   if (success) {
     return (
       <div className="wor-page">
         <div className="wor-card wor-card--success">
-          <div className="wor-success-icon">✓</div>
+          <div className="wor-result-icon wor-result-icon--success">✓</div>
           <h2 className="wor-card-title">Wallet Registered</h2>
           <p className="wor-card-desc">
-            Your wallet is registered. If it's ever compromised, visit{' '}
-            <Link to="/report" className="wor-link">/report</Link> to flag it instantly.
+            Your wallet is now protected by OTI. If it's ever compromised, visit{' '}
+            <Link to="/report" className="wor-link">/report</Link> to flag it instantly —
+            one signed message warns everyone.
           </p>
-          <Link to="/score" className="wor-btn wor-btn--ghost" style={{ textAlign: 'center' }}>
-            ← Score a Wallet
-          </Link>
+          <div className="wor-result-actions">
+            <Link to="/score" className="wor-btn wor-btn--ghost">← Score a Wallet</Link>
+            <Link to="/report" className="wor-btn wor-btn--outline">Report if Compromised →</Link>
+          </div>
         </div>
       </div>
     )
@@ -146,15 +163,17 @@ export function Register() {
 
   return (
     <div className="wor-page">
-      <p className="wor-step-indicator">Step {step} of 3</p>
+      <Stepper step={step} />
 
-      {/* ── Step 1 ── */}
       {step === 1 && (
         <div className="wor-card">
-          <h2 className="wor-card-title">Register Your Wallet</h2>
-          <p className="wor-card-desc">
-            Link your wallet to OTI so you can self-report it as compromised if it's ever stolen or hacked.
-          </p>
+          <div className="wor-card-head">
+            <h2 className="wor-card-title">Register Your Wallet</h2>
+            <p className="wor-card-desc">
+              Link your wallet to OTI's Ownership Registry. If it's ever stolen or hacked,
+              one signed message flags it immediately — warning anyone who checks it.
+            </p>
+          </div>
           <form onSubmit={handleAddressSubmit} className="wor-form">
             <div className="wor-form-field">
               <label className="wor-form-label">Wallet Address</label>
@@ -163,12 +182,15 @@ export function Register() {
                 placeholder="0x… or wallet address"
                 value={address}
                 onChange={e => { setAddress(e.target.value); clearError() }}
+                spellCheck={false}
+                autoCorrect="off"
+                autoCapitalize="off"
                 required
                 autoFocus
               />
             </div>
             {error && <p className="wor-error">{error}</p>}
-            <button className="wor-btn" type="submit" disabled={loading}>
+            <button className="wor-btn wor-btn--primary" type="submit" disabled={loading}>
               {loading ? 'Checking…' : 'Continue →'}
             </button>
           </form>
@@ -179,46 +201,58 @@ export function Register() {
         </div>
       )}
 
-      {/* ── Step 2 ── */}
       {step === 2 && (
         <div className="wor-card">
-          <h2 className="wor-card-title">Sign the Challenge</h2>
-          <p className="wor-card-desc">
-            Sign the message below with MetaMask to prove ownership of this wallet. You will
-            always see the exact message before signing.
-          </p>
-          <div className="wor-form-field">
-            <label className="wor-form-label">Message to Sign</label>
+          <div className="wor-card-head">
+            <h2 className="wor-card-title">Sign the Challenge</h2>
+            <p className="wor-card-desc">
+              Prove ownership by signing the message below. You will always see the exact
+              text before MetaMask asks you to sign — never sign something you haven't read.
+            </p>
+          </div>
+          <div className="wor-challenge-wrap">
+            <div className="wor-challenge-header">
+              <span className="wor-challenge-icon">🔐</span>
+              <span className="wor-challenge-label">Challenge Message — Read Before Signing</span>
+            </div>
             <div className="wor-message-box">{challengeMessage}</div>
+            <p className="wor-challenge-note">
+              MetaMask will display this message exactly as shown above.
+            </p>
           </div>
           {error && <p className="wor-error">{error}</p>}
-          <button className="wor-btn" onClick={handleSign} disabled={loading}>
-            {loading ? 'Waiting for MetaMask…' : '🦊 Sign with MetaMask'}
-          </button>
-          <button
-            className="wor-btn wor-btn--ghost"
-            type="button"
-            onClick={() => { setStep(1); clearError() }}
-            disabled={loading}
-          >
-            ← Back
-          </button>
+          <div className="wor-form" style={{ gap: '0.6rem' }}>
+            <button className="wor-btn wor-btn--primary" onClick={handleSign} disabled={loading}>
+              {loading ? 'Waiting for MetaMask…' : '🦊 Sign with MetaMask'}
+            </button>
+            <button
+              className="wor-btn wor-btn--ghost"
+              type="button"
+              onClick={() => { setStep(1); clearError() }}
+              disabled={loading}
+            >
+              ← Back
+            </button>
+          </div>
         </div>
       )}
 
-      {/* ── Step 3 ── */}
       {step === 3 && (
         <div className="wor-card">
-          <h2 className="wor-card-title">Set a Passkey</h2>
-          <p className="wor-card-desc">
-            Your passkey will be required to self-report this wallet as compromised in the future.
-            Store it somewhere safe — OTI cannot recover it for you.
-          </p>
+          <div className="wor-card-head">
+            <h2 className="wor-card-title">Set Your Passkey</h2>
+            <p className="wor-card-desc">
+              Your passkey is required to self-report this wallet as compromised in the future.
+            </p>
+          </div>
           <form onSubmit={handleRegister} className="wor-form">
-            <div className="wor-form-field">
-              <label className="wor-form-label">Passkey</label>
+            <div className="wor-security-field">
+              <div className="wor-security-field-header">
+                <span>🔑</span>
+                <label className="wor-form-label">Passkey</label>
+              </div>
               <input
-                className="wor-input"
+                className="wor-input wor-input--security"
                 type="password"
                 placeholder="Min. 8 characters"
                 value={passkey}
@@ -228,10 +262,13 @@ export function Register() {
                 autoComplete="new-password"
               />
             </div>
-            <div className="wor-form-field">
-              <label className="wor-form-label">Confirm Passkey</label>
+            <div className="wor-security-field">
+              <div className="wor-security-field-header">
+                <span>🔑</span>
+                <label className="wor-form-label">Confirm Passkey</label>
+              </div>
               <input
-                className="wor-input"
+                className="wor-input wor-input--security"
                 type="password"
                 placeholder="Repeat your passkey"
                 value={confirmPasskey}
@@ -240,9 +277,12 @@ export function Register() {
                 autoComplete="new-password"
               />
             </div>
+            <p className="wor-security-note">
+              ⚠ Store this securely — OTI cannot recover your passkey.
+            </p>
             {error && <p className="wor-error">{error}</p>}
-            <button className="wor-btn" type="submit" disabled={loading}>
-              {loading ? 'Registering…' : 'Register Wallet'}
+            <button className="wor-btn wor-btn--primary" type="submit" disabled={loading}>
+              {loading ? 'Registering…' : '✓ Register Wallet'}
             </button>
             <button
               type="button"

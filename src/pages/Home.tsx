@@ -1,4 +1,5 @@
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { WalletForm } from '@/components/WalletForm'
 import { useScore } from '@/hooks/useScore'
 import { useAnonymousLimit } from '@/hooks/useAnonymousLimit'
@@ -15,7 +16,7 @@ import { ShareButton } from '@/components/ShareButton'
 import { ChainIcon } from '@/components/ChainIcon'
 import { CopyButton } from '@/components/CopyButton'
 import { generateScoreCard } from '@/lib/generateScoreCard'
-import { useComingSoon } from '@/components/ComingSoon'
+import { worFetch } from '@/lib/worClient'
 
 function truncateAddress(addr: string): string {
   if (addr.length <= 13) return addr
@@ -30,8 +31,22 @@ function scoreTier(score: number): { label: string; color: string } {
   return               { label: 'HIGH RISK',         color: 'var(--danger)' }
 }
 
+function useRegistrationStatus(address: string) {
+  return useQuery({
+    queryKey: ['wor', 'status', address],
+    queryFn: async () => {
+      const { data } = await worFetch<{ status?: string }>(
+        `/wallet/registration-status/${encodeURIComponent(address)}`
+      )
+      return data.status ?? 'not_registered'
+    },
+    enabled: Boolean(address),
+    retry: false,
+    staleTime: 60_000,
+  })
+}
+
 export function Home() {
-  const showComingSoon = useComingSoon()
   const [searchParams, setSearchParams] = useSearchParams()
   const wallet = searchParams.get('wallet') ?? ''
   const chain = searchParams.get('chain') ?? ''
@@ -41,9 +56,13 @@ export function Home() {
 
   const scoreQuery = useScore(wallet, chain)
   // Bug 8 fix: only fire this query when the input form is actually visible.
-  // While a score result is displayed (!hasQuery is false) the badge is hidden,
-  // so a network request would just waste the freshness window.
   const limitQuery = useAnonymousLimit({ enabled: !hasQuery })
+  // Check WOR registration status when results are shown and wallet is not compromised
+  const regStatus = useRegistrationStatus(
+    hasQuery && scoreQuery.isSuccess && scoreQuery.data && !scoreQuery.data.compromised
+      ? wallet
+      : ''
+  )
 
   function handleSearch(address: string, selectedChain: string) {
     setSearchParams({ wallet: address, chain: selectedChain })
@@ -111,27 +130,13 @@ export function Home() {
         </div>
 
         <div className="home-wor-links">
-          <a
-            href="#"
-            className="home-wor-link"
-            onClick={(e) => {
-              e.preventDefault()
-              showComingSoon('Wallet registration')
-            }}
-          >
+          <Link to="/register" className="home-wor-link">
             🔒 Own this wallet? Register it
-          </a>
-          <a
-            href="#"
-            className="home-report-badge"
-            onClick={(e) => {
-              e.preventDefault()
-              showComingSoon('Wallet reporting')
-            }}
-          >
+          </Link>
+          <Link to="/report" className="home-report-badge">
             <span className="home-report-badge-icon">⚑</span>
             <span>Report a compromised wallet</span>
-          </a>
+          </Link>
         </div>
 
         <footer className="home-footer">
@@ -207,6 +212,20 @@ export function Home() {
                   {scoreQuery.data.cached && <CachedBadge />}
                 </div>
               </div>
+
+              {/* WOR register prompt — shown when wallet is not yet registered */}
+              {regStatus.isSuccess && regStatus.data === 'not_registered' && (
+                <Link
+                  to={`/register?address=${encodeURIComponent(wallet)}`}
+                  className="results-wor-prompt"
+                >
+                  <span className="results-wor-prompt-icon">🔒</span>
+                  <span className="results-wor-prompt-text">
+                    Own this wallet? Register it with OTI to protect it.
+                  </span>
+                  <span className="results-wor-prompt-arrow">→</span>
+                </Link>
+              )}
 
               <div className="results-signals-panel">
                 <h2 className="results-signals-heading">Trust Signals</h2>

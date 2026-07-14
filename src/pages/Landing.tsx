@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Radio,
   Wrench,
+  ShieldAlert,
 } from 'lucide-react'
 import type { IconType } from 'react-icons'
 import { FaTelegram, FaDiscord } from 'react-icons/fa6'
@@ -48,29 +49,29 @@ const HOW_IT_WORKS = [
 ]
 
 const TRUST_SIGNALS: { icon: LucideIcon; label: string; weight: string; body: string }[] = [
-  { icon: Clock, label: 'Wallet Age', weight: '25%', body: 'How long this wallet has been active on-chain' },
-  { icon: BarChart3, label: 'Transaction Count', weight: '20%', body: 'Volume and frequency of transactions' },
-  { icon: Coins, label: 'Token Holding Behavior', weight: '20%', body: 'Diversity and quality of tokens held' },
-  { icon: Link2, label: 'Smart Contract Interactions', weight: '20%', body: 'Depth of DeFi and protocol engagement' },
-  { icon: Timer, label: 'Transaction Timing', weight: '15%', body: 'Consistency and naturalness of activity patterns' },
+  { icon: Clock,    label: 'Wallet Age',                  weight: '25%', body: 'How long this wallet has been active on-chain' },
+  { icon: BarChart3, label: 'Transaction Count',          weight: '20%', body: 'Volume and frequency of transactions' },
+  { icon: Coins,    label: 'Token Holding Behavior',      weight: '20%', body: 'Diversity and quality of tokens held' },
+  { icon: Link2,    label: 'Smart Contract Interactions', weight: '20%', body: 'Depth of DeFi and protocol engagement' },
+  { icon: Timer,    label: 'Transaction Timing',          weight: '15%', body: 'Consistency and naturalness of activity patterns' },
 ]
 
 const USE_CASES: { icon: LucideIcon; label: string; body: string }[] = [
-  { icon: Landmark, label: 'Exchanges & Gateways', body: 'Flag compromised wallets before processing withdrawals.' },
-  { icon: Banknote, label: 'DeFi Protocols', body: 'Risk-adjust lending and collateral requirements based on wallet trust.' },
-  { icon: Image, label: 'NFT Marketplaces', body: 'Display trust badges next to seller listings.' },
-  { icon: Coins, label: 'Payment Processors', body: 'Require a minimum trust score before processing outbound payments.' },
-  { icon: Gamepad2, label: 'Web3 Gaming', body: 'Prevent fresh-wallet farming in Play-to-Earn.' },
-  { icon: Vote, label: 'DAO Governance', body: 'Weight votes by wallet trust alongside token balance.' },
-  { icon: ShieldCheck, label: 'Custody Services', body: 'Score source wallets before crediting accounts.' },
-  { icon: Radio, label: 'Bridges & Cross-chain', body: 'Score the source wallet before allowing a bridge transaction.' },
-  { icon: Wrench, label: 'Developer Tooling', body: 'One API call. Any chain. No blockchain infrastructure required.' },
+  { icon: Landmark,    label: 'Exchanges & Gateways',  body: 'Flag compromised wallets before processing withdrawals.' },
+  { icon: Banknote,    label: 'DeFi Protocols',        body: 'Risk-adjust lending and collateral requirements based on wallet trust.' },
+  { icon: Image,       label: 'NFT Marketplaces',      body: 'Display trust badges next to seller listings.' },
+  { icon: Coins,       label: 'Payment Processors',    body: 'Require a minimum trust score before processing outbound payments.' },
+  { icon: Gamepad2,    label: 'Web3 Gaming',           body: 'Prevent fresh-wallet farming in Play-to-Earn.' },
+  { icon: Vote,        label: 'DAO Governance',        body: 'Weight votes by wallet trust alongside token balance.' },
+  { icon: ShieldCheck, label: 'Custody Services',      body: 'Score source wallets before crediting accounts.' },
+  { icon: Radio,       label: 'Bridges & Cross-chain', body: 'Score the source wallet before allowing a bridge transaction.' },
+  { icon: Wrench,      label: 'Developer Tooling',     body: 'One API call. Any chain. No blockchain infrastructure required.' },
 ]
 
 const FIND_US: { icon: IconType; label: string }[] = [
-  { icon: FaTelegram, label: 'Telegram' },
-  { icon: FaDiscord, label: 'Discord' },
-  { icon: SiGooglechrome, label: 'Chrome Extension' },
+  { icon: FaTelegram,       label: 'Telegram' },
+  { icon: FaDiscord,        label: 'Discord' },
+  { icon: SiGooglechrome,   label: 'Chrome Extension' },
   { icon: SiFirefoxbrowser, label: 'Firefox Extension' },
 ]
 
@@ -165,8 +166,28 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ─── Get the API ─── */}
+      {/* ─── Protect Your Wallet (WOR) ─── */}
       <section className="marketing-section marketing-section--alt">
+        <div className="marketing-container marketing-wor-inner">
+          <ShieldAlert className="marketing-wor-icon" aria-hidden="true" />
+          <h2 className="marketing-section-heading">Protect Your Wallet</h2>
+          <p className="marketing-wor-sub">
+            Register your wallet with OTI's Ownership Registry. If it's ever compromised,
+            one signed message flags it instantly — warning anyone who checks it before transacting.
+          </p>
+          <div className="marketing-wor-ctas">
+            <Link to="/register" className="marketing-btn marketing-btn--outline">
+              🔒 Register a Wallet
+            </Link>
+            <Link to="/report" className="marketing-btn marketing-btn--ghost">
+              ⚑ Report Compromised Wallet
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Get the API ─── */}
+      <section className="marketing-section">
         <div className="marketing-container marketing-api-inner">
           <h2 className="marketing-section-heading">Free API Key. No Credit Card.</h2>
           <p className="marketing-api-sub">
@@ -187,7 +208,7 @@ export function Landing() {
       </section>
 
       {/* ─── Find Us ─── */}
-      <section className="marketing-section">
+      <section className="marketing-section marketing-section--alt">
         <div className="marketing-container">
           <h2 className="marketing-section-heading">Find Us</h2>
           <div className="marketing-findus-row">

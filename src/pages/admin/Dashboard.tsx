@@ -56,7 +56,11 @@ function getTier(score: number) {
   return SCORE_TIERS.find(t => score >= t.min) ?? SCORE_TIERS[SCORE_TIERS.length - 1]
 }
 
-export function Dashboard() {
+interface DashboardProps {
+  onNavigateToWor: () => void
+}
+
+export function Dashboard({ onNavigateToWor }: DashboardProps) {
   const stats = useQuery({
     queryKey: ['admin', 'stats'],
     queryFn: () => adminFetch<StatsResponse>('/admin/stats'),
@@ -118,9 +122,20 @@ export function Dashboard() {
               <span className="admin-stat-value">{(stats.data.total_keys ?? 0).toLocaleString()}</span>
               <span className="admin-stat-label">Active API keys</span>
             </div>
-            <div className="admin-stat-card">
-              <span className="admin-stat-value">{(stats.data.total_compromised ?? 0).toLocaleString()}</span>
-              <span className="admin-stat-label">Flagged wallets (DB total)</span>
+            {/* Clickable — navigates to WOR → Compromised */}
+            <div
+              className="admin-stat-card admin-stat-card--clickable"
+              onClick={onNavigateToWor}
+              title="View compromised wallets in WOR tab"
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onNavigateToWor() }}
+            >
+              <span className="admin-stat-value" style={{ color: 'var(--danger)' }}>
+                {(stats.data.total_compromised ?? 0).toLocaleString()}
+              </span>
+              <span className="admin-stat-label">Flagged wallets</span>
+              <span className="admin-stat-card-hint">View in WOR →</span>
             </div>
           </div>
 
@@ -205,7 +220,6 @@ export function Dashboard() {
               borderRadius: 8,
               overflow: 'hidden',
             }}>
-              {/* Score header */}
               <div style={{ padding: '0.9rem 1.1rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '2.4rem', fontWeight: 700, color: tier.color, lineHeight: 1 }}>
                   {scoreResult.score}
@@ -227,7 +241,6 @@ export function Dashboard() {
                 </div>
               </div>
 
-              {/* Signals breakdown */}
               {scoreResult.signals && Object.keys(scoreResult.signals).length > 0 && (
                 <div style={{ padding: '0.75rem 1.1rem', borderBottom: '1px solid var(--border)' }}>
                   <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.5rem' }}>
@@ -254,7 +267,6 @@ export function Dashboard() {
                 </div>
               )}
 
-              {/* Metadata */}
               {scoreResult.metadata && Object.keys(scoreResult.metadata).length > 0 && (
                 <div style={{ padding: '0.75rem 1.1rem' }}>
                   <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.5rem' }}>
