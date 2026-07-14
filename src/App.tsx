@@ -5,6 +5,8 @@ import { Admin } from '@/pages/Admin'
 import { NotFound } from '@/pages/NotFound'
 import { Landing } from '@/pages/Landing'
 import { Whitepaper } from '@/pages/Whitepaper'
+import { Register } from '@/pages/Register'
+import { Report } from '@/pages/Report'
 
 // Task 11A: the scoring tool (formerly at "/") now lives at "/score" and
 // keeps the shared app <Layout> (navbar + status dot) exactly as before —
@@ -20,6 +22,22 @@ function App() {
         element={
           <Layout>
             <Home />
+          </Layout>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <Layout>
+            <Register />
+          </Layout>
+        }
+      />
+      <Route
+        path="/report"
+        element={
+          <Layout>
+            <Report />
           </Layout>
         }
       />

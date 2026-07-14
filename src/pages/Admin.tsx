@@ -14,6 +14,7 @@ import { AdminCache }         from './admin/AdminCache'
 import { PlanConfigs }        from './admin/PlanConfigs'
 import { CompromisedWallets } from './admin/CompromisedWallets'
 import { ConfigSync }         from './admin/ConfigSync'
+import { WOR }                from './admin/WOR'
 
 class AdminErrorBoundary extends Component<
   { children: ReactNode; onReset: () => void },
@@ -50,7 +51,7 @@ class AdminErrorBoundary extends Component<
   }
 }
 
-type Screen = 'dashboard' | 'keys' | 'usage' | 'history' | 'cache' | 'plans' | 'flagged' | 'sync'
+type Screen = 'dashboard' | 'keys' | 'usage' | 'history' | 'cache' | 'plans' | 'flagged' | 'sync' | 'wor'
 
 const SCREENS: { id: Screen; label: string; icon: string }[] = [
   { id: 'dashboard', label: 'Dashboard',       icon: '▦' },
@@ -61,6 +62,7 @@ const SCREENS: { id: Screen; label: string; icon: string }[] = [
   { id: 'plans',     label: 'Plan Configs',     icon: '◧' },
   { id: 'flagged',   label: 'Flagged Wallets',  icon: '⚑' },
   { id: 'sync',      label: 'Config Sync',      icon: '⟐' },
+  { id: 'wor',       label: 'WOR',              icon: '◉' },
 ]
 
 export function Admin() {
@@ -209,6 +211,7 @@ export function Admin() {
           {screen === 'plans'     && <PlanConfigs />}
           {screen === 'flagged'   && <CompromisedWallets />}
           {screen === 'sync'      && <ConfigSync />}
+          {screen === 'wor'       && <WOR />}
         </div>
       </div>
     </div>

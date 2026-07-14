@@ -227,12 +227,8 @@ export function Home() {
                   ))}
                 </div>
                 <a
-                  href="#"
+                  href={`/report?address=${encodeURIComponent(wallet)}`}
                   className="results-report-link"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    showComingSoon('Wallet reporting')
-                  }}
                 >
                   ⚑ Report this wallet
                 </a>
