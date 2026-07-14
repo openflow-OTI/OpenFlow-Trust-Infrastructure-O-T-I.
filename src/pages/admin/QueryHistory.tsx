@@ -10,6 +10,31 @@ interface HistoryEntry {
   timestamp: string
 }
 
+function escapeCsv(val: string | number): string {
+  const s = String(val)
+  return s.includes(',') || s.includes('"') || s.includes('\n')
+    ? `"${s.replace(/"/g, '""')}"`
+    : s
+}
+
+function downloadCsv(rows: HistoryEntry[], hasFilters: boolean) {
+  const header = ['address', 'chain', 'score', 'timestamp']
+  const lines  = [
+    header.join(','),
+    ...rows.map(r =>
+      [r.address, r.chain, r.score, new Date(r.timestamp).toISOString()].map(escapeCsv).join(',')
+    ),
+  ]
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  const date = new Date().toISOString().slice(0, 10)
+  a.href     = url
+  a.download = `oti-query-history${hasFilters ? '-filtered' : ''}-${date}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export function QueryHistory() {
   const history = useQuery({
     queryKey: ['admin', 'history'],
@@ -29,9 +54,9 @@ export function QueryHistory() {
 
   const filtered = useMemo(() => {
     if (!history.data) return []
-    const addr  = addrFilter.trim().toLowerCase()
-    const from  = dateFrom ? new Date(dateFrom).getTime() : null
-    const to    = dateTo   ? new Date(dateTo + 'T23:59:59').getTime() : null
+    const addr = addrFilter.trim().toLowerCase()
+    const from = dateFrom ? new Date(dateFrom).getTime() : null
+    const to   = dateTo   ? new Date(dateTo + 'T23:59:59').getTime() : null
 
     return history.data.filter(r => {
       if (addr        && !r.address.toLowerCase().includes(addr)) return false
@@ -43,7 +68,7 @@ export function QueryHistory() {
     })
   }, [history.data, addrFilter, chainFilter, dateFrom, dateTo])
 
-  const hasFilters = addrFilter || chainFilter || dateFrom || dateTo
+  const hasFilters = !!(addrFilter || chainFilter || dateFrom || dateTo)
 
   function clearFilters() {
     setAddrFilter('')
@@ -54,7 +79,17 @@ export function QueryHistory() {
 
   return (
     <div className="admin-section">
-      <h2 className="admin-section-title">Query History</h2>
+      <div className="admin-section-header">
+        <h2 className="admin-section-title">Query History</h2>
+        {history.isSuccess && filtered.length > 0 && (
+          <button
+            className="admin-btn admin-btn--ghost"
+            onClick={() => downloadCsv(filtered, hasFilters)}
+          >
+            ↓ Export CSV{hasFilters ? ` (${filtered.length.toLocaleString()})` : ''}
+          </button>
+        )}
+      </div>
 
       {history.isLoading && <p className="admin-loading">Loading history…</p>}
 

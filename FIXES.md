@@ -146,6 +146,9 @@
 ### FF22 — Query History Filter Bar ✅
 **Fixed:** July 14, 2026. Added client-side filter bar to `src/pages/admin/QueryHistory.tsx`. Four controls: address text filter (partial match, case-insensitive), chain dropdown (populated from live data), from/to date range pickers. "✕ Clear" button appears only when filters are active. Result count line shows "Showing N of M results" with red "no matches" hint. No new API calls — filters on already-fetched data via useMemo.
 
+### FF24 — Query History Export to CSV ✅
+**Fixed:** July 14, 2026. Added "↓ Export CSV" button to `src/pages/admin/QueryHistory.tsx`. Exports whatever is currently visible (filtered or full). Button label shows filtered count when filters are active (e.g. "↓ Export CSV (12)"). Filename includes date and "-filtered" suffix when filters are on. Pure client-side — no API call, no dependencies. Handles CSV escaping (quoted fields with embedded commas/quotes). Button hidden when there are no results to export.
+
 ### FF23 — Cache Tab Visual Toggle Switch + Quick Scorer ✅
 **Fixed:** July 14, 2026. Replaced button-based cache toggle in `src/pages/admin/AdminCache.tsx` with a proper sliding pill toggle switch (CSS in `src/index.css`). Added "Score a wallet" quick-action section at the bottom of the Cache tab — address input, chain dropdown (all 15 chains from `chains.ts`), live score button, inline result card showing score/tier/chain. Address auto-populates from the last cleared wallet so clearing and immediately rescoring is one step.
 
