@@ -46,7 +46,7 @@ export function AdminCache() {
 
   // ── Rescore window ───────────────────────────────────────────────────────
   const [windowDays, setWindowDays] = useState<number | ''>('')
-  const [windowMsg, setWindowMsg]   = useState<{ ok: boolean; text: string } | null>(null)
+  const [windowMsg,  setWindowMsg]  = useState<{ ok: boolean; text: string } | null>(null)
 
   useEffect(() => {
     if (stats.data && windowDays === '') {
@@ -78,8 +78,8 @@ export function AdminCache() {
   }
 
   // ── Clear single wallet ──────────────────────────────────────────────────
-  const [clearAddr, setClearAddr]   = useState('')
-  const [clearMsg, setClearMsg]     = useState<{ ok: boolean; text: string } | null>(null)
+  const [clearAddr, setClearAddr] = useState('')
+  const [clearMsg,  setClearMsg]  = useState<{ ok: boolean; text: string } | null>(null)
 
   const clearOneMutation = useMutation({
     mutationFn: (address: string) =>
@@ -129,6 +129,8 @@ export function AdminCache() {
     clearAllMutation.mutate()
   }
 
+  const cacheOn = stats.data?.cacheEnabled ?? false
+
   // ── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="admin-section">
@@ -162,11 +164,8 @@ export function AdminCache() {
       {stats.isSuccess && (
         <div className="admin-stat-grid" style={{ marginBottom: '2rem' }}>
           <div className="admin-stat-card">
-            <span
-              className="admin-stat-value"
-              style={{ color: stats.data.cacheEnabled ? 'var(--mint)' : 'var(--danger)' }}
-            >
-              {stats.data.cacheEnabled ? 'ON' : 'OFF'}
+            <span className="admin-stat-value" style={{ color: cacheOn ? 'var(--mint)' : 'var(--danger)' }}>
+              {cacheOn ? 'ON' : 'OFF'}
             </span>
             <span className="admin-stat-label">Cache enabled</span>
           </div>
@@ -179,11 +178,11 @@ export function AdminCache() {
             <span className="admin-stat-label">Wallets cached</span>
           </div>
           <div className="admin-stat-card">
-            <span className="admin-stat-value" style={{ fontSize: '0.95rem' }}>{fmt(stats.data.oldestScore)}</span>
+            <span className="admin-stat-value" style={{ fontSize: '0.9rem' }}>{fmt(stats.data.oldestScore)}</span>
             <span className="admin-stat-label">Oldest score</span>
           </div>
           <div className="admin-stat-card">
-            <span className="admin-stat-value" style={{ fontSize: '0.95rem' }}>{fmt(stats.data.newestScore)}</span>
+            <span className="admin-stat-value" style={{ fontSize: '0.9rem' }}>{fmt(stats.data.newestScore)}</span>
             <span className="admin-stat-label">Newest score</span>
           </div>
         </div>
@@ -192,27 +191,24 @@ export function AdminCache() {
       <hr style={{ border: 'none', borderTop: '1px solid var(--border)', marginBottom: '2rem' }} />
 
       {/* ── Cache toggle ──────────────────────────────────────────────── */}
-      <h3 className="admin-subsection-title">Cache toggle</h3>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <button
-          className={`admin-btn ${stats.data?.cacheEnabled ? 'admin-btn--danger' : 'admin-btn--primary'}`}
-          onClick={handleToggle}
-          disabled={toggleMutation.isPending || !stats.isSuccess}
-        >
-          {toggleMutation.isPending
-            ? 'Updating…'
-            : stats.data?.cacheEnabled
-              ? 'Turn cache OFF'
-              : 'Turn cache ON'}
-        </button>
-        {stats.isSuccess && (
-          <span style={{ fontSize: '0.83rem', color: 'var(--text-dim)' }}>
-            Current state: <strong style={{ color: stats.data.cacheEnabled ? 'var(--mint)' : 'var(--danger)' }}>
-              {stats.data.cacheEnabled ? 'ON' : 'OFF'}
-            </strong>
-          </span>
-        )}
+      <h3 className="admin-subsection-title">Cache on / off</h3>
+
+      <div className="cache-toggle-wrap">
+        <label className="cache-toggle-switch" aria-label="Toggle cache">
+          <input
+            type="checkbox"
+            checked={cacheOn}
+            disabled={toggleMutation.isPending || !stats.isSuccess}
+            onChange={handleToggle}
+          />
+          <span className="cache-toggle-track" />
+        </label>
+
+        <span className={`cache-toggle-label cache-toggle-label--${cacheOn ? 'on' : 'off'}`}>
+          {toggleMutation.isPending ? 'Updating…' : cacheOn ? 'ON — results are being cached' : 'OFF — live data only, nothing cached'}
+        </span>
       </div>
+
       {toggleMutation.isError && (
         <p className="admin-error" style={{ marginBottom: '1.5rem' }}>
           {toggleMutation.error instanceof Error ? toggleMutation.error.message : String(toggleMutation.error)}
@@ -224,7 +220,7 @@ export function AdminCache() {
       {/* ── Rescore window ────────────────────────────────────────────── */}
       <h3 className="admin-subsection-title">Rescore window</h3>
       <p className="admin-section-desc">
-        Wallets scored more recently than this window will be served from cache. Wallets older than the window are rescored live.
+        Wallets scored more recently than this window are served from cache. Older ones are rescored live.
       </p>
       <form className="admin-form" onSubmit={handleWindowSave} style={{ maxWidth: 320 }}>
         <div className="admin-form-row">
