@@ -96,7 +96,8 @@ You never update either file on your own initiative. Every update — whether ma
 **General rules:**
 - Never touch Git, never push, never open a PR — Ahmad handles all of that himself
 - Never touch `vercel.json` — ever
-- Never manually edit `src/api/schema.gen.ts` — run `pnpm codegen` instead
+- Never manually edit `src/api/schema.gen.ts` — run `npm run codegen` instead
+  - Main app uses npm. oti-docs uses pnpm. Never mix them.
 - Ahmad loves the chain selector — do not touch it
 - All CSS goes in `src/index.css` — no new component libraries
 - Test on mobile (375px) — most users are on mobile
