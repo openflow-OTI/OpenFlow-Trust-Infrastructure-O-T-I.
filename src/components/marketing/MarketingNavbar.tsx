@@ -63,6 +63,7 @@ export function MarketingNavbar() {
           </Link>
           <a href="/docs/" className="marketing-navbar-link">API Docs</a>
           <Link to="/whitepaper" className="marketing-navbar-link">Whitepaper</Link>
+          <Link to="/services" className="marketing-navbar-link">Services</Link>
           {socials}
         </nav>
 
@@ -99,6 +100,9 @@ export function MarketingNavbar() {
           </a>
           <Link to="/whitepaper" className="marketing-navbar-link" onClick={() => setOpen(false)}>
             Whitepaper
+          </Link>
+          <Link to="/services" className="marketing-navbar-link" onClick={() => setOpen(false)}>
+            Services
           </Link>
           {socials}
         </nav>

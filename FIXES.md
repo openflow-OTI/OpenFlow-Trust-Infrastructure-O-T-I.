@@ -163,6 +163,21 @@
 ### FF23 — Cache Tab Visual Toggle Switch ✅
 **Fixed:** July 14, 2026. Replaced button-based cache toggle in `src/pages/admin/AdminCache.tsx` with a proper sliding pill toggle switch (CSS in `src/index.css`).
 
+### FF25 — Register as Primary WOR Entry Point 🔴 ACTIVE
+**Note:** ID reused — flagged to the Manager, this is a distinct item from the FF25 "Score a Wallet Moved to Dashboard Tab" entry below, kept for history.
+**Status:** In progress. Assigned July 15, 2026, alongside Task 18/FF26/FF27. Reviewed, no code changes needed — already correct.
+Checked every WOR entry point: `Landing.tsx`'s "Protect Your Wallet" section already shows "Register Your Wallet" before "Report Compromised Wallet"; `Home.tsx`'s quiet link row already shows "Own this wallet? Register it" before "Report a compromised wallet"; the score-results CTA already leads with Register for an unregistered wallet and only shows Report for an already-registered, non-compromised wallet (mutually exclusive states, so there's no "wrong order" case). No file changed for this item.
+
+### FF26 — OTI Logo in WalletConnect DApp Connect Modal 🔴 ACTIVE
+**Note:** ID reused — flagged to the Manager, this is a distinct item from the FF26 "Query History Chain Filter" entry below, kept for history.
+**Status:** In progress. Assigned July 15, 2026, alongside Task 18/FF25/FF27. Build complete, verified locally, awaiting Manager review before marking ✅.
+Exported the existing OTI spiral/G logo (`public/logo.svg`) to `public/logo512.png` and `public/logo192.png` (square canvas, centered). Added `public/manifest.json` referencing both. Updated `index.html`: added `<link rel="manifest">`, a PNG `<link rel="icon">` and `apple-touch-icon` (both `/logo192.png`), and fixed `theme-color` to match the app's actual background (`#05080f`, was `#000000`). **Important — item 3 does not apply:** this codebase has no WalletConnect/wagmi/viem client anywhere; wallet connection is a custom EIP-6963 + mobile-deep-link connector (`src/lib/walletConnector.ts`) with no WalletConnect protocol session, so there is no `metadata.icons` field to set. Trust Wallet's in-app dapp browser reads the page's own icon/manifest tags for its connect UI, which is what items 1/2/4 now provide. Flagging this in case Ahmad still sees the "o" circle after deploy — the likely next step would be a hard cache-bust or CDN purge of the old favicon, not more app code.
+
+### FF27 — OTI Logo in /register Success Screen (Circle) 🔴 ACTIVE
+**Note:** ID reused — flagged to the Manager, this is a distinct item from the FF27 "Query History Score Search Filter" entry below, kept for history.
+**Status:** In progress. Assigned July 15, 2026, alongside Task 18/FF25/FF26. Reviewed, no code changes needed — already correct.
+`/register` step 4 (DONE state) already renders the OTI logo inside a circular `.wor-result-logo` badge (mint-tinted background, mint border/glow, logo centered) — confirmed by temporarily forcing the success state and screenshotting locally; it matches the brand and the results-page ring treatment already. No file changed for this item.
+
 ### FF25 — Score a Wallet Moved to Dashboard Tab ✅
 **Fixed:** July 14, 2026. Removed the "Score a wallet" quick scorer from the Cache tab (`src/pages/admin/AdminCache.tsx`) and rebuilt it in the Dashboard tab (`src/pages/admin/Dashboard.tsx`). Full result card shows: score number + colour-coded tier badge, signal breakdown table (Signal / Score / Weight for all 5 signals), and on-chain metadata row. Compromised wallet warning included. `CHAINS` import and all scorer types/constants (`SignalDetail`, `ScoreResult`, `SIGNAL_LABELS`, `META_LABELS`, `SCORE_TIERS`, `getTier`) removed from AdminCache; auto-populate-on-clear removed with them.
 

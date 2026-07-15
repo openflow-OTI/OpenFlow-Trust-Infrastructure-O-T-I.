@@ -430,6 +430,12 @@ textarea {
   font-size: 0.8rem;
 }
 
+.marketing-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* ── Hero ── */
 .marketing-hero {
   position: relative;
@@ -732,6 +738,92 @@ textarea {
 
 @media (max-width: 560px) {
   .marketing-usecase-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Services Hub ── */
+.marketing-services-hero {
+  padding-bottom: 1.5rem;
+  text-align: center;
+}
+
+.marketing-services-heading {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.marketing-services-sub {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-dim);
+}
+
+.marketing-services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.marketing-service-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.75rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.marketing-service-card:hover {
+  border-color: rgba(0, 229, 160, 0.3);
+  box-shadow: 0 0 24px rgba(0, 229, 160, 0.08);
+}
+
+.marketing-service-card--soon {
+  opacity: 0.6;
+}
+
+.marketing-service-card--soon:hover {
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.marketing-service-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+  stroke-width: 1.75;
+}
+
+.marketing-service-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.marketing-service-body {
+  margin: 0 0 1.25rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+  flex-grow: 1;
+}
+
+.marketing-service-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .marketing-services-grid {
     grid-template-columns: 1fr;
   }
 }

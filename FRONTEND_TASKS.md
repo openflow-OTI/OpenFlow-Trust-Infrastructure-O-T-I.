@@ -63,7 +63,9 @@ You are idle as of July 9, 2026 — all tasks below are done. Your likely next i
 
 ## 🔴 Your Task Queue
 
-Nothing is currently queued. Once Ahmad confirms priority, the Manager will send you `FIXES.md` FF17 (AI-native tell cleanup) as your next active item — it lives in the fixes log, not here, since it corrects existing copy/design rather than building something new.
+### TASK 18 — Services Hub + WOR Fixes 🔴 ACTIVE
+**Status:** In progress. Assigned July 15, 2026, alongside FF25/FF26/FF27 in `FIXES.md`. Build complete, verified locally, awaiting Manager review before marking ✅.
+Built a new `/services` portal page: heading + one-line description, a 2-column (1-column on mobile, ≤720px) card grid for Score a Wallet, Wallet Ownership Registry (Register/Report), API for Developers, Whitepaper, and a greyed-out "Coming Soon" placeholder card. Cards use the locked color system (Surface `#0b0f1a` background, `#1c2535` border, mint accent on hover) via new `.marketing-service-*` CSS classes, matching the existing Use Cases tile recipe. Added the route in `App.tsx` and a "Services" link to `MarketingNavbar` (desktop + mobile), placed after the existing Whitepaper link.
 
 ---
 

@@ -5,6 +5,7 @@ import { Admin } from '@/pages/Admin'
 import { NotFound } from '@/pages/NotFound'
 import { Landing } from '@/pages/Landing'
 import { Whitepaper } from '@/pages/Whitepaper'
+import { Services } from '@/pages/Services'
 import { Register } from '@/pages/Register'
 import { Report } from '@/pages/Report'
 
@@ -17,6 +18,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/whitepaper" element={<Whitepaper />} />
+      <Route path="/services" element={<Services />} />
       <Route
         path="/score"
         element={
