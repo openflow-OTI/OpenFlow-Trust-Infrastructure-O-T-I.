@@ -133,9 +133,6 @@ export function Home() {
           <Link to="/register" className="home-wor-link">
             Own this wallet? Register it
           </Link>
-          <Link to="/report" className="home-report-badge">
-            <span>Report a compromised wallet</span>
-          </Link>
         </div>
 
         <footer className="home-footer">
