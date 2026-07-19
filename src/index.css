@@ -1942,47 +1942,38 @@ textarea {
 
   .home-page {
     padding: 0.1rem 0 0;
-    gap: 0.45rem;
+    gap: 0.6rem;
   }
 
+  /* Logo removed on mobile — saves vertical space, text moves up */
   .home-logo-wrap {
-    margin-bottom: 0.1rem;
+    display: none;
   }
 
-  /* Shrunk a bit to make room for the much bigger tagline below —
-     OTI itself (title) is untouched. */
-  .home-logo-spin {
-    width: 36px;
-    height: 36px;
-  }
-
-  /* OTI wordmark — left as-is in size, just given real breathing room
-     below so it reads as its own distinct block. */
+  /* OTI wordmark */
   .home-title {
     font-size: 2rem;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.25rem;
   }
 
-  /* This is the actual tagline ("OpenFlow Trust Infrastructure") — made
-     big and bold so it reads as a statement, not a small caption, with
-     clear space above (from OTI) and below (from the "On-chain..." line)
-     so all three read as distinct, separated blocks. */
+  /* "OpenFlow Trust Infrastructure" */
   .home-wordmark-sub {
     font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: 0.06em;
-    margin: 0 0 0.4rem;
+    margin: 0 0 0.35rem;
   }
 
-  /* Secondary: the supporting line under the tagline */
+  /* Supporting tagline */
   .home-tagline {
-    font-size: 0.72rem;
-    margin-top: 0.1rem;
+    font-size: 0.78rem;
+    margin-top: 0;
   }
 
+  /* Larger form card on mobile */
   .home-form-card {
-    padding: 0.55rem 0.65rem;
-    border-radius: 0.85rem;
+    padding: 1.1rem 1rem;
+    border-radius: 0.95rem;
   }
 
   .home-example-wrap {
