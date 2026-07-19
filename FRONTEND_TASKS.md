@@ -33,6 +33,10 @@ You are idle as of July 9, 2026 — all tasks below are done. Your likely next i
 ### TASK 11 — Developer Docs Site ✅
 **Completed:** July 9, 2026. Docusaurus site (`oti-docs/`) covering Getting Started, API Reference, Score Explanation, Supported Chains, Rate Limits, and JS/Python/cURL examples, plus an OG social-share image and a live "Try It Live" widget. Deployed as its own Vercel project (pnpm-based build — do not switch back to npm, see `MANAGER_HANDOVER.md` for why) and proxied onto the main site at `/docs/` via `vercel.json` rewrites. Confirmed fully live via curl on `/docs`, `/docs/`, and `/docs/api-reference`. One open follow-up: `FIXES.md` BF11/BF-style item — re-verify "Try It Live" hits the real Railway backend post-redeploy (tracked as BF11 in `FIXES.md`, owned by whichever Builder picks it up next — currently unassigned).
 
+### TASK 18 — Services Hub + WOR Fixes ✅
+**Completed:** July 19, 2026. Confirmed ✅ by Ahmad live.
+Built a new `/services` portal page: heading + one-line description, a 2-column (1-column on mobile, ≤720px) card grid for Score a Wallet, Wallet Ownership Registry (Register/Report), API for Developers, Whitepaper, and a greyed-out "Coming Soon" placeholder card. Cards use the locked color system (Surface `#0b0f1a` background, `#1c2535` border, mint accent on hover) via new `.marketing-service-*` CSS classes, matching the existing Use Cases tile recipe. Added the route in `App.tsx` and a "Services" link to `MarketingNavbar` (desktop + mobile), placed after the existing Whitepaper link.
+
 ---
 
 ## 🎨 OTI Color System (Locked — July 7, 2026)
@@ -63,9 +67,7 @@ You are idle as of July 9, 2026 — all tasks below are done. Your likely next i
 
 ## 🔴 Your Task Queue
 
-### TASK 18 — Services Hub + WOR Fixes 🔴 ACTIVE
-**Status:** In progress. Assigned July 15, 2026, alongside FF25/FF26/FF27 in `FIXES.md`. Build complete, verified locally, awaiting Manager review before marking ✅.
-Built a new `/services` portal page: heading + one-line description, a 2-column (1-column on mobile, ≤720px) card grid for Score a Wallet, Wallet Ownership Registry (Register/Report), API for Developers, Whitepaper, and a greyed-out "Coming Soon" placeholder card. Cards use the locked color system (Surface `#0b0f1a` background, `#1c2535` border, mint accent on hover) via new `.marketing-service-*` CSS classes, matching the existing Use Cases tile recipe. Added the route in `App.tsx` and a "Services" link to `MarketingNavbar` (desktop + mobile), placed after the existing Whitepaper link.
+Nothing is currently queued. Sitting tight until the Manager assigns the next item.
 
 ---
 
