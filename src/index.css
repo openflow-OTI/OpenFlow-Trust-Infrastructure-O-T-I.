@@ -1945,29 +1945,10 @@ textarea {
     gap: 0.6rem;
   }
 
-  /* Logo removed on mobile — saves vertical space, text moves up */
-  .home-logo-wrap {
+  /* Hide entire intro block on mobile — logo, OTI title, and taglines
+     all removed so the form card sits at the top with no wasted space */
+  .home-intro {
     display: none;
-  }
-
-  /* OTI wordmark */
-  .home-title {
-    font-size: 2rem;
-    margin-bottom: 0.25rem;
-  }
-
-  /* "OpenFlow Trust Infrastructure" */
-  .home-wordmark-sub {
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    margin: 0 0 0.35rem;
-  }
-
-  /* Supporting tagline */
-  .home-tagline {
-    font-size: 0.78rem;
-    margin-top: 0;
   }
 
   /* Larger form card on mobile */
