@@ -106,7 +106,7 @@ export function Landing() {
               View API Docs
             </a>
             <Link to="/services" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
-              Services
+              Services →
             </Link>
           </div>
           <div className="marketing-hero-chains">
