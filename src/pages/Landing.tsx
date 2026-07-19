@@ -102,12 +102,12 @@ export function Landing() {
             <Link to="/register" className="marketing-btn marketing-btn--outline marketing-btn--lg">
               Register Wallet
             </Link>
-            <Link to="/whitepaper" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
-              Read Whitepaper
-            </Link>
             <a href="/docs/" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
               View API Docs
             </a>
+            <Link to="/services" className="marketing-btn marketing-btn--ghost marketing-btn--lg">
+              Services
+            </Link>
           </div>
           <div className="marketing-hero-chains">
             {HERO_CHAIN_IDS.map((id) => (
